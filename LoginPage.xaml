@@ -2,20 +2,37 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LogiApp.LoginPage"
-             Title="Iniciar sesi�n">
+             Title=" ">
 
-    <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center">
-        <Label Text="LOGISYNC" FontSize="32" HorizontalOptions="Center" FontAttributes="Bold" />
+    <Grid>
+        <Image Source="copp.png" 
+                Aspect="AspectFill" />
+        <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="End">
+            <Label Text=" " 
+                   FontSize="32" 
+                   FontAttributes="Bold" 
+                   TextColor="#0A0A33" 
+                   HorizontalOptions="Center" />
 
-        <Button x:Name="BtnLogin"
-                Text="INICIAR SESIÓN"
-                Clicked="OnLoginClicked"
-                HeightRequest="60" />
+            <Button x:Name="BtnLogin"
+                    Text="INICIAR SESIÓN"
+                    Clicked="OnLoginClicked"
+                    FontFamily="sans-serif-black" 
+                    FontSize="25" 
+                    FontAttributes="Bold"
+                    TextColor="White"
+                    BackgroundColor="#0A0A33"
+                    HeightRequest="60" />
 
-        <Button x:Name="BtnRegistro"
-                Text="REGISTRO"
-                Clicked="OnRegisterClicked"
-                HeightRequest="60" />
-    </VerticalStackLayout>
-
+            <Button x:Name="BtnRegistro"
+                    Text="REGISTRO"
+                    FontFamily="sans-serif-black" 
+                    FontSize="25" 
+                    FontAttributes="Bold"
+                    TextColor="White" 
+                    Clicked="OnRegisterClicked"
+                    BackgroundColor="#0A0A33"
+                    HeightRequest="60" />
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>
