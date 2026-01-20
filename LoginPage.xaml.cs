@@ -10,21 +10,14 @@ namespace LogiApp
             InitializeComponent();
         }
 
-        private async void OnLoginClicked(object? sender, EventArgs e)
+        private async void OnLoginClicked(object sender, EventArgs e)
         {
-            var user = UsernameEntry.Text?.Trim();
-            var pass = PasswordEntry.Text;
+            await DisplayAlert("Login", "Entrando...", "OK");
+        }
 
-            // Ejemplo simple de validación
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
-            {
-                await DisplayAlert("Error", "Introduce usuario y contraseña", "OK");
-                return;
-            }
-
-            // Aquí iría la validación real (API, servicio, etc.)
-            // Si login correcto, navegar a la página principal:
-            await Shell.Current.GoToAsync("//MainPage");
+        private async void OnRegisterClicked(object sender, EventArgs e)
+        {
+            await DisplayAlert("Registro", "Abriendo...", "OK");
         }
     }
 }

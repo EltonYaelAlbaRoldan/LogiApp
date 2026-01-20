@@ -4,11 +4,18 @@
              x:Class="LogiApp.LoginPage"
              Title="Iniciar sesi�n">
 
-    <VerticalStackLayout Padding="30" Spacing="20">
-        <Label Text="Bienvenido" FontSize="24" HorizontalOptions="Center" />
-        <Entry x:Name="UsernameEntry" Placeholder="Usuario" />
-        <Entry x:Name="PasswordEntry" Placeholder="Contrase�a" IsPassword="True" />
-        <Button Text="Iniciar sesi�n" Clicked="OnLoginClicked" BackgroundColor="#1A237E" TextColor="White" HeightRequest="50"/>
+    <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center">
+        <Label Text="LOGISYNC" FontSize="32" HorizontalOptions="Center" FontAttributes="Bold" />
+
+        <Button x:Name="BtnLogin"
+                Text="INICIAR SESIÓN"
+                Clicked="OnLoginClicked"
+                HeightRequest="60" />
+
+        <Button x:Name="BtnRegistro"
+                Text="REGISTRO"
+                Clicked="OnRegisterClicked"
+                HeightRequest="60" />
     </VerticalStackLayout>
 
 </ContentPage>
