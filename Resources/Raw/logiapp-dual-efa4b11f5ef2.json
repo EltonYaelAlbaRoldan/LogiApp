@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "logiapp-dual",
+  "private_key_id": "efa4b11f5ef2a98139920e4c77dce76324423d68",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCp1vXsL1rkc9MG\nRM3ypgXNydXsRwKgZWH4QNpVSVd6Xw6CluzSanfxWiXCpYfF6PNrexG2RVgD9Yow\npa/vrjMDLMD3wDpMYeMN05xs2FgHkTwOtkMbudrx0f3bYwjHuaDY3iFBOWsHVYpO\nUAsoTUMAjMrAkFsE5CooshRNn3Df/aTX0SW8xz39kdZ+XbFqM6R5TtkNbkpwkm8b\ngc39L/2TVoFPyMmZrslLVxXfExLzDw0JXCAbYeZXbT/Jg3MgELOicNc/pLkYfK8e\nLaYFkqyRxk6GUoAsAMvvQJyR2ufOeZq7E9yaEFQPBUVHa+pCy9m6CbvSl9FrbDC5\nJZ992GrbAgMBAAECggEADjFA3qo8Ya/OGA2C2j6GaKJvpm1uqkGelLSyqgLVdQvh\ndgcvpguwlzINyryzYlXrlXU0zzLvPnFzyUnnMFOxvpesTme5V22soBipTy0q+gLo\nbmBLrlLzGVcPbBhUAQChkM3LIJywNW4v/whQTl9adH7PaJUHjhqU7U6oRK5Iq+bu\nuEfr1rC22Ae14r/DWw4jlZgFxy6jF9wp6/HH9KQnX+JFFLVD4Agt8XMqeji83AjG\nthbMz1oRBDG+45AzrB0ghL5V9750TaNNRKhDQ5Nsw+DxCcS5/FsjZf+CP0mGVI+o\n/b9eq/4iDCUIjm5msl7InLwK5R2BOLnRuoO28EU1RQKBgQDjCKHp8u079iEkLuDG\nRA2O1n5ujCZJzDjjpr4eBwKYC4lySx5a2ifjNccIwAoxzJHuAnlqTpQhgfL1WLF/\neNz4qCmfo7hy+pscWip96/npa0SMjUWpBpQQ4hzNWxYp7tyfcLM+5MD2N10SBVvN\n2fibFqnrbDKIq+quDimIU91ODQKBgQC/gkI62S55kYXgQ03LZOeIbmhj/3NSiikU\niAORvpeZ1imdo4lVSBEsFD+tIp++649jGBxUDHn7+yRehtU2geKrBS03jwBlPqUE\n8VSRKtY9WfytlQbGaFWsY+05E/Q6s9Y3+FiaX1TVeUZUbOgpRmvwStrjWQf9CJEU\nJY2iQUbKhwKBgAQ5DeHvHdCGtHka0h19+I6WmMVvn+qxfMFnQZQHZ1nypPzWPttL\nwYAtaOVVxRrGBlTaAO4kRgcVhrJfkvWfBuUtI5EPl4ez95ygZLfw4rYfw6elnQ0W\nzTw/KG/9aL0g70Ob8gmScbBiuT1zkhCTJFemJUT2vz3hjLzuEIGzpaMlAoGADZOI\nam+XEds1KG7dBvxCRbO+BsjHPiS5QNFbn2tph+hczuYXCEqxnPRah0WbGYfNhHLj\nHzo7M5fcPi9E0jZnAUS+rd+fYY4NWMpa+meVBIhql0unTU18NVpoKNG3UKoLF7Ct\nZ1Q2yWNtjvKhiruJT2GfHtri7Bc9YbY/0i7ae+UCgYEAhbuoX6Fnjsfkt2VhlvrG\nbvJn+/F6am/Tw+yyAhno6ZSu3WpcGpMeWOsO/Ek+iOok8qZCDUzkDoFhS9IogPbe\ny0xw+oEtRvslwc88WbBNo2w2TKGJ3L6a9bqPhF0CHtJly11UzmZ3BWZFqUfr4sQq\nOiTXQsZu0Nz2mGphJcbwBnw=\n-----END PRIVATE KEY-----\n",
+  "client_email": "logiapp-service@logiapp-dual.iam.gserviceaccount.com",
+  "client_id": "114122442598118909570",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/logiapp-service%40logiapp-dual.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
