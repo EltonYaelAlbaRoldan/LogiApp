@@ -66,4 +66,19 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Vistas\PaginaRegistro.xaml.cs">
+	    <DependentUpon>PaginaRegistro.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Vistas\PaginaLogeo.xaml.cs">
+	    <DependentUpon>PaginaLogeo.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Vistas\PaginaRegistro.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
