@@ -16,8 +16,9 @@
                MaxLength="2"/>
 
         <Button Text="Registrar" 
-                Clicked="OnProbarRegistroClicked" 
-                IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}" />
+                Clicked="OnProbarRegistroClicked"
+                IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
+                Visual="Material" />
         <ActivityIndicator IsRunning="{Binding IsBusy, Source={x:Reference this}}"
                            IsVisible="{Binding IsBusy, Source={x:Reference this}}"
                            Color="#2196F3"
