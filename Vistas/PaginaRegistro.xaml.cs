@@ -35,24 +35,48 @@ public partial class PaginaRegistro : ContentPage
 
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text)) return;
+        // 1. Validaciones de Interfaz (Falla rápido)
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text))
+        {
+            await DisplayAlert("Validación", "El nombre es obligatorio.", "Aceptar");
+            return;
+        }
+
+        if (!int.TryParse(EdadEntry.Text, out int edad) || edad <= 0 || edad >= 100)
+        {
+            await DisplayAlert("Dato Inválido", "La edad debe ser entre 1 y 99 años.", "Corregir");
+            return;
+        }
 
         try
         {
-            // Ahora crea la carpeta principal y las dos internas automáticamente
-            string folderId = await _drive.CrearEstructuraOperadorAsync(NombreEntry.Text);
+            // Bloqueamos la UI para evitar doble clic
+            // IsBusy = true; 
 
-            // El ID principal sigue siendo el que guardamos en Sheets para referencia
-            await _sheets.RegistrarOperadorAsync(NombreEntry.Text, EdadEntry.Text, folderId);
+            // 2. Generar el ID con el formato OP-XXX (Evita repetidos)
+            string idFormateado = await _sheets.GenerarIdUnicoFormateadoAsync();
 
-            await DisplayAlert("Éxito", $"Operador {NombreEntry.Text} registrado con carpetas de documentos y evidencias", "OK");
+            // 3. Crear la estructura de carpetas en Drive con ese ID
+            // Es mejor usar el ID en el nombre de la carpeta para organización
+            string nombreCarpeta = $"{idFormateado} - {NombreEntry.Text}";
+            string folderId = await _drive.CrearEstructuraOperadorAsync(nombreCarpeta);
 
+            // 4. Registrar todo en Google Sheets (Base de Datos)
+            await _sheets.RegistrarOperadorAsync(NombreEntry.Text, EdadEntry.Text, folderId, idFormateado);
+
+            await DisplayAlert("Éxito", $"Operador registrado con Folio: {idFormateado}", "OK");
+
+            // Limpieza
             NombreEntry.Text = string.Empty;
             EdadEntry.Text = string.Empty;
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", ex.Message, "Cerrar");
+            await DisplayAlert("Error de Registro", ex.Message, "Cerrar");
+        }
+        finally
+        {
+            // IsBusy = false;
         }
     }
 }

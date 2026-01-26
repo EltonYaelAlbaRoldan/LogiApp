@@ -11,33 +11,15 @@ public class ConsultasGoogleSheets
     public ConsultasGoogleSheets(SheetsService service) => _service = service;
 
     // CREATE: Registrar nuevo operador
-    public async Task RegistrarOperadorAsync(string nombre, string edad, string idCarpeta)
+    public async Task RegistrarOperadorAsync(string nombre, string edad, string folderId, int nuevoId)
     {
-        // 1. Obtenemos los datos actuales para saber cuántos hay y generar el ID
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:A").ExecuteAsync();
-        int siguienteId = (response.Values != null) ? response.Values.Count : 1;
+        var rango = "Operadores!A:E"; // Ajusta según tus columnas
+        var objetoLista = new List<object> { nuevoId, nombre, edad, folderId, DateTime.Now.ToString("dd/MM/yyyy") };
 
-        string idOperador = $"OP-{siguienteId:D3}"; // Ejemplo: OP-001, OP-002
+        var valueRange = new ValueRange { Values = new List<IList<object>> { objetoLista } };
 
-        // 2. Preparamos la fila con el ID en la primera columna y el Nombre en la segunda
-        var values = new ValueRange
-        {
-            Values = new List<IList<object>>
-        {
-            new List<object>
-            {
-                idOperador,    // Columna A: ID de Operador
-                nombre,        // Columna B: Nombre Completo
-                edad,          // Columna C: Edad
-                idCarpeta,     // Columna D: ID de Carpeta Drive
-                DateTime.Now.ToString("G") // Columna D: Fecha de Registro
-            }
-        }
-        };
-
-        var appendRequest = _service.Spreadsheets.Values.Append(values, _spreadsheetId, "Operadores!A:E");
+        var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
         appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-
         await appendRequest.ExecuteAsync();
     }
 
@@ -61,5 +43,49 @@ public class ConsultasGoogleSheets
     public async Task BorrarDatosFilaAsync(string rango)
     {
         await _service.Spreadsheets.Values.Clear(new ClearValuesRequest(), _spreadsheetId, rango).ExecuteAsync();
+    }
+
+
+    // Cambiamos el retorno a Task<string> porque ahora devolvemos "OP-00X"
+    public async Task<string> GenerarIdUnicoFormateadoAsync()
+    {
+        var rango = "Operadores!A:A";
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
+
+        var idsExistentes = new HashSet<int>();
+        if (response.Values != null)
+        {
+            foreach (var fila in response.Values.Skip(1))
+            {
+                string valorCelda = fila.FirstOrDefault()?.ToString() ?? "";
+
+                // Extraemos solo el número del formato "OP-003"
+                if (valorCelda.Contains("-"))
+                {
+                    string soloNumero = valorCelda.Split('-').Last();
+                    if (int.TryParse(soloNumero, out int num))
+                        idsExistentes.Add(num);
+                }
+            }
+        }
+
+        // Buscamos el máximo y sumamos 1
+        int siguienteNum = idsExistentes.Count > 0 ? idsExistentes.Max() + 1 : 1;
+
+        // Retornamos el formato profesional para tu Excel
+        return $"OP-{siguienteNum:D3}";
+    }
+
+    // También actualiza la firma de este método para que acepte el ID como string
+    public async Task RegistrarOperadorAsync(string nombre, string edad, string folderId, string nuevoId)
+    {
+        var rango = "Operadores!A:E";
+        var objetoLista = new List<object> { nuevoId, nombre, edad, folderId, DateTime.Now.ToString("dd/MM/yyyy") };
+
+        var valueRange = new ValueRange { Values = new List<IList<object>> { objetoLista } };
+
+        var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
+        appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+        await appendRequest.ExecuteAsync();
     }
 }

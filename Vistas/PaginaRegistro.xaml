@@ -12,7 +12,8 @@
 
         <Entry x:Name="EdadEntry" 
                Placeholder="Edad"
-               Keyboard="Numeric" />
+               Keyboard="Numeric" 
+               MaxLength="2"/>
 
         <Button Text="Registrar" 
                 Clicked="OnProbarRegistroClicked" />
