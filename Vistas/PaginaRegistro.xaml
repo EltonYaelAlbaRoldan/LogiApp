@@ -3,11 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LogiApp.Vistas.PaginaRegistro"
              x:Name="this"
-             Title="Registro de Operador">
+             Title=" ">
 
     <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
-        <Label Text="Nuevo Registro" FontSize="24" HorizontalOptions="Center" />
+        <ImageButton Source="volver.png" 
+             HorizontalOptions="Start"
+             HeightRequest="30"
+             WidthRequest="30"
+             Clicked="OnVolverClicked" />
 
+        <Label Text="Nuevo Registro" FontSize="24" HorizontalOptions="Center" />
         <Entry x:Name="NombreEntry" 
                Placeholder="Nombre del Operador" />
 

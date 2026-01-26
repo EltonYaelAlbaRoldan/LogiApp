@@ -33,6 +33,11 @@ public partial class PaginaRegistro : ContentPage
             await DisplayAlert("Error de Auth", ex.Message, "OK");
         }
     }
+    private async void OnVolverClicked(object sender, EventArgs e)
+    {
+        // Esto te regresa a la pantalla anterior en la pila de navegación
+        await Navigation.PopAsync();
+    }
 
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
