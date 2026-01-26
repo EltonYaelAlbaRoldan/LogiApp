@@ -9,6 +9,7 @@ public partial class PaginaRegistro : ContentPage
     private ConsultasGoogleDrive _drive;
     private readonly ConexionGoogleAuth _authService = new();
     public bool IsNotBusy => !IsBusy;
+    private bool _estaProcesando = false; // Bloqueo manual de seguridad
     public PaginaRegistro()
     {
         InitializeComponent(); // Esto ya no debería dar error si el XAML está bien
@@ -65,35 +66,37 @@ public partial class PaginaRegistro : ContentPage
             return;
         }
 
+        // --- NUEVO: BLOQUEO ANTIDUPLICADOS ---
+        if (_estaProcesando) return; // Si ya hay un proceso en curso, ignora este clic
+
+        // --- Validaciones de campos (Nombre, Edad) ---
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text)) return;
+
         try
         {
-            // 1. ACTIVAR ESTADO DE CARGA
-            IsBusy = true; // Activa el ActivityIndicator en el XAML
-            OnPropertyChanged(nameof(IsNotBusy)); // Notifica al botón que debe desactivarse
+            _estaProcesando = true; // Iniciamos el bloqueo
+            IsBusy = true;
+            OnPropertyChanged(nameof(IsNotBusy));
 
-            // 2. EJECUCIÓN DE APIs (Febrero Semana 1 y 2)
+            // Ejecución de APIs
             string idFormateado = await _sheets.GenerarIdUnicoFormateadoAsync();
+            string folderId = await _drive.CrearEstructuraOperadorAsync($"{idFormateado} - {NombreEntry.Text}");
+            await _sheets.RegistrarOperadorAsync(NombreEntry.Text, EdadEntry.Text, folderId, idFormateado);
 
-            string nombreCarpeta = $"{idFormateado} - {NombreEntry.Text.Trim()}";
-            string folderId = await _drive.CrearEstructuraOperadorAsync(nombreCarpeta);
+            await DisplayAlert("Éxito", $"Registrado con Folio: {idFormateado}", "OK");
 
-            await _sheets.RegistrarOperadorAsync(NombreEntry.Text.Trim(), EdadEntry.Text, folderId, idFormateado);
-
-            await DisplayAlert("Registro Exitoso", $"Operador {idFormateado} guardado en la nube.", "Finalizar");
-
-            // Limpieza de campos
             NombreEntry.Text = string.Empty;
             EdadEntry.Text = string.Empty;
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Fallo de Conexión", "Error al conectar con Google: " + ex.Message, "Cerrar");
+            await DisplayAlert("Error", ex.Message, "Cerrar");
         }
         finally
         {
-            // 3. DESACTIVAR ESTADO DE CARGA
-            IsBusy = false; // Oculta el ActivityIndicator
-            OnPropertyChanged(nameof(IsNotBusy)); // Reactiva el botón de registro
+            IsBusy = false;
+            _estaProcesando = false; // Liberamos el bloqueo al terminar
+            OnPropertyChanged(nameof(IsNotBusy));
         }
     }
 }
