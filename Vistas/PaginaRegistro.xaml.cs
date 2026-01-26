@@ -36,7 +36,7 @@ public partial class PaginaRegistro : ContentPage
     private async void OnVolverClicked(object sender, EventArgs e)
     {
         // Esto te regresa a la pantalla anterior en la pila de navegación
-        await Navigation.PopAsync();
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
 
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
