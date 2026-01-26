@@ -11,12 +11,34 @@ public class ConsultasGoogleSheets
     public ConsultasGoogleSheets(SheetsService service) => _service = service;
 
     // CREATE: Registrar nuevo operador
-    public async Task RegistrarOperadorAsync(string nombre, string idCarpeta)
+    public async Task RegistrarOperadorAsync(string nombre, string edad, string idCarpeta)
     {
-        var values = new ValueRange { Values = new List<IList<object>> { new List<object> { nombre, idCarpeta, DateTime.Now.ToString("G") } } };
-        var request = _service.Spreadsheets.Values.Append(values, _spreadsheetId, "Operadores!A:C");
-        request.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-        await request.ExecuteAsync();
+        // 1. Obtenemos los datos actuales para saber cuántos hay y generar el ID
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:A").ExecuteAsync();
+        int siguienteId = (response.Values != null) ? response.Values.Count : 1;
+
+        string idOperador = $"OP-{siguienteId:D3}"; // Ejemplo: OP-001, OP-002
+
+        // 2. Preparamos la fila con el ID en la primera columna y el Nombre en la segunda
+        var values = new ValueRange
+        {
+            Values = new List<IList<object>>
+        {
+            new List<object>
+            {
+                idOperador,    // Columna A: ID de Operador
+                nombre,        // Columna B: Nombre Completo
+                edad,          // Columna C: Edad
+                idCarpeta,     // Columna D: ID de Carpeta Drive
+                DateTime.Now.ToString("G") // Columna D: Fecha de Registro
+            }
+        }
+        };
+
+        var appendRequest = _service.Spreadsheets.Values.Append(values, _spreadsheetId, "Operadores!A:E");
+        appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+
+        await appendRequest.ExecuteAsync();
     }
 
     // READ: Obtener todos los operadores

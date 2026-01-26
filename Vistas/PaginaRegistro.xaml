@@ -10,7 +10,12 @@
         <Entry x:Name="NombreEntry" 
                Placeholder="Nombre del Operador" />
 
+        <Entry x:Name="EdadEntry" 
+               Placeholder="Edad"
+               Keyboard="Numeric" />
+
         <Button Text="Registrar" 
                 Clicked="OnProbarRegistroClicked" />
+
     </VerticalStackLayout>
 </ContentPage>

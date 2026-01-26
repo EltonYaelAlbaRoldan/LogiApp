@@ -35,20 +35,20 @@ public partial class PaginaRegistro : ContentPage
 
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
-        // El nombre debe coincidir con el x:Name del XAML
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text))
-        {
-            await DisplayAlert("Campo vacío", "Escribe un nombre", "OK");
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text)) return;
 
         try
         {
-            // Lógica de prueba dinámica
-            string folderId = await _drive.CrearCarpetaOperadorAsync(NombreEntry.Text);
-            await _sheets.RegistrarOperadorAsync(NombreEntry.Text, folderId);
+            // Ahora crea la carpeta principal y las dos internas automáticamente
+            string folderId = await _drive.CrearEstructuraOperadorAsync(NombreEntry.Text);
 
-            await DisplayAlert("Éxito", "Operador y carpeta creados", "OK");
+            // El ID principal sigue siendo el que guardamos en Sheets para referencia
+            await _sheets.RegistrarOperadorAsync(NombreEntry.Text, EdadEntry.Text, folderId);
+
+            await DisplayAlert("Éxito", $"Operador {NombreEntry.Text} registrado con carpetas de documentos y evidencias", "OK");
+
+            NombreEntry.Text = string.Empty;
+            EdadEntry.Text = string.Empty;
         }
         catch (Exception ex)
         {

@@ -1,4 +1,4 @@
-﻿namespace LogiApp
+﻿namespace LogiApp.Vistas
 {
     public partial class MainPage : ContentPage
     {

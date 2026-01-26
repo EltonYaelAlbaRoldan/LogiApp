@@ -6,24 +6,39 @@ namespace LogiApp.Servicios;
 public class ConsultasGoogleDrive
 {
     private readonly DriveService _service;
-    private readonly string _rootFolderId = "1J4KToWdv-uOfe8KwH-4F9a7RZc7zEdEf";
+    private readonly string _rootFolderId = "18UK5_tCQmtOLyEOoIWCqaeKqNKJsaFGM";
 
     public ConsultasGoogleDrive(DriveService service) => _service = service;
 
     // CREATE: Crear carpeta para operador
-    public async Task<string> CrearCarpetaOperadorAsync(string nombre)
+    public async Task<string> CrearEstructuraOperadorAsync(string nombreOperador)
     {
-        var meta = new Google.Apis.Drive.v3.Data.File
+        var metaPrincipal = new Google.Apis.Drive.v3.Data.File
         {
-            Name = nombre,
+            Name = nombreOperador,
             MimeType = "application/vnd.google-apps.folder",
             Parents = new[] { _rootFolderId }
         };
+        var carpetaPrincipal = await _service.Files.Create(metaPrincipal).ExecuteAsync();
+        string idPrincipal = carpetaPrincipal.Id;
 
-        var request = _service.Files.Create(meta);
-        request.Fields = "id";
-        var file = await request.ExecuteAsync();
-        return file.Id;
+        //Crear subcarpeta "documentos"
+        await CrearSubcarpetaAsync("documentos", idPrincipal);
+
+        //Crear subcarpeta "evidencias"
+        await CrearSubcarpetaAsync("evidencias", idPrincipal);
+
+        return idPrincipal; // Devolvemos el ID principal para guardarlo en Sheets
+    }
+    private async Task CrearSubcarpetaAsync(string nombreSubcarpeta, string idPadre)
+    {
+        var metaSub = new Google.Apis.Drive.v3.Data.File
+        {
+            Name = nombreSubcarpeta,
+            MimeType = "application/vnd.google-apps.folder",
+            Parents = new[] { idPadre }
+        };
+        await _service.Files.Create(metaSub).ExecuteAsync();
     }
 
     // READ: Listar carpetas
