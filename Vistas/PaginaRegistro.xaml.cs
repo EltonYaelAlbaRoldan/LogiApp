@@ -8,7 +8,7 @@ public partial class PaginaRegistro : ContentPage
     private ConsultasGoogleSheets _sheets;
     private ConsultasGoogleDrive _drive;
     private readonly ConexionGoogleAuth _authService = new();
-
+    public bool IsNotBusy => !IsBusy;
     public PaginaRegistro()
     {
         InitializeComponent(); // Esto ya no debería dar error si el XAML está bien
@@ -35,48 +35,65 @@ public partial class PaginaRegistro : ContentPage
 
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
-        // 1. Validaciones de Interfaz (Falla rápido)
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text))
+        // --- CAPA 1: VALIDACIÓN DE CAMPOS VACÍOS ---
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text))
         {
-            await DisplayAlert("Validación", "El nombre es obligatorio.", "Aceptar");
+            await DisplayAlert("Campos Incompletos", "Todos los campos son obligatorios para el registro.", "Revisar");
             return;
         }
 
-        if (!int.TryParse(EdadEntry.Text, out int edad) || edad <= 0 || edad >= 100)
+        // --- CAPA 2: VALIDACIÓN DE FORMATO (EDAD) ---
+        // Usamos int.TryParse para evitar que la app truene si meten letras
+        if (!int.TryParse(EdadEntry.Text, out int edad))
         {
-            await DisplayAlert("Dato Inválido", "La edad debe ser entre 1 y 99 años.", "Corregir");
+            await DisplayAlert("Error de Formato", "La edad debe ser un número entero.", "Corregir");
+            return;
+        }
+
+        // --- CAPA 3: LÓGICA DE NEGOCIO (RANGOS) ---
+        if (edad < 18 || edad > 99)
+        {
+            await DisplayAlert("Edad no permitida", "El operador debe tener entre 18 y 99 años.", "OK");
+            return;
+        }
+
+        // --- CAPA 4: REGLAS DE SEGURIDAD (NOMBRE) ---
+        // Evitamos nombres demasiado cortos o con caracteres extraños si lo deseas
+        if (NombreEntry.Text.Trim().Length < 3)
+        {
+            await DisplayAlert("Nombre Inválido", "Ingresa el nombre completo del operador.", "OK");
             return;
         }
 
         try
         {
-            // Bloqueamos la UI para evitar doble clic
-            // IsBusy = true; 
+            // 1. ACTIVAR ESTADO DE CARGA
+            IsBusy = true; // Activa el ActivityIndicator en el XAML
+            OnPropertyChanged(nameof(IsNotBusy)); // Notifica al botón que debe desactivarse
 
-            // 2. Generar el ID con el formato OP-XXX (Evita repetidos)
+            // 2. EJECUCIÓN DE APIs (Febrero Semana 1 y 2)
             string idFormateado = await _sheets.GenerarIdUnicoFormateadoAsync();
 
-            // 3. Crear la estructura de carpetas en Drive con ese ID
-            // Es mejor usar el ID en el nombre de la carpeta para organización
-            string nombreCarpeta = $"{idFormateado} - {NombreEntry.Text}";
+            string nombreCarpeta = $"{idFormateado} - {NombreEntry.Text.Trim()}";
             string folderId = await _drive.CrearEstructuraOperadorAsync(nombreCarpeta);
 
-            // 4. Registrar todo en Google Sheets (Base de Datos)
-            await _sheets.RegistrarOperadorAsync(NombreEntry.Text, EdadEntry.Text, folderId, idFormateado);
+            await _sheets.RegistrarOperadorAsync(NombreEntry.Text.Trim(), EdadEntry.Text, folderId, idFormateado);
 
-            await DisplayAlert("Éxito", $"Operador registrado con Folio: {idFormateado}", "OK");
+            await DisplayAlert("Registro Exitoso", $"Operador {idFormateado} guardado en la nube.", "Finalizar");
 
-            // Limpieza
+            // Limpieza de campos
             NombreEntry.Text = string.Empty;
             EdadEntry.Text = string.Empty;
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error de Registro", ex.Message, "Cerrar");
+            await DisplayAlert("Fallo de Conexión", "Error al conectar con Google: " + ex.Message, "Cerrar");
         }
         finally
         {
-            // IsBusy = false;
+            // 3. DESACTIVAR ESTADO DE CARGA
+            IsBusy = false; // Oculta el ActivityIndicator
+            OnPropertyChanged(nameof(IsNotBusy)); // Reactiva el botón de registro
         }
     }
 }

@@ -16,7 +16,14 @@
                MaxLength="2"/>
 
         <Button Text="Registrar" 
-                Clicked="OnProbarRegistroClicked" />
-
+                Clicked="OnProbarRegistroClicked" 
+                IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}" />
+        <ActivityIndicator IsRunning="{Binding IsBusy, Source={x:Reference this}}"
+                           IsVisible="{Binding IsBusy, Source={x:Reference this}}"
+                           Color="#2196F3"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           WidthRequest="50"
+                           HeightRequest="50" />
     </VerticalStackLayout>
 </ContentPage>
