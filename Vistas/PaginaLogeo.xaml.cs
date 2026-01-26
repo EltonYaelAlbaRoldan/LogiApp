@@ -17,7 +17,8 @@ public partial class PaginaLogeo : ContentPage
 
     private async void OnRegisterClicked(object sender, EventArgs e)
     {
-        await DisplayAlert("Registro", "Abriendo...", "OK");
+        //await DisplayAlert("Registro", "Abriendo...", "OK");
         //await Navigation.PushAsync(new Vistas.PaginaRegistro());
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaRegistro());
     }
 }
