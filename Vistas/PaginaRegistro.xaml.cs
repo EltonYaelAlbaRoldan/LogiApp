@@ -84,6 +84,7 @@ public partial class PaginaRegistro : ContentPage
             await _sheets.RegistrarOperadorAsync(NombreEntry.Text, EdadEntry.Text, folderId, idFormateado);
 
             await DisplayAlert("Éxito", $"Registrado con Folio: {idFormateado}", "OK");
+            Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
 
             NombreEntry.Text = string.Empty;
             EdadEntry.Text = string.Empty;
