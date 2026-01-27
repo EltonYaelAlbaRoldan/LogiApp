@@ -12,7 +12,7 @@ public partial class PaginaRegistro : ContentPage
     private bool _estaProcesando = false; // Bloqueo manual de seguridad
     public PaginaRegistro()
     {
-        InitializeComponent(); // Esto ya no debería dar error si el XAML está bien
+        InitializeComponent(); 
         InicializarConexion();
 
     }
