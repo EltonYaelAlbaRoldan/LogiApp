@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LogiApp.Vistas.PaginaRegistro"
              x:Name="this"
-             Title=" ">
+             Title="LogiApp - Registro"
+             NavigationPage.HasNavigationBar="False">
 
     <Grid RowDefinitions="Auto,*">
 

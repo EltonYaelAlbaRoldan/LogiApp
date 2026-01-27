@@ -35,20 +35,10 @@ public partial class InicioSesion : ContentPage
         CargandoIndicator.IsVisible = false;
     }
 
-    private async void OnRegresarClicked(object sender, EventArgs e)
+    private async void OnVolverClicked(object sender, EventArgs e)
     {
-        // Opción A: Si entraste con PushAsync, esto te regresa con una animación suave
-        // await Navigation.PopAsync();
-
-        // Opción B: Si quieres forzar el regreso a una página específica (como el Logeo inicial)
-        // Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
-
-        // Para tu flujo actual de prueba, usemos un simple aviso o retorno:
-        bool answer = await DisplayAlert("Salir", "¿Deseas volver a la pantalla anterior?", "Sí", "No");
-        if (answer)
-        {
-            // Esto asume que tienes una página previa en el stack de navegación
-            Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
-        }
+        // Esto te regresa a la pantalla anterior en la pila de navegación
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
+
 }
