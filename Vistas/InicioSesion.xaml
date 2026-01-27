@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LogiApp.Vistas.InicioSesion"
+             Title="LogiApp - Acceso">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
+
+            <Image Source="principal.png" 
+                   HeightRequest="120" 
+                   HorizontalOptions="Center" 
+                   Margin="0,0,0,20"/>
+
+            <Label Text="Bienvenido" 
+                   FontSize="28" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" />
+
+            <Label Text="Ingresa tus credenciales para continuar" 
+                   FontSize="14" 
+                   TextColor="Gray"
+                   HorizontalOptions="Center" 
+                   Margin="0,0,0,10"/>
+
+            <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="5,0">
+                <Entry x:Name="UsuarioEntry" 
+                       Placeholder="Usuario" 
+                       Keyboard="Text" />
+            </Frame>
+
+            <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="5,0">
+                <Entry x:Name="ContrasenaEntry" 
+                       Placeholder="Contraseña" 
+                       IsPassword="True" />
+            </Frame>
+
+            <Button Text="INICIAR SESIÓN"
+                    BackgroundColor="#2196F3"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    Clicked="OnLoginClicked" 
+                    Margin="0,10,0,0"/>
+
+
+
+            <Label Text="← Volver al inicio"
+                   TextColor="Gray"
+                   HorizontalOptions="Center"
+                   FontSize="12"
+                   Margin="0,20,0,0">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarClicked" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <ActivityIndicator x:Name="CargandoIndicator" 
+                               IsRunning="False" 
+                               IsVisible="False" 
+                               Color="#2196F3" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

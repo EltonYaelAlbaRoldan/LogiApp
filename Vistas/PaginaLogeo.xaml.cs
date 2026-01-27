@@ -12,7 +12,7 @@ public partial class PaginaLogeo : ContentPage
 
     private async void OnLoginClicked(object sender, EventArgs e)
     {
-        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
+        Application.Current.MainPage = new NavigationPage(new Vistas.InicioSesion());
     }
 
     private async void OnRegisterClicked(object sender, EventArgs e)

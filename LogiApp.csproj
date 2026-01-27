@@ -67,6 +67,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Vistas\InicioSesion.xaml.cs">
+	    <DependentUpon>InicioSesion.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Vistas\PaginaMenu.xaml.cs">
 	    <DependentUpon>PaginaMenu.xaml</DependentUpon>
 	  </Compile>
@@ -79,6 +82,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Vistas\InicioSesion.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Vistas\PaginaMenu.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
