@@ -39,6 +39,73 @@ public partial class PaginaRegistro : ContentPage
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
 
+    // --- MÉTODOS PARA CARGA DE ARCHIVOS (FEBRERO SEMANA 3) ---
+
+    private async void OnSubirLicenciaClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("Licencia Federal");
+    }
+
+    private async void OnSubirIneClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("INE");
+    }
+
+    private async void OnSubirActaClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("Acta de Nacimiento");
+    }
+
+    private async void OnSubirNssClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("NSS");
+    }
+
+    private async void OnSubirCvClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("CV");
+    }
+
+    // Método auxiliar para no repetir código
+    private async Task SeleccionarArchivoPdfAsync(string tipoDocumento)
+    {
+        try
+        {
+            var opciones = new PickOptions
+            {
+                PickerTitle = $"Selecciona tu {tipoDocumento} (PDF)",
+                FileTypes = FilePickerFileType.Pdf
+            };
+
+            var resultado = await FilePicker.Default.PickAsync(opciones);
+
+            if (resultado != null)
+            {
+                // Aquí podrías guardar la ruta en una variable para el registro final
+                await DisplayAlert("Archivo Seleccionado", $"Se cargó: {resultado.FileName}", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo cargar el archivo: {ex.Message}", "Cerrar");
+        }
+    }
+    // --- NUEVOS MÉTODOS PARA DATOS FISCALES ---
+
+    private async void OnSubirDomicilioClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("Comprobante de Domicilio");
+    }
+
+    private async void OnSubirRfcClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("RFC / Cédula Fiscal");
+    }
+
+    private async void OnSubirCurpClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("CURP");
+    }
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
         // --- CAPA 1: VALIDACIÓN DE CAMPOS VACÍOS ---
