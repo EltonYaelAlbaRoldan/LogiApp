@@ -1,34 +1,48 @@
+using LogiApp.Servicios;
+
 namespace LogiApp.Vistas;
 
 public partial class InicioSesion : ContentPage
 {
+
+    private ConsultasGoogleSheets _sheets;
+    private readonly ConexionGoogleAuth _authService = new();
+
     public InicioSesion()
     {
         InitializeComponent();
+        InicializarServicio();
+
+    }
+
+    private async void InicializarServicio()
+    {
+        // Obtenemos los servicios de Google
+        var (sService, _) = await _authService.ObtenerServiciosAsync();
+        _sheets = new ConsultasGoogleSheets(sService);
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)
     {
-        // Validación básica de campos
         if (string.IsNullOrWhiteSpace(UsuarioEntry.Text) || string.IsNullOrWhiteSpace(ContrasenaEntry.Text))
         {
-            await DisplayAlert("Campos Vacíos", "Por favor ingresa tu usuario y contraseña.", "Aceptar");
+            await DisplayAlert("Campos Vacíos", "Ingresa tus datos.", "OK");
             return;
         }
 
         CargandoIndicator.IsVisible = true;
         CargandoIndicator.IsRunning = true;
 
-        // Por ahora, validación "quemada" para que pruebes tu flujo
-        // Usuario: admin | Contraseña: 123
-        if (UsuarioEntry.Text == "admin" && ContrasenaEntry.Text == "123")
+        // VALIDACIÓN REAL DESDE GOOGLE SHEETS
+        bool esValido = await _sheets.ValidarUsuarioAsync(UsuarioEntry.Text, ContrasenaEntry.Text);
+
+        if (esValido)
         {
-            // Navegamos al Menú Principal que ya tienes listo
             Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
         else
         {
-            await DisplayAlert("Error", "Usuario o contraseña incorrectos.", "Reintentar");
+            await DisplayAlert("Error", "Usuario o contraseña no encontrados en la base de datos.", "Reintentar");
         }
 
         CargandoIndicator.IsRunning = false;

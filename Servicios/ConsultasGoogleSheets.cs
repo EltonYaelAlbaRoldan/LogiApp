@@ -88,4 +88,35 @@ public class ConsultasGoogleSheets
         appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
         await appendRequest.ExecuteAsync();
     }
+
+    //Consutar usuarios y contraseñas
+    public async Task<bool> ValidarUsuarioAsync(string usuario, string contrasena)
+    {
+        try
+        {
+            // Leemos el rango de la pestaña "Test"
+            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Test!A:B").ExecuteAsync();
+            var valores = response.Values;
+
+            if (valores == null || valores.Count == 0) return false;
+
+            // Recorremos las filas buscando coincidencia (saltando el encabezado)
+            foreach (var fila in valores.Skip(1))
+            {
+                if (fila.Count >= 2)
+                {
+                    string u = fila[0]?.ToString();
+                    string c = fila[1]?.ToString();
+
+                    if (u == usuario && c == contrasena)
+                        return true; // Credenciales correctas
+                }
+            }
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        return false;
+    }
 }
