@@ -2,65 +2,100 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LogiApp.Vistas.InicioSesion"
-             Title="LogiApp - Acceso">
+             Title="LogiApp - Acceso"
+             NavigationPage.HasNavigationBar="False">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
+    <Grid RowDefinitions="Auto,*">
+    
+        <Grid Grid.Row="0" 
+          ColumnDefinitions="60,*" 
+          Padding="20,15" 
+          BackgroundColor="White"
+          VerticalOptions="Start">
 
-            <Image Source="principal.png" 
-                   HeightRequest="120" 
+            <Border Grid.Column="0"
+                HeightRequest="40"
+                WidthRequest="40"
+                HorizontalOptions="Start"
+                BackgroundColor="White"
+                Stroke="#E0E0E0"
+                StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="3" Opacity="0.1" />
+                </Border.Shadow>
+
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnVolverClicked" />
+                </Border.GestureRecognizers>
+
+                <Label Text="&#x2039;" 
+                   TextColor="#0A0A33" 
+                   FontSize="26"
+                   FontAttributes="Bold"
                    HorizontalOptions="Center" 
-                   Margin="0,0,0,20"/>
+                   VerticalOptions="Center"
+                   Margin="0,0,4,8" />
+            </Border>
 
-            <Label Text="Bienvenido" 
-                   FontSize="28" 
-                   FontAttributes="Bold" 
-                   HorizontalOptions="Center" />
+            <Label Grid.Column="1"
+               Text="Acceso" 
+               VerticalOptions="Center" 
+               HorizontalOptions="Start"
+               FontAttributes="Bold" 
+               FontSize="16"
+               TextColor="#0A0A33" 
+               CharacterSpacing="0.5"/>
+        </Grid>
 
-            <Label Text="Ingresa tus credenciales para continuar" 
-                   FontSize="14" 
-                   TextColor="Gray"
-                   HorizontalOptions="Center" 
-                   Margin="0,0,0,10"/>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
 
-            <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="5,0">
-                <Entry x:Name="UsuarioEntry" 
-                       Placeholder="Usuario" 
-                       Keyboard="Text" />
-            </Frame>
+                <Image Source="principal.png" 
+                       HeightRequest="120" 
+                       HorizontalOptions="Center" 
+                       Margin="0,0,0,15"/>
 
-            <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="5,0">
-                <Entry x:Name="ContrasenaEntry" 
-                       Placeholder="Contraseña" 
-                       IsPassword="True" />
-            </Frame>
+                <Label Text="Bienvenido" 
+                       FontSize="28" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" />
 
-            <Button Text="INICIAR SESIÓN"
-                    BackgroundColor="#2196F3"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    HeightRequest="50"
-                    CornerRadius="25"
-                    Clicked="OnLoginClicked" 
-                    Margin="0,10,0,0"/>
+                <Label Text="Ingresa tus credenciales para continuar" 
+                       FontSize="14" 
+                       TextColor="Gray"
+                       HorizontalOptions="Center" 
+                       Margin="0,0,0,10"/>
 
+                <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="5,0">
+                    <Entry x:Name="UsuarioEntry" 
+                           Placeholder="Usuario" 
+                           Keyboard="Text" />
+                </Frame>
 
+                <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="5,0">
+                    <Entry x:Name="ContrasenaEntry" 
+                           Placeholder="Contraseña" 
+                           IsPassword="True" />
+                </Frame>
 
-            <Label Text="← Volver al inicio"
-                   TextColor="Gray"
-                   HorizontalOptions="Center"
-                   FontSize="12"
-                   Margin="0,20,0,0">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnRegresarClicked" />
-                </Label.GestureRecognizers>
-            </Label>
+                <Button Text="INICIAR SESIÓN"
+                        BackgroundColor="#2196F3"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HeightRequest="50"
+                        CornerRadius="25"
+                        Clicked="OnLoginClicked" 
+                        Margin="0,10,0,0"/>
 
-            <ActivityIndicator x:Name="CargandoIndicator" 
-                               IsRunning="False" 
-                               IsVisible="False" 
-                               Color="#2196F3" />
+                <ActivityIndicator x:Name="CargandoIndicator" 
+                                   IsRunning="False" 
+                                   IsVisible="False" 
+                                   Color="#2196F3" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>
