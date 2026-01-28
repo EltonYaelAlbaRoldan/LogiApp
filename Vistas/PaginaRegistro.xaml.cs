@@ -12,6 +12,10 @@ public partial class PaginaRegistro : ContentPage
     private bool _estaProcesando = false; // Bloqueo manual de seguridad
                                           // 1. Al inicio de la clase, añade este diccionario
     private Dictionary<string, string> _rutasArchivos = new Dictionary<string, string>();
+
+    private string _folderIdDestino = "";
+    private string _idOperadorGenerado = "";
+
     public PaginaRegistro()
     {
         InitializeComponent(); 
@@ -177,7 +181,9 @@ public partial class PaginaRegistro : ContentPage
             return;
         }
 
-        if (_estaProcesando) return; // Si ya hay un proceso en curso, ignora este clic
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text) || !int.TryParse(EdadEntry.Text, out _)) return;
+
+        if (_estaProcesando) return;
 
         try
         {
@@ -185,51 +191,77 @@ public partial class PaginaRegistro : ContentPage
             IsBusy = true;
             OnPropertyChanged(nameof(IsNotBusy));
 
-            string idOp = await _sheets.GenerarIdUnicoFormateadoAsync();
-            string folderId = await _drive.CrearEstructuraOperadorAsync($"{idOp} - {NombreEntry.Text}");
+            // --- MEJORA: PANTALLA EMERGENTE INICIAL ---
+            await DisplayAlert("Registrando", "Estamos creando el folio y el expediente del operador. Espera un momento...", "Entendido");
 
-            // --- PROCESO DE SUBIDA DE ARCHIVOS ---
+            // A. Generar ID y Carpeta principal
+            _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
+            _folderIdDestino = await _drive.CrearEstructuraOperadorAsync($"{_idOperadorGenerado} - {NombreEntry.Text}");
+
+            // B. Registro en Sheets (Solo textos)
+            await _sheets.RegistrarOperadorAsync(
+                _idOperadorGenerado, NombreEntry.Text, EdadEntry.Text,
+                CorreoEntry.Text ?? "", Tel1Entry.Text, Tel2Entry.Text ?? "",
+                ClaveInterbancariaEntry.Text, VigenciaLicenciaPicker.Date.ToString("d"),
+                "Pendiente", VigenciaMedicoPicker.Date.ToString("d"),
+                "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente"
+            );
+
+            await DisplayAlert("Paso 1 Exitoso", $"Folio {_idOperadorGenerado} creado. Procede a subir los PDF.", "Siguiente");
+
+            BtnSubirArchivos.IsEnabled = true;
+            BtnRegistrarDatos.IsEnabled = false;
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudieron registrar los datos: " + ex.Message, "Cerrar");
+        }
+        finally
+        {
+            IsBusy = false;
+            _estaProcesando = false;
+            OnPropertyChanged(nameof(IsNotBusy));
+        }
+    }
+
+
+
+    private async void OnSubirArchivosClicked(object sender, EventArgs e)
+    {
+        if (_rutasArchivos.Count == 0)
+        {
+            await DisplayAlert("Atención", "No has seleccionado ningún archivo para subir.", "OK");
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            OnPropertyChanged(nameof(IsNotBusy));
+
+            // MEJORA: Avisamos que el proceso ha comenzado
+            await DisplayAlert("Subida en Progreso", "Estamos enviando tus documentos a la nube. Por favor, no cierres la aplicación.", "Entendido");
+
             var linksDrive = new Dictionary<string, string>();
+
             foreach (var item in _rutasArchivos)
             {
-                // Subimos y generamos el link público/clicable
-                string fileId = await _drive.SubirArchivoAsync(item.Value, item.Key, folderId);
+                // Subimos a Drive
+                string fileId = await _drive.SubirArchivoAsync(item.Value, item.Key, _folderIdDestino);
                 linksDrive[item.Key] = $"https://drive.google.com/open?id={fileId}";
             }
 
-            // --- REGISTRO EN SHEETS CON LINKS REALES ---
-            await _sheets.RegistrarOperadorAsync(
-                idOp,
-                NombreEntry.Text,
-                EdadEntry.Text,
-                CorreoEntry.Text ?? "",
-                Tel1Entry.Text,
-                Tel2Entry.Text ?? "",
-                ClaveInterbancariaEntry.Text,
-                VigenciaLicenciaPicker.Date.ToString("d"),
-                linksDrive.GetValueOrDefault("Licencia Federal", "Pendiente"),
-                VigenciaMedicoPicker.Date.ToString("d"),
-                linksDrive.GetValueOrDefault("Comprobante de Domicilio", "Pendiente"),
-                linksDrive.GetValueOrDefault("RFC / Cédula Fiscal", "Pendiente"),
-                linksDrive.GetValueOrDefault("CURP", "Pendiente"),
-                linksDrive.GetValueOrDefault("INE", "Pendiente"),
-                linksDrive.GetValueOrDefault("Acta de Nacimiento", "Pendiente"),
-                linksDrive.GetValueOrDefault("NSS", "Pendiente"),
-                linksDrive.GetValueOrDefault("CV", "Pendiente")
-            );
-
-            await DisplayAlert("Éxito", "Operador y documentos registrados correctamente.", "OK");
+            await DisplayAlert("Éxito Total", "Expediente digital completado correctamente.", "OK");
             _rutasArchivos.Clear();
             await Navigation.PopAsync();
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", ex.Message, "Cerrar");
+            await DisplayAlert("Error de Subida", "Hubo un problema al subir: " + ex.Message, "Cerrar");
         }
         finally
         {
             IsBusy = false;
-            _estaProcesando = false; // Liberamos el bloqueo al terminar
             OnPropertyChanged(nameof(IsNotBusy));
         }
     }
