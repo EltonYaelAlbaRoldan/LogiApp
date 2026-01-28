@@ -76,24 +76,37 @@
                     <DatePicker x:Name="VigenciaMedicoPicker" Format="dd/MM/yyyy" />
                 </VerticalStackLayout>
 
-                <BoxView HeightRequest="1" Color="#EEEEEE" />
-                <Label Text="Expediente Digital (Subir PDF)" FontSize="18" TextColor="Gray" FontAttributes="Bold" />
+                <Button x:Name="BtnRegistrarDatos" Text="1. REGISTRAR DATOS Y CARPETA" 
+                        Clicked="OnProbarRegistroClicked"
+                        IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
+                        BackgroundColor="#0A0A33"
+                        TextColor="White"
+                        HeightRequest="55"
+                        CornerRadius="10"
+                        Margin="0,15,0,0" />
 
                 <BoxView HeightRequest="1" Color="#EEEEEE" />
-                <Label Text="Datos Fiscales e Identificación" FontSize="18" TextColor="Gray" FontAttributes="Bold" />
+                <Label Text="Expediente Digital (Subir PDF)" FontSize="18" TextColor="Gray" FontAttributes="Bold" />
 
                 <Button Text="Comprobante de Domicilio" Clicked="OnSubirDomicilioClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" BorderWidth="1" BorderColor="#E0E0E0" />
                 <Button Text="RFC" Clicked="OnSubirRfcClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" BorderWidth="1" BorderColor="#E0E0E0" />
                 <Button Text="CURP" Clicked="OnSubirCurpClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" BorderWidth="1" BorderColor="#E0E0E0" />
-
-                <BoxView HeightRequest="1" Color="#EEEEEE" />
-                <Label Text="Expediente Digital" FontSize="18" TextColor="Gray" FontAttributes="Bold" />
 
                 <Button Text="INE" Clicked="OnSubirIneClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" />
                 <Button Text="Acta de Nacimiento" Clicked="OnSubirActaClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" />
                 <Button Text="NSS" Clicked="OnSubirNssClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" />
                 <Button Text="CV" Clicked="OnSubirCvClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" />
 
+
+                <Button x:Name="BtnSubirArchivos" Text="2. SUBIR ARCHIVOS PDF" 
+                        Clicked="OnSubirArchivosClicked"
+                        IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
+                        BackgroundColor="#0A0A33"
+                        TextColor="White"
+                        HeightRequest="55"
+                        CornerRadius="10"
+                        Margin="0,15,0,0" />
+                <!--
                 <Button Text="GUARDAR REGISTRO COMPLETO" 
                         Clicked="OnProbarRegistroClicked"
                         IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
@@ -102,6 +115,7 @@
                         HeightRequest="55"
                         CornerRadius="10"
                         Margin="0,15,0,0" />
+                -->
 
                 <ActivityIndicator IsRunning="{Binding IsBusy, Source={x:Reference this}}"
                                    IsVisible="{Binding IsBusy, Source={x:Reference this}}"
