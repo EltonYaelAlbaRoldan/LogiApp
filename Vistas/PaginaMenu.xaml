@@ -33,6 +33,17 @@
                     CornerRadius="15"
                     Clicked="OnMantenimientoClicked" />
 
+            <Button Text="Cerrar Sesión" 
+                    Clicked="OnLogoutClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="Grey"
+                    BorderColor="Grey"
+                    BorderWidth="1"
+                    CornerRadius="20"
+                    HorizontalOptions="Center"
+                    Padding="20,0" 
+                    Margin="0,20,0,0" />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
