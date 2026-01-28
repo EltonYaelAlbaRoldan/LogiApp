@@ -53,12 +53,12 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
 
-                <Image Source="principal.png" 
+                <Image Source="login.png" 
                        HeightRequest="120" 
                        HorizontalOptions="Center" 
                        Margin="0,0,0,15"/>
 
-                <Label Text="Bienvenido" 
+                <Label Text="Iniciar Sesión" 
                        FontSize="28" 
                        FontAttributes="Bold" 
                        HorizontalOptions="Center" />
