@@ -69,4 +69,34 @@ public class ConsultasGoogleDrive
         var meta = new Google.Apis.Drive.v3.Data.File { Trashed = true };
         await _service.Files.Update(meta, fileId).ExecuteAsync();
     }
+
+    // --- MÉTODO PARA SUBIR ARCHIVOS PDF ---
+    public async Task<string> SubirArchivoAsync(string rutaLocal, string nombreDeseado, string folderId)
+    {
+        try
+        {
+            var metadata = new Google.Apis.Drive.v3.Data.File()
+            {
+                Name = nombreDeseado,
+                Parents = new List<string> { folderId }
+            };
+
+            using (var stream = new FileStream(rutaLocal, FileMode.Open))
+            {
+                var request = _service.Files.Create(metadata, stream, "application/pdf");
+                request.Fields = "id";
+
+                var progreso = await request.UploadAsync();
+
+                if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
+                    throw new Exception(progreso.Exception.Message);
+
+                return request.ResponseBody?.Id ?? "";
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error al cargar archivo en Drive: {ex.Message}");
+        }
+    }
 }
