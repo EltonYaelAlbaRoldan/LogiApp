@@ -59,9 +59,9 @@
                 <Entry x:Name="NombreEntry" Placeholder="Nombre Completo" Visual="Material" />
                 <Entry x:Name="EdadEntry" Placeholder="Edad" Keyboard="Numeric" MaxLength="2" />
                 <Entry x:Name="CorreoEntry" Placeholder="Correo Electrónico" Keyboard="Email" />
-                <Entry x:Name="Tel1Entry" Placeholder="No. de teléfono 1" Keyboard="Telephone" />
-                <Entry x:Name="Tel2Entry" Placeholder="No. de teléfono 2" Keyboard="Telephone" />
-                <Entry x:Name="ClaveInterbancariaEntry" Placeholder="Clave Interbancaria" Keyboard="Numeric" />
+                <Entry x:Name="Tel1Entry" Placeholder="No. de teléfono 1" Keyboard="Numeric" MaxLength="10"/>
+                <Entry x:Name="Tel2Entry" Placeholder="No. de teléfono 2" Keyboard="Numeric" MaxLength="10"/>
+                <Entry x:Name="ClaveInterbancariaEntry" Placeholder="Clave Interbancaria" Keyboard="Numeric" MaxLength="18"/>
 
                 <BoxView HeightRequest="1" Color="#EEEEEE" />
                 <Label Text="Vigencias y Fechas" FontSize="18" TextColor="Gray" FontAttributes="Bold" />

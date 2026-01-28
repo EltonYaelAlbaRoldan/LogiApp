@@ -1,10 +1,10 @@
 using LogiApp.Servicios;
-
+using System.Text.RegularExpressions;
 namespace LogiApp.Vistas;
 
 public partial class PaginaRegistro : ContentPage
 {
-    // Usamos los nombres de clase correctos de tus archivos de servicio
+   
     private ConsultasGoogleSheets _sheets;
     private ConsultasGoogleDrive _drive;
     private readonly ConexionGoogleAuth _authService = new();
@@ -23,8 +23,6 @@ public partial class PaginaRegistro : ContentPage
         {
             // Obtenemos los servicios reales desde el JSON
             var (sService, dService) = await _authService.ObtenerServiciosAsync();
-
-            // Ahora sí, inicializamos tus consultas con servicios reales
             _sheets = new ConsultasGoogleSheets(sService);
             _drive = new ConsultasGoogleDrive(dService);
         }
@@ -35,11 +33,11 @@ public partial class PaginaRegistro : ContentPage
     }
     private async void OnVolverClicked(object sender, EventArgs e)
     {
-        // Esto te regresa a la pantalla anterior en la pila de navegación
+        // Esto regresa a la pantalla anterior en la pila de navegación
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
 
-    // --- MÉTODOS PARA CARGA DE ARCHIVOS (FEBRERO SEMANA 3) ---
+    // --- MÉTODOS PARA CARGA DE ARCHIVOS
 
     private async void OnSubirLicenciaClicked(object sender, EventArgs e)
     {
@@ -137,29 +135,78 @@ public partial class PaginaRegistro : ContentPage
             await DisplayAlert("Nombre Inválido", "Ingresa el nombre completo del operador.", "OK");
             return;
         }
+        // 1. VALIDACIÓN DE CAMPOS VACÍOS BÁSICOS
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text))
+        {
+            await DisplayAlert("Campos Incompletos", "Nombre y Edad son obligatorios.", "Revisar");
+            return;
+        }
 
-        // --- NUEVO: BLOQUEO ANTIDUPLICADOS ---
+        // 2. VALIDACIÓN DE CORREO ELECTRÓNICO
+        string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        if (!string.IsNullOrWhiteSpace(CorreoEntry.Text) && !Regex.IsMatch(CorreoEntry.Text, emailPattern))
+        {
+            await DisplayAlert("Correo Inválido", "El formato del correo electrónico no es correcto.", "Corregir");
+            return;
+        }
+
+        // 3. VALIDACIÓN DE TELÉFONOS (10 DÍGITOS)
+        string telPattern = @"^\d{10}$";
+        if (!Regex.IsMatch(Tel1Entry.Text ?? "", telPattern))
+        {
+            await DisplayAlert("Teléfono 1 Inválido", "El número debe tener exactamente 10 dígitos numéricos.", "Corregir");
+            return;
+        }
+
+        // El segundo teléfono es opcional, pero si lo pone, debe ser válido
+        if (!string.IsNullOrWhiteSpace(Tel2Entry.Text) && !Regex.IsMatch(Tel2Entry.Text, telPattern))
+        {
+            await DisplayAlert("Teléfono 2 Inválido", "El segundo número también debe ser de 10 dígitos.", "Corregir");
+            return;
+        }
+
+        // 4. VALIDACIÓN DE CLAVE INTERBANCARIA (18 DÍGITOS)
+        string clavePattern = @"^\d{18}$";
+        if (!Regex.IsMatch(ClaveInterbancariaEntry.Text ?? "", clavePattern))
+        {
+            await DisplayAlert("Clave Inválida", "La clave interbancaria debe tener exactamente 18 dígitos.", "Corregir");
+            return;
+        }
+
         if (_estaProcesando) return; // Si ya hay un proceso en curso, ignora este clic
-
-        // --- Validaciones de campos (Nombre, Edad) ---
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text)) return;
 
         try
         {
-            _estaProcesando = true; // Iniciamos el bloqueo
+            _estaProcesando = true;
             IsBusy = true;
             OnPropertyChanged(nameof(IsNotBusy));
 
-            // Ejecución de APIs
-            string idFormateado = await _sheets.GenerarIdUnicoFormateadoAsync();
-            string folderId = await _drive.CrearEstructuraOperadorAsync($"{idFormateado} - {NombreEntry.Text}");
-            await _sheets.RegistrarOperadorAsync(NombreEntry.Text, EdadEntry.Text, folderId, idFormateado);
+            // 1. Generar ID y Carpeta
+            string idOp = await _sheets.GenerarIdUnicoFormateadoAsync();
+            string folderId = await _drive.CrearEstructuraOperadorAsync($"{idOp} - {NombreEntry.Text}");
 
-            await DisplayAlert("Éxito", $"Registrado con Folio: {idFormateado}", "OK");
-            Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
+            await _sheets.RegistrarOperadorAsync(
+                idOp,                                     // A: ID_Operador
+                NombreEntry.Text,                         // B: Nombre_Completo
+                EdadEntry.Text,                           // C: Edad
+                CorreoEntry.Text ?? "",                   // D: Correo
+                Tel1Entry.Text ?? "",                     // E: No. de telefono 1
+                Tel2Entry.Text ?? "",                     // F: No. de telefono 2
+                ClaveInterbancariaEntry.Text ?? "",       // G: Clave intervancaria
+                VigenciaLicenciaPicker.Date.ToString("d"),// H: Vigencia de licencia federal
+                "Pendiente PDF",                          // I: No. de licencia federal (ARCHIVO)
+                VigenciaMedicoPicker.Date.ToString("d"),  // J: Vigencia de apto medico
+                "Pendiente PDF",                          // K: Domicilio (ARCHIVO)
+                "Pendiente PDF",                          // L: RFC (ARCHIVO)
+                "Pendiente PDF",                          // M: CURP (ARCHIVO)
+                "Pendiente PDF",                          // N: INE (ARCHIVO)
+                "Pendiente PDF",                          // O: Acta de nacimiento (ARCHIVO)
+                "Pendiente PDF",                          // P: NSS (ARCHIVO)
+                "Pendiente PDF"                           // Q: CV (ARCHIVO)
+            );
 
-            NombreEntry.Text = string.Empty;
-            EdadEntry.Text = string.Empty;
+            await DisplayAlert("Éxito", $"Operador {idOp} registrado en la base de datos.", "OK");
+            await Navigation.PopAsync();
         }
         catch (Exception ex)
         {

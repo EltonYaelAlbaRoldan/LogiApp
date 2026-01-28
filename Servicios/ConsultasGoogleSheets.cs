@@ -77,15 +77,26 @@ public class ConsultasGoogleSheets
     }
 
     // También actualiza la firma de este método para que acepte el ID como string
-    public async Task RegistrarOperadorAsync(string nombre, string edad, string folderId, string nuevoId)
+    public async Task RegistrarOperadorAsync(params string[] datos)
     {
-        var rango = "Operadores!A:E";
-        var objetoLista = new List<object> { nuevoId, nombre, edad, folderId, DateTime.Now.ToString("dd/MM/yyyy") };
+        try
+        {
+            // El rango ahora es de la A hasta la Q para cubrir los 17 campos que definimos
+            string rango = "Operadores!A:Q";
 
-        var valueRange = new ValueRange { Values = new List<IList<object>> { objetoLista } };
+            var valueRange = new ValueRange
+            {
+                Values = new List<IList<object>> { new List<object>(datos) }
+            };
 
-        var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
-        appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-        await appendRequest.ExecuteAsync();
+            var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
+            appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+
+            await appendRequest.ExecuteAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error al escribir en Sheets: {ex.Message}");
+        }
     }
 }
