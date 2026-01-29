@@ -154,4 +154,45 @@ public class ConsultasGoogleSheets
             return $"❌ Error desconocido: {ex.Message}";
         }
     }
+
+    // Generador automático de folios para Mantenimiento
+    public async Task<string> GenerarFolioMantenimientoAsync()
+    {
+        var rango = "Mantenimiento!A:A"; // Columna de Folios
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
+
+        var idsExistentes = new HashSet<int>();
+        if (response.Values != null)
+        {
+            foreach (var fila in response.Values.Skip(1))
+            {
+                string valorCelda = fila.FirstOrDefault()?.ToString() ?? "";
+                if (valorCelda.Contains("-"))
+                {
+                    string soloNumero = valorCelda.Split('-').Last();
+                    if (int.TryParse(soloNumero, out int num))
+                        idsExistentes.Add(num);
+                }
+            }
+        }
+        int siguienteNum = idsExistentes.Count > 0 ? idsExistentes.Max() + 1 : 1;
+        return $"MT-{siguienteNum:D3}"; // Ejemplo: MT-001
+    }
+
+    // Envío de los 14 campos a la pestaña Mantenimiento
+    public async Task RegistrarMantenimientoAsync(params string[] datos)
+    {
+        try
+        {
+            string rango = "Mantenimiento!A:N";
+            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
+            var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
+            appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+            await appendRequest.ExecuteAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error al escribir en pestaña Mantenimiento: {ex.Message}");
+        }
+    }
 }
