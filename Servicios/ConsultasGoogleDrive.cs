@@ -22,15 +22,16 @@ public class ConsultasGoogleDrive
         var carpetaPrincipal = await _service.Files.Create(metaPrincipal).ExecuteAsync();
         string idPrincipal = carpetaPrincipal.Id;
 
+
         //Crear subcarpeta "documentos"
-        await CrearSubcarpetaAsync("documentos", idPrincipal);
+        string idDocumentos = await CrearSubcarpetaAsync("documentos", idPrincipal);
 
         //Crear subcarpeta "evidencias"
         await CrearSubcarpetaAsync("evidencias", idPrincipal);
 
-        return idPrincipal; // Devolvemos el ID principal para guardarlo en Sheets
+        return idDocumentos; 
     }
-    private async Task CrearSubcarpetaAsync(string nombreSubcarpeta, string idPadre)
+    private async Task<string> CrearSubcarpetaAsync(string nombreSubcarpeta, string idPadre)
     {
         var metaSub = new Google.Apis.Drive.v3.Data.File
         {
@@ -38,7 +39,8 @@ public class ConsultasGoogleDrive
             MimeType = "application/vnd.google-apps.folder",
             Parents = new[] { idPadre }
         };
-        await _service.Files.Create(metaSub).ExecuteAsync();
+        var sub = await _service.Files.Create(metaSub).ExecuteAsync();
+        return sub.Id;
     }
 
     // READ: Listar carpetas
@@ -71,10 +73,13 @@ public class ConsultasGoogleDrive
     }
 
     // --- MÉTODO PARA SUBIR ARCHIVOS PDF ---
+
     public async Task<string> SubirArchivoAsync(string rutaLocal, string nombreDeseado, string folderId)
     {
         try
         {
+            // Ahora usamos directamente el folderId del operador (ej. la subcarpeta 'documentos')
+            // Porque con OAuth 2.0 tú eres el dueño de todo lo que subas.
             var metadata = new Google.Apis.Drive.v3.Data.File()
             {
                 Name = nombreDeseado,
@@ -91,6 +96,7 @@ public class ConsultasGoogleDrive
                 if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
                     throw new Exception(progreso.Exception.Message);
 
+                // Retornamos el ID del archivo recién subido
                 return request.ResponseBody?.Id ?? "";
             }
         }
@@ -99,4 +105,5 @@ public class ConsultasGoogleDrive
             throw new Exception($"Error al cargar archivo en Drive: {ex.Message}");
         }
     }
+
 }

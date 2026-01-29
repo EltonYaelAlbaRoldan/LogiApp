@@ -2,31 +2,36 @@
 using Google.Apis.Drive.v3;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Services;
+using Google.Apis.Util.Store; // Necesario para guardar el token
 
 namespace LogiApp.Servicios;
 
 public class ConexionGoogleAuth
 {
-    private const string JsonFileName = "logiapp-dual-efa4b11f5ef2.json"; // El que está en Resources/Raw
-
     public async Task<(SheetsService, DriveService)> ObtenerServiciosAsync()
     {
-        using var stream = await FileSystem.OpenAppPackageFileAsync(JsonFileName);
-        var credential = GoogleCredential.FromStream(stream)
-            .CreateScoped(SheetsService.Scope.Spreadsheets, DriveService.Scope.Drive);
+        // 1. AGREGA AQUÍ TUS NUEVAS CREDENCIALES DE ESCRITORIO
+        string clientId = "1021863353895-n3j9fh9a8gsv018a95h57mhfeeq38kna.apps.googleusercontent.com";
+        string clientSecret = "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";
 
-        var sheetsService = new SheetsService(new BaseClientService.Initializer()
+        // 2. El flujo de escritorio SÍ requiere el ClientSecret para validar
+        UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+            new ClientSecrets
+            {
+                ClientId = clientId,
+                ClientSecret = clientSecret
+            },
+            new[] { DriveService.Scope.Drive, SheetsService.Scope.Spreadsheets },
+            "user",
+            CancellationToken.None
+        );
+
+        var initializer = new BaseClientService.Initializer()
         {
             HttpClientInitializer = credential,
             ApplicationName = "LogiApp"
-        });
+        };
 
-        var driveService = new DriveService(new BaseClientService.Initializer()
-        {
-            HttpClientInitializer = credential,
-            ApplicationName = "LogiApp"
-        });
-
-        return (sheetsService, driveService);
+        return (new SheetsService(initializer), new DriveService(initializer));
     }
 }
