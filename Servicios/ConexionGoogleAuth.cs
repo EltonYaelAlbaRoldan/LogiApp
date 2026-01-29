@@ -1,8 +1,10 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
-using Google.Apis.Sheets.v4;
 using Google.Apis.Services;
-using Google.Apis.Util.Store; // Necesario para guardar el token
+using Google.Apis.Sheets.v4;
+using Google.Apis.Util.Store;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
 
 namespace LogiApp.Servicios;
 
@@ -10,21 +12,25 @@ public class ConexionGoogleAuth
 {
     public async Task<(SheetsService, DriveService)> ObtenerServiciosAsync()
     {
-        // 1. AGREGA AQUÍ TUS NUEVAS CREDENCIALES DE ESCRITORIO
-        string clientId = "1021863353895-n3j9fh9a8gsv018a95h57mhfeeq38kna.apps.googleusercontent.com";
-        string clientSecret = "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";
+        string clientId = "1021863353895-55eb5gi10kt8mmd0u4kb08i0dq5ahf45.apps.googleusercontent.com";
+        string clientSecret = "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";
+        string refreshToken = "1//04xIdmJ6T-aWWCgYIARAAGAQSNwF-L9IrQWF7I-adOHrW-IthKUJLzbS5WRXHmuk34HcNYU-2TfSV_yLcFv4VV21UNnPxfXOsW-s";
 
-        // 2. El flujo de escritorio SÍ requiere el ClientSecret para validar
-        UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-            new ClientSecrets
-            {
-                ClientId = clientId,
-                ClientSecret = clientSecret
-            },
-            new[] { DriveService.Scope.Drive, SheetsService.Scope.Spreadsheets },
-            "user",
-            CancellationToken.None
-        );
+        var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+        {
+            ClientSecrets = new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
+            Scopes = new[] { DriveService.Scope.Drive, SheetsService.Scope.Spreadsheets }
+        });
+
+        // Creamos la credencial usando el Refresh Token directamente
+        var tokenResponse = new TokenResponse { RefreshToken = refreshToken };
+        var credential = new UserCredential(flow, "user", tokenResponse);
+
+        // Si el token expiró, esto lo renueva automáticamente sin avisar al usuario
+        if (tokenResponse.IsExpired(Google.Apis.Util.SystemClock.Default))
+        {
+            await credential.RefreshTokenAsync(CancellationToken.None);
+        }
 
         var initializer = new BaseClientService.Initializer()
         {

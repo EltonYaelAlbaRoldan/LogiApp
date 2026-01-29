@@ -1,4 +1,4 @@
-using LogiApp.Servicios;
+Ôªøusing LogiApp.Servicios;
 using System.Text.RegularExpressions;
 namespace LogiApp.Vistas;
 
@@ -10,7 +10,7 @@ public partial class PaginaRegistro : ContentPage
     private readonly ConexionGoogleAuth _authService = new();
     public bool IsNotBusy => !IsBusy;
     private bool _estaProcesando = false; // Bloqueo manual de seguridad
-                                          // 1. Al inicio de la clase, aÒade este diccionario
+                                          // 1. Al inicio de la clase, a√±ade este diccionario
     private Dictionary<string, string> _rutasArchivos = new Dictionary<string, string>();
 
     private string _folderIdDestino = "";
@@ -39,11 +39,11 @@ public partial class PaginaRegistro : ContentPage
     }
     private async void OnVolverClicked(object sender, EventArgs e)
     {
-        // Esto regresa a la pantalla anterior en la pila de navegaciÛn
+        // Esto regresa a la pantalla anterior en la pila de navegaci√≥n
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
 
-    // --- M…TODOS PARA CARGA DE ARCHIVOS
+    // --- M√âTODOS PARA CARGA DE ARCHIVOS
 
     private async void OnSubirLicenciaClicked(object sender, EventArgs e)
     {
@@ -70,7 +70,7 @@ public partial class PaginaRegistro : ContentPage
         await SeleccionarArchivoPdfAsync("CV");
     }
 
-    // 2. Actualiza el mÈtodo auxiliar para guardar la ruta
+    // 2. Actualiza el m√©todo auxiliar para guardar la ruta
     private async Task SeleccionarArchivoPdfAsync(string tipoDocumento)
     {
         try
@@ -85,7 +85,7 @@ public partial class PaginaRegistro : ContentPage
 
             if (resultado != null)
             {
-                // Guardamos la ruta fÌsica del PDF
+                // Guardamos la ruta f√≠sica del PDF
                 _rutasArchivos[tipoDocumento] = resultado.FullPath;
                 await DisplayAlert("Listo", $"{tipoDocumento} seleccionado.", "OK");
             }
@@ -96,7 +96,7 @@ public partial class PaginaRegistro : ContentPage
         }
     }
 
-    // --- NUEVOS M…TODOS PARA DATOS FISCALES ---
+    // --- NUEVOS M√âTODOS PARA DATOS FISCALES ---
 
     private async void OnSubirDomicilioClicked(object sender, EventArgs e)
     {
@@ -105,7 +105,7 @@ public partial class PaginaRegistro : ContentPage
 
     private async void OnSubirRfcClicked(object sender, EventArgs e)
     {
-        await SeleccionarArchivoPdfAsync("RFC / CÈdula Fiscal");
+        await SeleccionarArchivoPdfAsync("RFC / C√©dula Fiscal");
     }
 
     private async void OnSubirCurpClicked(object sender, EventArgs e)
@@ -114,114 +114,122 @@ public partial class PaginaRegistro : ContentPage
     }
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
-        // --- CAPA 1: VALIDACI”N DE CAMPOS VACÕOS ---
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text))
+
+        string diagnostico = await _sheets.ValidarEstructuraAsync();
+        await DisplayAlert("Diagn√≥stico de Conexi√≥n", diagnostico, "OK");
+
+        if (diagnostico.Contains("‚úÖ"))
         {
-            await DisplayAlert("Campos Incompletos", "Todos los campos son obligatorios para el registro.", "Revisar");
-            return;
+            // --- CAPA 1: VALIDACI√ìN DE CAMPOS VAC√çOS ---
+            if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text))
+            {
+                await DisplayAlert("Campos Incompletos", "Todos los campos son obligatorios para el registro.", "Revisar");
+                return;
+            }
+
+            // --- CAPA 2: VALIDACI√ìN DE FORMATO (EDAD) ---
+            // Usamos int.TryParse para evitar que la app truene si meten letras
+            if (!int.TryParse(EdadEntry.Text, out int edad))
+            {
+                await DisplayAlert("Error de Formato", "La edad debe ser un n√∫mero entero.", "Corregir");
+                return;
+            }
+
+            // --- CAPA 3: L√ìGICA DE NEGOCIO (RANGOS) ---
+            if (edad < 18 || edad > 99)
+            {
+                await DisplayAlert("Edad no permitida", "El operador debe tener entre 18 y 99 a√±os.", "OK");
+                return;
+            }
+
+            // --- CAPA 4: REGLAS DE SEGURIDAD (NOMBRE) ---
+            // Evitamos nombres demasiado cortos o con caracteres extra√±os si lo deseas
+            if (NombreEntry.Text.Trim().Length < 3)
+            {
+                await DisplayAlert("Nombre Inv√°lido", "Ingresa el nombre completo del operador.", "OK");
+                return;
+            }
+            // 1. VALIDACI√ìN DE CAMPOS VAC√çOS B√ÅSICOS
+            if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text))
+            {
+                await DisplayAlert("Campos Incompletos", "Nombre y Edad son obligatorios.", "Revisar");
+                return;
+            }
+
+            // 2. VALIDACI√ìN DE CORREO ELECTR√ìNICO
+            string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            if (!string.IsNullOrWhiteSpace(CorreoEntry.Text) && !Regex.IsMatch(CorreoEntry.Text, emailPattern))
+            {
+                await DisplayAlert("Correo Inv√°lido", "El formato del correo electr√≥nico no es correcto.", "Corregir");
+                return;
+            }
+
+            // 3. VALIDACI√ìN DE TEL√âFONOS (10 D√çGITOS)
+            string telPattern = @"^\d{10}$";
+            if (!Regex.IsMatch(Tel1Entry.Text ?? "", telPattern))
+            {
+                await DisplayAlert("Tel√©fono 1 Inv√°lido", "El n√∫mero debe tener exactamente 10 d√≠gitos num√©ricos.", "Corregir");
+                return;
+            }
+
+            // El segundo tel√©fono es opcional, pero si lo pone, debe ser v√°lido
+            if (!string.IsNullOrWhiteSpace(Tel2Entry.Text) && !Regex.IsMatch(Tel2Entry.Text, telPattern))
+            {
+                await DisplayAlert("Tel√©fono 2 Inv√°lido", "El segundo n√∫mero tambi√©n debe ser de 10 d√≠gitos.", "Corregir");
+                return;
+            }
+
+            // 4. VALIDACI√ìN DE CLAVE INTERBANCARIA (18 D√çGITOS)
+            string clavePattern = @"^\d{18}$";
+            if (!Regex.IsMatch(ClaveInterbancariaEntry.Text ?? "", clavePattern))
+            {
+                await DisplayAlert("Clave Inv√°lida", "La clave interbancaria debe tener exactamente 18 d√≠gitos.", "Corregir");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(NombreEntry.Text) || !int.TryParse(EdadEntry.Text, out _)) return;
+
+            if (_estaProcesando) return;
+
+            try
+            {
+                _estaProcesando = true;
+                IsBusy = true;
+                OnPropertyChanged(nameof(IsNotBusy));
+
+                // --- MEJORA: PANTALLA EMERGENTE INICIAL ---
+                await DisplayAlert("Registrando", "Estamos creando el folio y el expediente del operador. Espera un momento...", "Entendido");
+
+                // A. Generar ID y Carpeta principal
+                _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
+                _folderIdDestino = await _drive.CrearEstructuraOperadorAsync($"{_idOperadorGenerado} - {NombreEntry.Text}");
+
+                // B. Registro en Sheets (Solo textos)
+                await _sheets.RegistrarOperadorAsync(
+                    _idOperadorGenerado, NombreEntry.Text, EdadEntry.Text,
+                    CorreoEntry.Text ?? "", Tel1Entry.Text, Tel2Entry.Text ?? "",
+                    ClaveInterbancariaEntry.Text, VigenciaLicenciaPicker.Date.ToString("d"),
+                    "Pendiente", VigenciaMedicoPicker.Date.ToString("d"),
+                    "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente"
+                );
+
+                await DisplayAlert("Paso 1 Exitoso", $"Folio {_idOperadorGenerado} creado. Procede a subir los PDF.", "Siguiente");
+
+                BtnSubirArchivos.IsEnabled = true;
+                BtnRegistrarDatos.IsEnabled = false;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("¬°ERROR DETECTADO!", ex.ToString(), "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+                _estaProcesando = false;
+                OnPropertyChanged(nameof(IsNotBusy));
+            }
         }
-
-        // --- CAPA 2: VALIDACI”N DE FORMATO (EDAD) ---
-        // Usamos int.TryParse para evitar que la app truene si meten letras
-        if (!int.TryParse(EdadEntry.Text, out int edad))
-        {
-            await DisplayAlert("Error de Formato", "La edad debe ser un n˙mero entero.", "Corregir");
-            return;
-        }
-
-        // --- CAPA 3: L”GICA DE NEGOCIO (RANGOS) ---
-        if (edad < 18 || edad > 99)
-        {
-            await DisplayAlert("Edad no permitida", "El operador debe tener entre 18 y 99 aÒos.", "OK");
-            return;
-        }
-
-        // --- CAPA 4: REGLAS DE SEGURIDAD (NOMBRE) ---
-        // Evitamos nombres demasiado cortos o con caracteres extraÒos si lo deseas
-        if (NombreEntry.Text.Trim().Length < 3)
-        {
-            await DisplayAlert("Nombre Inv·lido", "Ingresa el nombre completo del operador.", "OK");
-            return;
-        }
-        // 1. VALIDACI”N DE CAMPOS VACÕOS B¡SICOS
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text))
-        {
-            await DisplayAlert("Campos Incompletos", "Nombre y Edad son obligatorios.", "Revisar");
-            return;
-        }
-
-        // 2. VALIDACI”N DE CORREO ELECTR”NICO
-        string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        if (!string.IsNullOrWhiteSpace(CorreoEntry.Text) && !Regex.IsMatch(CorreoEntry.Text, emailPattern))
-        {
-            await DisplayAlert("Correo Inv·lido", "El formato del correo electrÛnico no es correcto.", "Corregir");
-            return;
-        }
-
-        // 3. VALIDACI”N DE TEL…FONOS (10 DÕGITOS)
-        string telPattern = @"^\d{10}$";
-        if (!Regex.IsMatch(Tel1Entry.Text ?? "", telPattern))
-        {
-            await DisplayAlert("TelÈfono 1 Inv·lido", "El n˙mero debe tener exactamente 10 dÌgitos numÈricos.", "Corregir");
-            return;
-        }
-
-        // El segundo telÈfono es opcional, pero si lo pone, debe ser v·lido
-        if (!string.IsNullOrWhiteSpace(Tel2Entry.Text) && !Regex.IsMatch(Tel2Entry.Text, telPattern))
-        {
-            await DisplayAlert("TelÈfono 2 Inv·lido", "El segundo n˙mero tambiÈn debe ser de 10 dÌgitos.", "Corregir");
-            return;
-        }
-
-        // 4. VALIDACI”N DE CLAVE INTERBANCARIA (18 DÕGITOS)
-        string clavePattern = @"^\d{18}$";
-        if (!Regex.IsMatch(ClaveInterbancariaEntry.Text ?? "", clavePattern))
-        {
-            await DisplayAlert("Clave Inv·lida", "La clave interbancaria debe tener exactamente 18 dÌgitos.", "Corregir");
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text) || !int.TryParse(EdadEntry.Text, out _)) return;
-
-        if (_estaProcesando) return;
-
-        try
-        {
-            _estaProcesando = true;
-            IsBusy = true;
-            OnPropertyChanged(nameof(IsNotBusy));
-
-            // --- MEJORA: PANTALLA EMERGENTE INICIAL ---
-            await DisplayAlert("Registrando", "Estamos creando el folio y el expediente del operador. Espera un momento...", "Entendido");
-
-            // A. Generar ID y Carpeta principal
-            _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
-            _folderIdDestino = await _drive.CrearEstructuraOperadorAsync($"{_idOperadorGenerado} - {NombreEntry.Text}");
-
-            // B. Registro en Sheets (Solo textos)
-            await _sheets.RegistrarOperadorAsync(
-                _idOperadorGenerado, NombreEntry.Text, EdadEntry.Text,
-                CorreoEntry.Text ?? "", Tel1Entry.Text, Tel2Entry.Text ?? "",
-                ClaveInterbancariaEntry.Text, VigenciaLicenciaPicker.Date.ToString("d"),
-                "Pendiente", VigenciaMedicoPicker.Date.ToString("d"),
-                "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente"
-            );
-
-            await DisplayAlert("Paso 1 Exitoso", $"Folio {_idOperadorGenerado} creado. Procede a subir los PDF.", "Siguiente");
-
-            BtnSubirArchivos.IsEnabled = true;
-            BtnRegistrarDatos.IsEnabled = false;
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", "No se pudieron registrar los datos: " + ex.Message, "Cerrar");
-        }
-        finally
-        {
-            IsBusy = false;
-            _estaProcesando = false;
-            OnPropertyChanged(nameof(IsNotBusy));
-        }
+        
     }
 
 
@@ -230,7 +238,7 @@ public partial class PaginaRegistro : ContentPage
     {
         if (_rutasArchivos.Count == 0)
         {
-            await DisplayAlert("AtenciÛn", "No has seleccionado ning˙n archivo para subir.", "OK");
+            await DisplayAlert("Atenci√≥n", "No has seleccionado ning√∫n archivo para subir.", "OK");
             return;
         }
 
@@ -240,7 +248,7 @@ public partial class PaginaRegistro : ContentPage
             OnPropertyChanged(nameof(IsNotBusy));
 
             // MEJORA: Avisamos que el proceso ha comenzado
-            await DisplayAlert("Subida en Progreso", "Estamos enviando tus documentos a la nube. Por favor, no cierres la aplicaciÛn.", "Entendido");
+            await DisplayAlert("Subida en Progreso", "Estamos enviando tus documentos a la nube. Por favor, no cierres la aplicaci√≥n.", "Entendido");
 
             var linksDrive = new Dictionary<string, string>();
 
@@ -251,7 +259,7 @@ public partial class PaginaRegistro : ContentPage
                 linksDrive[item.Key] = $"https://drive.google.com/open?id={fileId}";
             }
 
-            await DisplayAlert("…xito Total", "Expediente digital completado correctamente.", "OK");
+            await DisplayAlert("√âxito Total", "Expediente digital completado correctamente.", "OK");
             _rutasArchivos.Clear();
             await Navigation.PopAsync();
         }
@@ -265,4 +273,6 @@ public partial class PaginaRegistro : ContentPage
             OnPropertyChanged(nameof(IsNotBusy));
         }
     }
+
+
 }

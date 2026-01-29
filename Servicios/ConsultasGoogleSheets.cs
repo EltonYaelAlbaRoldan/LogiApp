@@ -11,16 +11,35 @@ public class ConsultasGoogleSheets
     public ConsultasGoogleSheets(SheetsService service) => _service = service;
 
     // CREATE: Registrar nuevo operador
-    public async Task RegistrarOperadorAsync(string nombre, string edad, string folderId, int nuevoId)
+    // DEJA SOLO ESTE MÉTODO PARA REGISTRAR
+    public async Task RegistrarOperadorAsync(params string[] datos)
     {
-        var rango = "Operadores!A:E"; // Ajusta según tus columnas
-        var objetoLista = new List<object> { nuevoId, nombre, edad, folderId, DateTime.Now.ToString("dd/MM/yyyy") };
+        try
+        {
+            // Asegúrate que la pestaña se llame 'Operadores' en tu Excel
+            string rango = "Operadores!A:Q";
 
-        var valueRange = new ValueRange { Values = new List<IList<object>> { objetoLista } };
+            var valueRange = new ValueRange
+            {
+                Values = new List<IList<object>> { new List<object>(datos) }
+            };
 
-        var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
-        appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-        await appendRequest.ExecuteAsync();
+            var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
+            appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+
+            await appendRequest.ExecuteAsync();
+            Console.WriteLine("Datos escritos correctamente en Sheets.");
+        }
+        catch (Google.GoogleApiException gEx)
+        {
+            // Esto te dirá si el error es de Permisos (403) o de ID no encontrado (404)
+            // Esto imprimirá en la consola de Salida el motivo real (403 Forbidden, 404 Not Found, etc.)
+            Console.WriteLine("--- ERROR DE GOOGLE DETECTADO ---");
+            Console.WriteLine($"Mensaje: {gEx.Error.Message}");
+            Console.WriteLine($"Código: {gEx.Error.Code}");
+            Console.WriteLine("---------------------------------");
+            throw;
+        }
     }
 
     // READ: Obtener todos los operadores
@@ -74,31 +93,7 @@ public class ConsultasGoogleSheets
 
         // Retornamos el formato profesional para tu Excel
         return $"OP-{siguienteNum:D3}";
-    }
-
-    // También actualiza la firma de este método para que acepte el ID como string
-    public async Task RegistrarOperadorAsync(params string[] datos)
-    {
-        try
-        {
-            // El rango ahora es de la A hasta la Q para cubrir los 17 campos que definimos
-            string rango = "Operadores!A:Q";
-
-            var valueRange = new ValueRange
-            {
-                Values = new List<IList<object>> { new List<object>(datos) }
-            };
-
-            var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
-            appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-
-            await appendRequest.ExecuteAsync();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error al escribir en Sheets: {ex.Message}");
-        }
-    }
+    }  
 
     //Consutar usuarios y contraseñas
     public async Task<bool> ValidarUsuarioAsync(string usuario, string contrasena)
@@ -129,5 +124,34 @@ public class ConsultasGoogleSheets
             return false;
         }
         return false;
+    }
+
+    public async Task<string> ValidarEstructuraAsync()
+    {
+        try
+        {
+            // 1. Intentamos obtener metadatos del archivo
+            var request = _service.Spreadsheets.Get(_spreadsheetId);
+            var spreadsheet = await request.ExecuteAsync();
+
+            // 2. Revisamos si existe la pestaña 'Operadores'
+            var existePestana = spreadsheet.Sheets.Any(s => s.Properties.Title == "Operadores");
+
+            if (existePestana)
+                return "✅ Conexión perfecta: Archivo y pestaña 'Operadores' localizados.";
+            else
+            {
+                var nombres = string.Join(", ", spreadsheet.Sheets.Select(s => s.Properties.Title));
+                return $"⚠️ Archivo encontrado, pero la pestaña 'Operadores' NO existe. Pestañas encontradas: {nombres}";
+            }
+        }
+        catch (Google.GoogleApiException e) when (e.Error.Code == 404)
+        {
+            return "❌ ERROR 404: El ID del Spreadsheet es incorrecto o no tengo permisos para verlo.";
+        }
+        catch (Exception ex)
+        {
+            return $"❌ Error desconocido: {ex.Message}";
+        }
     }
 }
