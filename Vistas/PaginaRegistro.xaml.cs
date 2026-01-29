@@ -112,6 +112,10 @@ public partial class PaginaRegistro : ContentPage
     {
         await SeleccionarArchivoPdfAsync("CURP");
     }
+    private async void OnSubirLicenciaFederalClicked(object sender, EventArgs e)
+    {
+        await SeleccionarArchivoPdfAsync("Licencia Federal Doc");
+    }
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
 
@@ -186,6 +190,13 @@ public partial class PaginaRegistro : ContentPage
                 await DisplayAlert("Clave Inválida", "La clave interbancaria debe tener exactamente 18 dígitos.", "Corregir");
                 return;
             }
+            
+            // Validación de Número de Licencia
+            if (string.IsNullOrWhiteSpace(NumLicenciaEntry.Text))
+            {
+                await DisplayAlert("Campo Incompleto", "El número de licencia es obligatorio.", "Revisar");
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(NombreEntry.Text) || !int.TryParse(EdadEntry.Text, out _)) return;
 
@@ -204,13 +215,22 @@ public partial class PaginaRegistro : ContentPage
                 _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
                 _folderIdDestino = await _drive.CrearEstructuraOperadorAsync($"{_idOperadorGenerado} - {NombreEntry.Text}");
 
-                // B. Registro en Sheets (Solo textos)
+                // Generamos el link directo a la carpeta de Drive
+                string linkCarpeta = $"https://drive.google.com/drive/folders/{_folderIdDestino}";
+
+                // B. Registro en Sheets (Sin los "Pendiente", solo datos y el link de la carpeta)
                 await _sheets.RegistrarOperadorAsync(
-                    _idOperadorGenerado, NombreEntry.Text, EdadEntry.Text,
-                    CorreoEntry.Text ?? "", Tel1Entry.Text, Tel2Entry.Text ?? "",
-                    ClaveInterbancariaEntry.Text, VigenciaLicenciaPicker.Date.ToString("d"),
-                    "Pendiente", VigenciaMedicoPicker.Date.ToString("d"),
-                    "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente", "Pendiente"
+                    _idOperadorGenerado,
+                    NombreEntry.Text,
+                    EdadEntry.Text,
+                    CorreoEntry.Text ?? "",
+                    Tel1Entry.Text,
+                    Tel2Entry.Text ?? "",
+                    ClaveInterbancariaEntry.Text,
+                    "'" + NumLicenciaEntry.Text,
+                    VigenciaLicenciaPicker.Date.ToString("d"),
+                    VigenciaMedicoPicker.Date.ToString("d"),
+                    linkCarpeta
                 );
 
                 await DisplayAlert("Paso 1 Exitoso", $"Folio {_idOperadorGenerado} creado. Procede a subir los PDF.", "Siguiente");
@@ -232,14 +252,22 @@ public partial class PaginaRegistro : ContentPage
         
     }
 
-
-
     private async void OnSubirArchivosClicked(object sender, EventArgs e)
     {
-        if (_rutasArchivos.Count == 0)
+        // Lista de documentos que deben estar sí o sí
+        string[] documentosObligatorios = {
+        "Licencia Federal Doc", "INE", "Acta de Nacimiento",
+        "NSS", "CV", "Comprobante de Domicilio", "RFC / Cédula Fiscal", "CURP"
+    };
+
+        // Capa de Validación: Revisamos si falta alguno
+        foreach (var doc in documentosObligatorios)
         {
-            await DisplayAlert("Atención", "No has seleccionado ningún archivo para subir.", "OK");
-            return;
+            if (!_rutasArchivos.ContainsKey(doc))
+            {
+                await DisplayAlert("Documento Faltante", $"Por favor, selecciona el archivo de: {doc}", "Entendido");
+                return; // Detiene el proceso si falta uno
+            }
         }
 
         try
@@ -247,25 +275,24 @@ public partial class PaginaRegistro : ContentPage
             IsBusy = true;
             OnPropertyChanged(nameof(IsNotBusy));
 
-            // MEJORA: Avisamos que el proceso ha comenzado
-            await DisplayAlert("Subida en Progreso", "Estamos enviando tus documentos a la nube. Por favor, no cierres la aplicación.", "Entendido");
-
-            var linksDrive = new Dictionary<string, string>();
+            await DisplayAlert("Subida en Progreso", "Enviando documentos a la nube...", "Entendido");
 
             foreach (var item in _rutasArchivos)
             {
-                // Subimos a Drive
-                string fileId = await _drive.SubirArchivoAsync(item.Value, item.Key, _folderIdDestino);
-                linksDrive[item.Key] = $"https://drive.google.com/open?id={fileId}";
+                await _drive.SubirArchivoAsync(item.Value, item.Key, _folderIdDestino);
             }
 
-            await DisplayAlert("Éxito Total", "Expediente digital completado correctamente.", "OK");
+            // MENSAJE FINAL Y REGRESO A LOGEO
+            await DisplayAlert("Éxito Total", "El expediente digital se ha creado correctamente.", "Finalizar");
+
             _rutasArchivos.Clear();
-            await Navigation.PopAsync();
+
+            // Regresamos a la página de Logeo
+            Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error de Subida", "Hubo un problema al subir: " + ex.Message, "Cerrar");
+            await DisplayAlert("Error de Subida", ex.Message, "Cerrar");
         }
         finally
         {
