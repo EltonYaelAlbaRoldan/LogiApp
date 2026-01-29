@@ -9,7 +9,7 @@
 
     <ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate vistas:PaginaLogeo}"
+        ContentTemplate="{DataTemplate vistas:PaginaMantenimiento}"
         Route="PaginaRegistro" />
 
 </Shell>
