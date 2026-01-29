@@ -254,48 +254,55 @@ public partial class PaginaRegistro : ContentPage
 
     private async void OnSubirArchivosClicked(object sender, EventArgs e)
     {
-        // Lista de documentos que deben estar sí o sí
+        // 1. Evitar clics dobles si ya se está procesando
+        if (_estaProcesando) return;
+
         string[] documentosObligatorios = {
         "Licencia Federal Doc", "INE", "Acta de Nacimiento",
         "NSS", "CV", "Comprobante de Domicilio", "RFC / Cédula Fiscal", "CURP"
     };
 
-        // Capa de Validación: Revisamos si falta alguno
         foreach (var doc in documentosObligatorios)
         {
             if (!_rutasArchivos.ContainsKey(doc))
             {
-                await DisplayAlert("Documento Faltante", $"Por favor, selecciona el archivo de: {doc}", "Entendido");
-                return; // Detiene el proceso si falta uno
+                await DisplayAlert("Documento Faltante", $"Por favor, selecciona: {doc}", "Entendido");
+                return;
             }
         }
 
         try
         {
+            // 2. Bloqueamos todo
+            _estaProcesando = true;
             IsBusy = true;
+            BtnSubirArchivos.IsEnabled = false; // Desactivar botón físicamente
             OnPropertyChanged(nameof(IsNotBusy));
 
-            await DisplayAlert("Subida en Progreso", "Enviando documentos a la nube...", "Entendido");
+            await DisplayAlert("Subida en Progreso", "Enviando expediente a Drive. No cierres la App...", "Entendido");
 
             foreach (var item in _rutasArchivos)
             {
+                // Subimos cada archivo a tu cuenta de 15GB
                 await _drive.SubirArchivoAsync(item.Value, item.Key, _folderIdDestino);
             }
 
-            // MENSAJE FINAL Y REGRESO A LOGEO
-            await DisplayAlert("Éxito Total", "El expediente digital se ha creado correctamente.", "Finalizar");
+            await DisplayAlert("Éxito Total", "Expediente digital completado correctamente.", "Finalizar");
 
             _rutasArchivos.Clear();
 
-            // Regresamos a la página de Logeo
+            // Regreso automático al logeo tras el OK
             Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error de Subida", ex.Message, "Cerrar");
+            await DisplayAlert("Error de Subida", "Hubo un problema: " + ex.Message, "Cerrar");
+            // En caso de error, reactivamos para que pueda reintentar
+            BtnSubirArchivos.IsEnabled = true;
         }
         finally
         {
+            _estaProcesando = false;
             IsBusy = false;
             OnPropertyChanged(nameof(IsNotBusy));
         }
