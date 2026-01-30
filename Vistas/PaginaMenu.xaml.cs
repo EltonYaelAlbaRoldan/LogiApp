@@ -21,8 +21,8 @@ public partial class PaginaMenu : ContentPage
     /// </summary>
     private async void OnViajesClicked(object sender, EventArgs e)
     {
-        // Nota: Actualmente redirige al inicio, ajustar si existe una página de Viajes específica
-        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
+        // Cambia a la nueva página de Viajes
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaViajes());
     }
 
     /// <summary>
@@ -49,4 +49,5 @@ public partial class PaginaMenu : ContentPage
             Application.Current.MainPage = new NavigationPage(new PaginaLogeo());
         }
     }
+
 }
