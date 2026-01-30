@@ -57,18 +57,17 @@ public partial class InicioSesion : ContentPage
 
     private void OnTogglePasswordClicked(object sender, EventArgs e)
     {
-        // Cambiamos el estado de IsPassword
+        // Cambiamos el estado de visibilidad
         ContrasenaEntry.IsPassword = !ContrasenaEntry.IsPassword;
 
-        // Cambiamos el texto del "botón"
+        // Cambiamos el icono (asegúrate de tener ambas imágenes en Resources/Images)
         if (ContrasenaEntry.IsPassword)
         {
-            TogglePasswordLabel.Text = "VER";
+            TogglePasswordButton.Source = "ver.png"; // Icono de mostrar
         }
         else
         {
-            TogglePasswordLabel.Text = "OCULTAR";
+            TogglePasswordButton.Source = "nover.png"; // Icono de ocultar
         }
-
     }
 }

@@ -78,23 +78,20 @@
                 <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="10,0">
                     <Grid ColumnDefinitions="*, Auto">
                         <Entry x:Name="ContrasenaEntry" 
-                               Grid.Column="0"
-                               Placeholder="Contraseña" 
-                               IsPassword="True" 
-                               VerticalOptions="Center"/>
+               Grid.Column="0"
+               Placeholder="Contraseña" 
+               IsPassword="True" 
+               VerticalOptions="Center"/>
 
-                        <Label Grid.Column="1"
-                               x:Name="TogglePasswordLabel"
-                               Text="VER"
-                               TextColor="#2196F3"
-                               VerticalOptions="Center"
-                               FontAttributes="Bold"
-                               FontSize="12"
-                               Padding="10">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnTogglePasswordClicked" />
-                            </Label.GestureRecognizers>
-                        </Label>
+                        <ImageButton Grid.Column="1"
+                     x:Name="TogglePasswordButton"
+                     Source="ver.png"
+                     HeightRequest="25"
+                     WidthRequest="25"
+                     BackgroundColor="Transparent"
+                     Clicked="OnTogglePasswordClicked"
+                     VerticalOptions="Center"
+                     Margin="5,0"/>
                     </Grid>
                 </Frame>
 
