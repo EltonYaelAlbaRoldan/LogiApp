@@ -4,7 +4,6 @@ namespace LogiApp.Vistas;
 
 public partial class InicioSesion : ContentPage
 {
-
     private ConsultasGoogleSheets _sheets;
     private readonly ConexionGoogleAuth _authService = new();
 
@@ -12,7 +11,6 @@ public partial class InicioSesion : ContentPage
     {
         InitializeComponent();
         InicializarServicio();
-
     }
 
     private async void InicializarServicio()
