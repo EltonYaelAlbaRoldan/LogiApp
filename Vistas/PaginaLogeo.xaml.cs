@@ -22,8 +22,8 @@ public partial class PaginaLogeo : ContentPage
     private async void OnLoginClicked(object sender, EventArgs e)
     {
         // Reiniciamos la raíz de navegación para asegurar una pila limpia
-        //Application.Current.MainPage = new NavigationPage(new Vistas.InicioSesion());
-        await DisplayAlert("Funcionalidad en Desarrollo", "La pantalla de inicio de sesión estará disponible próximamente.", "OK");
+        Application.Current.MainPage = new NavigationPage(new Vistas.InicioSesion());
+        //await DisplayAlert("Funcionalidad en Desarrollo", "La pantalla de inicio de sesión estará disponible próximamente.", "OK");
     }
 
     /// <summary>
