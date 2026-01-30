@@ -32,10 +32,20 @@ public partial class PaginaMantenimiento : ContentPage
 
     private async void OnGuardarMantenimientoClicked(object sender, EventArgs e)
     {
-        // Validación de controles del XAML
-        if (string.IsNullOrWhiteSpace(PlacasEntry.Text) || string.IsNullOrWhiteSpace(CostoEntry.Text))
+        // Validación de controles del XAML (Todos obligatorios excepto evidencia)
+        bool camposIncompletos =
+            string.IsNullOrWhiteSpace(OperadorEntry.Text) ||
+            string.IsNullOrWhiteSpace(PlacasEntry.Text) ||
+            string.IsNullOrWhiteSpace(LugarEntry.Text) ||
+            string.IsNullOrWhiteSpace(EstablecimientoEntry.Text) ||
+            string.IsNullOrWhiteSpace(TipoMantenimientoEntry.Text) ||
+            string.IsNullOrWhiteSpace(PiezasCambiadasEntry.Text) ||
+            string.IsNullOrWhiteSpace(KilometrajeEntry.Text) ||
+            string.IsNullOrWhiteSpace(CostoEntry.Text);
+
+        if (camposIncompletos)
         {
-            await DisplayAlert("Atención", "Placas y Costo son obligatorios.", "OK");
+            await DisplayAlert("Atención", "Todos los campos son obligatorios para generar el reporte de analítica.", "OK");
             return;
         }
 
