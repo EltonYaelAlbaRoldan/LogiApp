@@ -14,7 +14,8 @@
               BackgroundColor="White"
               VerticalOptions="Center">
             <!-- Encabezado con botón de volver y título !-->
-            <Border Grid.Column="0"
+            <Border x:Name="BtnVolver"
+                    Grid.Column="0"
                     HeightRequest="40"
                     WidthRequest="40"
                     HorizontalOptions="Start"

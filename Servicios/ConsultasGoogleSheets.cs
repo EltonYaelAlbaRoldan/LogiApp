@@ -56,14 +56,14 @@ public class ConsultasGoogleSheets
     {
         try
         {
-            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Test!A:B").ExecuteAsync();
+            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:L").ExecuteAsync();
             var valores = response.Values;
 
             if (valores == null) return false;
 
             return valores.Skip(1).Any(fila => fila.Count >= 2 &&
                                               fila[0]?.ToString() == usuario &&
-                                              fila[1]?.ToString() == contrasena);
+                                              fila[11]?.ToString() == contrasena);
         }
         catch { return false; }
     }
