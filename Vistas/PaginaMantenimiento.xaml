@@ -1,63 +1,146 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LogiApp.Vistas.PaginaMantenimiento"
-             Title="Mantenimiento"
-             Shell.NavBarIsVisible="False" 
-             NavigationPage.HasNavigationBar="False"
-             BackgroundColor="#F5F5F7">
+<ContentPage
+    x:Class="LogiApp.Vistas.PaginaMantenimiento"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Mantenimiento"
+    BackgroundColor="#F5F5F7"
+    NavigationPage.HasNavigationBar="False"
+    Shell.NavBarIsVisible="False">
 
+    <!--  Estructura de la página de reporte de mantenimiento  -->
     <Grid RowDefinitions="Auto,*">
-        <Grid Grid.Row="0" ColumnDefinitions="60,*" Padding="20,15" BackgroundColor="White">
-            <Border Grid.Column="0" HeightRequest="40" WidthRequest="40" HorizontalOptions="Start" BackgroundColor="White" Stroke="#E0E0E0" StrokeThickness="1">
+        <!--  Encabezado  -->
+        <Grid
+            Grid.Row="0"
+            Padding="20,15"
+            BackgroundColor="White"
+            ColumnDefinitions="60,*">
+            <Border
+                Grid.Column="0"
+                BackgroundColor="White"
+                HeightRequest="40"
+                HorizontalOptions="Start"
+                Stroke="#E0E0E0"
+                StrokeThickness="1"
+                WidthRequest="40">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="20" />
                 </Border.StrokeShape>
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnVolverClicked" />
                 </Border.GestureRecognizers>
-                <Label Text="‹" TextColor="#0A0A33" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,4,8" />
+                <Label
+                    Margin="0,0,4,8"
+                    FontAttributes="Bold"
+                    FontSize="26"
+                    HorizontalOptions="Center"
+                    Text="‹"
+                    TextColor="#0A0A33"
+                    VerticalOptions="Center" />
             </Border>
-            <Label Grid.Column="1" Text="REPORTE DE MANTENIMIENTO" VerticalOptions="Center" FontAttributes="Bold" FontSize="16" TextColor="#0A0A33" CharacterSpacing="0.5"/>
+            <Label
+                Grid.Column="1"
+                CharacterSpacing="0.5"
+                FontAttributes="Bold"
+                FontSize="16"
+                Text="REPORTE DE MANTENIMIENTO"
+                TextColor="#0A0A33"
+                VerticalOptions="Center" />
         </Grid>
 
+        <!--  Formulario  -->
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="18" Padding="25,20">
+            <VerticalStackLayout Padding="25,20" Spacing="18">
 
-                <Label Text="Información del Servicio" FontSize="16" TextColor="Gray" FontAttributes="Bold" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    Text="Información del Servicio"
+                    TextColor="Gray" />
 
-                <DatePicker x:Name="FechaMantenimientoPicker" Format="dd/MM/yyyy" MinimumDate="01/01/2024" />
+                <DatePicker
+                    x:Name="FechaMantenimientoPicker"
+                    Format="dd/MM/yyyy"
+                    MinimumDate="01/01/2024" />
 
-                <Entry x:Name="OperadorEntry" Placeholder="Nombre del Operador" Visual="Material" />
+                <Entry
+                    x:Name="OperadorEntry"
+                    Placeholder="Nombre del Operador"
+                    Visual="Material" />
 
-                <Entry x:Name="PlacasEntry" Placeholder="Placas (Caja y/o Tráiler)" Visual="Material" />
-
-                <BoxView HeightRequest="1" Color="#E0E0E0" />
-
-                <Label Text="Ubicación del Servicio" FontSize="16" TextColor="Gray" FontAttributes="Bold" />
-
-                <Entry x:Name="LugarEntry" Placeholder="Lugar de mantenimiento (Ciudad/Estado)" Visual="Material" />
-
-                <Entry x:Name="EstablecimientoEntry" Placeholder="Nombre del Establecimiento/Taller" Visual="Material" />
-
-                <BoxView HeightRequest="1" Color="#E0E0E0" />
-
-                <Label Text="Detalles del Trabajo" FontSize="16" TextColor="Gray" FontAttributes="Bold" />
-
-                <Editor x:Name="TipoMantenimientoEntry" Placeholder="Descripción del tipo de mantenimiento" AutoSize="TextChanges" MinimumHeightRequest="80" />
-
-                <Editor x:Name="PiezasCambiadasEntry" Placeholder="Lista de piezas cambiadas" AutoSize="TextChanges" MinimumHeightRequest="80" />
-
-                <Entry x:Name="KilometrajeEntry" Placeholder="Kilometraje Actual (Cambio de aceite)" Keyboard="Numeric" MaxLength="10" />
+                <Entry
+                    x:Name="PlacasEntry"
+                    Placeholder="Placas (Caja y/o Tráiler)"
+                    Visual="Material" />
 
                 <BoxView HeightRequest="1" Color="#E0E0E0" />
 
-                <Label Text="Información Financiera" FontSize="16" TextColor="Gray" FontAttributes="Bold" />
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    Text="Ubicación del Servicio"
+                    TextColor="Gray" />
 
-                <Entry x:Name="CostoEntry" Placeholder="Costo Total ($)" Keyboard="Numeric" Visual="Material" />
+                <Entry
+                    x:Name="LugarEntry"
+                    Placeholder="Lugar de mantenimiento (Ciudad/Estado)"
+                    Visual="Material" />
 
-                <Label Text="Checklist Rápido de Seguridad" FontSize="14" TextColor="Gray" Margin="0,10,0,0"/>
-                <Border Padding="15" BackgroundColor="White" StrokeShape="RoundRectangle 10">
+                <Entry
+                    x:Name="EstablecimientoEntry"
+                    Placeholder="Nombre del Establecimiento/Taller"
+                    Visual="Material" />
+
+                <BoxView HeightRequest="1" Color="#E0E0E0" />
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    Text="Detalles del Trabajo"
+                    TextColor="Gray" />
+
+                <Editor
+                    x:Name="TipoMantenimientoEntry"
+                    AutoSize="TextChanges"
+                    MinimumHeightRequest="80"
+                    Placeholder="Descripción del tipo de mantenimiento" />
+
+                <Editor
+                    x:Name="PiezasCambiadasEntry"
+                    AutoSize="TextChanges"
+                    MinimumHeightRequest="80"
+                    Placeholder="Lista de piezas cambiadas" />
+
+                <Entry
+                    x:Name="KilometrajeEntry"
+                    Keyboard="Numeric"
+                    MaxLength="10"
+                    Placeholder="Kilometraje Actual (Cambio de aceite)" />
+
+                <BoxView HeightRequest="1" Color="#E0E0E0" />
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    Text="Información Financiera"
+                    TextColor="Gray" />
+
+                <Entry
+                    x:Name="CostoEntry"
+                    Keyboard="Numeric"
+                    Placeholder="Costo Total ($)"
+                    Visual="Material" />
+
+                <Label
+                    Margin="0,10,0,0"
+                    FontSize="14"
+                    Text="Checklist Rápido de Seguridad"
+                    TextColor="Gray" />
+                <Border
+                    Padding="15"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10">
                     <VerticalStackLayout Spacing="10">
                         <HorizontalStackLayout Spacing="10">
                             <CheckBox x:Name="CheckAceite" Color="#2196F3" />
@@ -70,22 +153,25 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <Button Text="📷 Adjuntar Evidencia" 
-                        BackgroundColor="#F8F8F8" 
-                        TextColor="#0A0A33" 
-                        BorderColor="#D0D0D0" 
-                        BorderWidth="1" 
-                        Margin="0,10,0,0"/>
+                <Button
+                    Margin="0,10,0,0"
+                    BackgroundColor="#F8F8F8"
+                    BorderColor="#D0D0D0"
+                    BorderWidth="1"
+                    Text="📷 Adjuntar Evidencia"
+                    TextColor="#0A0A33" />
 
-                <Button x:Name="BtnGuardarMantenimiento" 
-                        Text="GUARDAR REPORTE COMPLETO" 
-                        BackgroundColor="#0A0A33" 
-                        TextColor="White" 
-                        HeightRequest="60" 
-                        FontAttributes="Bold"
-                        CornerRadius="12" 
-                        Margin="0,10,0,30"
-                        Clicked="OnGuardarMantenimientoClicked"/>
+                <!--  Botón de envío  -->
+                <Button
+                    x:Name="BtnGuardarMantenimiento"
+                    Margin="0,10,0,30"
+                    BackgroundColor="#0A0A33"
+                    Clicked="OnGuardarMantenimientoClicked"
+                    CornerRadius="12"
+                    FontAttributes="Bold"
+                    HeightRequest="60"
+                    Text="GUARDAR REPORTE COMPLETO"
+                    TextColor="White" />
 
             </VerticalStackLayout>
         </ScrollView>
