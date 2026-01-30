@@ -134,12 +134,12 @@ public partial class PaginaRegistro : ContentPage
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
         // Primero, validamos la conexión y estructura de Sheets
-        string diagnostico = await _sheets.ValidarEstructuraAsync();
-        await DisplayAlert("Diagnóstico de Conexión", diagnostico, "OK");
+        //string diagnostico = await _sheets.ValidarEstructuraAsync();
+        //await DisplayAlert("Diagnóstico de Conexión", diagnostico, "OK");
 
         // Si todo está bien, procedemos con las validaciones de campos
-        if (diagnostico.Contains("✅"))
-        {
+        //if (diagnostico.Contains("✅"))
+        //{
             // --- CAPA 1: VALIDACIÓN DE CAMPOS VACÍOS ---
             if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text))
             {
@@ -265,7 +265,7 @@ public partial class PaginaRegistro : ContentPage
                 _estaProcesando = false;
                 OnPropertyChanged(nameof(IsNotBusy));
             }
-        }
+        //}
         
     }
 
