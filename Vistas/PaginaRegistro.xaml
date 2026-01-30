@@ -13,7 +13,7 @@
               Padding="20,15" 
               BackgroundColor="White"
               VerticalOptions="Center">
-
+            <!-- Encabezado con botón de volver y título !-->
             <Border Grid.Column="0"
                     HeightRequest="40"
                     WidthRequest="40"
@@ -41,6 +41,7 @@
                        Margin="0,0,4,8" />
             </Border>
 
+            <!-- Título de la página !-->
             <Label Grid.Column="1"
                    Text="REGISTRO DE OPERADOR" 
                    VerticalOptions="Center" 
@@ -54,8 +55,10 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="18" Padding="25,10,25,30">
 
+                <!-- Formulario de registro de operador !-->              
                 <Label Text="Información Personal" FontSize="18" TextColor="Gray" FontAttributes="Bold" />
-
+                
+                <!-- Entradas de texto para los datos del operador !-->
                 <Entry x:Name="NombreEntry" Placeholder="Nombre Completo" Visual="Material" />
                 <Entry x:Name="EdadEntry" Placeholder="Edad" Keyboard="Numeric" MaxLength="2" />
                 <Entry x:Name="CorreoEntry" Placeholder="Correo Electrónico" Keyboard="Email" />
@@ -63,42 +66,40 @@
                 <Entry x:Name="Tel2Entry" Placeholder="No. de teléfono 2" Keyboard="Numeric" MaxLength="10"/>
                 <Entry x:Name="ClaveInterbancariaEntry" Placeholder="Clave Interbancaria" Keyboard="Numeric" MaxLength="18"/>
                 <Entry x:Name="NumLicenciaEntry" Placeholder="Número de Licencia Federal" MaxLength="15" Visual="Material" />
+                <!-- Entrada de contraseña con opción para mostrar/ocultar !-->
                 <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="10,0">
                     <Grid ColumnDefinitions="*, Auto">
                         <Entry x:Name="ContrasenaOperadorEntry" 
-               Grid.Column="0"
-               Placeholder="Asignar Contraseña al Operador" 
-               IsPassword="True" 
-               VerticalOptions="Center"/>
-
+                               Grid.Column="0"
+                               Placeholder="Asignar Contraseña al Operador" 
+                               IsPassword="True" 
+                               VerticalOptions="Center"/>
                         <Label Grid.Column="1"
-               x:Name="TogglePasswordLabel"
-               Text="VER"
-               TextColor="#2196F3"
-               VerticalOptions="Center"
-               FontAttributes="Bold"
-               FontSize="12"
-               Padding="10">
+                               x:Name="TogglePasswordLabel"
+                               Text="VER"
+                               TextColor="#2196F3"
+                               VerticalOptions="Center"
+                               FontAttributes="Bold"
+                               FontSize="12"
+                               Padding="10">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnTogglePasswordClicked" />
                             </Label.GestureRecognizers>
                         </Label>
                     </Grid>
                 </Frame>
-
+                <!-- Sección de vigencias y fechas !-->
                 <BoxView HeightRequest="1" Color="#EEEEEE" />
                 <Label Text="Vigencias y Fechas" FontSize="18" TextColor="Gray" FontAttributes="Bold" />
-
                 <VerticalStackLayout Spacing="5">
                     <Label Text="Vigencia de licencia federal" FontSize="12" Margin="5,0"/>
                     <DatePicker x:Name="VigenciaLicenciaPicker" Format="dd/MM/yyyy" />
                 </VerticalStackLayout>
-
                 <VerticalStackLayout Spacing="5">
                     <Label Text="Vigencia de apto médico" FontSize="12" Margin="5,0"/>
                     <DatePicker x:Name="VigenciaMedicoPicker" Format="dd/MM/yyyy" />
                 </VerticalStackLayout>
-
+                <!-- Sección de subida de datos !-->
                 <Button x:Name="BtnRegistrarDatos" Text="1. REGISTRAR DATOS Y CARPETA" 
                         Clicked="OnProbarRegistroClicked"
                         IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
@@ -108,9 +109,10 @@
                         CornerRadius="10"
                         Margin="0,15,0,0" />
 
+
+                <!-- Sección de subida de archivos PDF !-->         
                 <BoxView HeightRequest="1" Color="#EEEEEE" />
                 <Label Text="Expediente Digital (Subir PDF)" FontSize="18" TextColor="Gray" FontAttributes="Bold" />
-
                 <Button Text="Comprobante de Domicilio" Clicked="OnSubirDomicilioClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" BorderWidth="1" BorderColor="#E0E0E0" />
                 <Button Text="RFC" Clicked="OnSubirRfcClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" BorderWidth="1" BorderColor="#E0E0E0" />
                 <Button Text="CURP" Clicked="OnSubirCurpClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" BorderWidth="1" BorderColor="#E0E0E0" />
@@ -119,8 +121,7 @@
                 <Button Text="Acta de Nacimiento" Clicked="OnSubirActaClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" />
                 <Button Text="NSS" Clicked="OnSubirNssClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" />
                 <Button Text="CV" Clicked="OnSubirCvClicked" BackgroundColor="#F5F5F5" TextColor="#0A0A33" />
-
-
+                <!-- Botón para subir todos los archivos PDF !-->
                 <Button x:Name="BtnSubirArchivos" Text="2. SUBIR ARCHIVOS PDF" 
                         Clicked="OnSubirArchivosClicked"
                         IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
@@ -129,17 +130,8 @@
                         HeightRequest="55"
                         CornerRadius="10"
                         Margin="0,15,0,0" />
-                <!--
-                <Button Text="GUARDAR REGISTRO COMPLETO" 
-                        Clicked="OnProbarRegistroClicked"
-                        IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
-                        BackgroundColor="#0A0A33"
-                        TextColor="White"
-                        HeightRequest="55"
-                        CornerRadius="10"
-                        Margin="0,15,0,0" />
-                -->
 
+                <!-- Indicador de actividad mientras se procesan las acciones !-->
                 <ActivityIndicator IsRunning="{Binding IsBusy, Source={x:Reference this}}"
                                    IsVisible="{Binding IsBusy, Source={x:Reference this}}"
                                    Color="#2196F3"

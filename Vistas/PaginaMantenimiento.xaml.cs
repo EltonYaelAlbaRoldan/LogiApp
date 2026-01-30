@@ -4,9 +4,11 @@ namespace LogiApp.Vistas;
 
 public partial class PaginaMantenimiento : ContentPage
 {
-    // 1. Declaración de variables de servicio (Corrige CS0103)
+    // Servicio para interactuar con Google Sheets
     private ConsultasGoogleSheets _sheets;
     private readonly ConexionGoogleAuth _authService = new();
+
+    // Constructor de la página
     public PaginaMantenimiento()
 	{
 		InitializeComponent();
@@ -14,10 +16,11 @@ public partial class PaginaMantenimiento : ContentPage
     }
     private async void InicializarConexion()
     {
+        // Configura la conexión con Google Sheets al iniciar la página
         try
         {
             var (sService, _) = await _authService.ObtenerServiciosAsync();
-            _sheets = new ConsultasGoogleSheets(sService); // Asignación de instancia
+            _sheets = new ConsultasGoogleSheets(sService); 
         }
         catch (Exception ex)
         {
@@ -43,6 +46,7 @@ public partial class PaginaMantenimiento : ContentPage
             string.IsNullOrWhiteSpace(KilometrajeEntry.Text) ||
             string.IsNullOrWhiteSpace(CostoEntry.Text);
 
+        // Verificar que los campos obligatorios estén completos
         if (camposIncompletos)
         {
             await DisplayAlert("Atención", "Todos los campos son obligatorios para generar el reporte de analítica.", "OK");
@@ -58,7 +62,7 @@ public partial class PaginaMantenimiento : ContentPage
             string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync();
             string estatusKpi = (CheckAceite.IsChecked && CheckFrenos.IsChecked) ? "OPERATIVO" : "CRÍTICO";
 
-            // Enviar los 14 datos configurados en tu tabla de Sheets
+            // Enviar los 14 datos configurados en la tabla de Sheets
             await _sheets.RegistrarMantenimientoAsync(
                 nuevoFolio,                                   // A: Folio
                 DateTime.Now.ToString("g"),                   // B: Registro
@@ -76,9 +80,11 @@ public partial class PaginaMantenimiento : ContentPage
                 estatusKpi                                    // N: KPI
             );
 
+            // Confirmación al usuario
             await DisplayAlert("Éxito", $"Reporte {nuevoFolio} guardado correctamente.", "OK");
             await Navigation.PopAsync();
         }
+        // Manejo de errores durante la sincronización
         catch (Exception ex)
         {
             await DisplayAlert("Error", "No se pudo sincronizar: " + ex.Message, "Cerrar");
