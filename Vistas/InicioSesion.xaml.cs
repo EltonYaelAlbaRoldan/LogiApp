@@ -55,4 +55,20 @@ public partial class InicioSesion : ContentPage
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
 
+    private void OnTogglePasswordClicked(object sender, EventArgs e)
+    {
+        // Cambiamos el estado de IsPassword
+        ContrasenaEntry.IsPassword = !ContrasenaEntry.IsPassword;
+
+        // Cambiamos el texto del "botón"
+        if (ContrasenaEntry.IsPassword)
+        {
+            TogglePasswordLabel.Text = "VER";
+        }
+        else
+        {
+            TogglePasswordLabel.Text = "OCULTAR";
+        }
+
+    }
 }

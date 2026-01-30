@@ -75,10 +75,27 @@
                            Keyboard="Text" />
                 </Frame>
 
-                <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="5,0">
-                    <Entry x:Name="ContrasenaEntry" 
-                           Placeholder="Contraseña" 
-                           IsPassword="True" />
+                <Frame BorderColor="#E0E0E0" CornerRadius="10" Padding="10,0">
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Entry x:Name="ContrasenaEntry" 
+                               Grid.Column="0"
+                               Placeholder="Contraseña" 
+                               IsPassword="True" 
+                               VerticalOptions="Center"/>
+
+                        <Label Grid.Column="1"
+                               x:Name="TogglePasswordLabel"
+                               Text="VER"
+                               TextColor="#2196F3"
+                               VerticalOptions="Center"
+                               FontAttributes="Bold"
+                               FontSize="12"
+                               Padding="10">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnTogglePasswordClicked" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
                 </Frame>
 
                 <Button Text="INICIAR SESIÓN"

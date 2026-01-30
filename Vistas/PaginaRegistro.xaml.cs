@@ -43,6 +43,12 @@ public partial class PaginaRegistro : ContentPage
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
 
+    private void OnTogglePasswordClicked(object sender, EventArgs e)
+    {
+        ContrasenaOperadorEntry.IsPassword = !ContrasenaOperadorEntry.IsPassword;
+        TogglePasswordLabel.Text = ContrasenaOperadorEntry.IsPassword ? "VER" : "OCULTAR";
+    }
+
     // --- MÉTODOS PARA CARGA DE ARCHIVOS
 
     private async void OnSubirLicenciaClicked(object sender, EventArgs e)
@@ -198,6 +204,12 @@ public partial class PaginaRegistro : ContentPage
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text))
+            {
+                await DisplayAlert("Campo Incompleto", "Debes asignar una contraseña al operador.", "OK");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(NombreEntry.Text) || !int.TryParse(EdadEntry.Text, out _)) return;
 
             if (_estaProcesando) return;
@@ -230,7 +242,8 @@ public partial class PaginaRegistro : ContentPage
                     "'" + NumLicenciaEntry.Text,
                     VigenciaLicenciaPicker.Date.ToString("d"),
                     VigenciaMedicoPicker.Date.ToString("d"),
-                    linkCarpeta
+                    linkCarpeta,
+                    ContrasenaOperadorEntry.Text
                 );
 
                 await DisplayAlert("Paso 1 Exitoso", $"Folio {_idOperadorGenerado} creado. Procede a subir los PDF.", "Siguiente");

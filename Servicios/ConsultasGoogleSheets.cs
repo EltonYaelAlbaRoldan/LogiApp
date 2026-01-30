@@ -17,7 +17,7 @@ public class ConsultasGoogleSheets
         try
         {
             // Asegúrate que la pestaña se llame 'Operadores' en tu Excel
-            string rango = "Operadores!A:K";
+            string rango = "Operadores!A:L";
 
             var valueRange = new ValueRange
             {
