@@ -3,6 +3,9 @@ using Google.Apis.Sheets.v4.Data;
 
 namespace LogiApp.Servicios;
 
+/// <summary>
+/// Gestiona todas las operaciones de lectura y escritura en el Spreadsheet de Google.
+/// </summary>
 public class ConsultasGoogleSheets
 {
     private readonly SheetsService _service;
@@ -10,189 +13,130 @@ public class ConsultasGoogleSheets
 
     public ConsultasGoogleSheets(SheetsService service) => _service = service;
 
-    // CREATE: Registrar nuevo operador
-    // DEJA SOLO ESTE MÉTODO PARA REGISTRAR
+    #region SECCIÓN 1: OPERACIONES DE OPERADORES
+
+    /// <summary>
+    /// Registra una nueva fila en la pestaña 'Operadores' (ID, Nombre, Edad, Correo, Tel1, Tel2, Clave, Licencia, VigenciaL, VigenciaM, Carpeta, Contraseña).
+    /// </summary>
     public async Task RegistrarOperadorAsync(params string[] datos)
     {
         try
         {
-            // Asegúrate que la pestaña se llame 'Operadores' en tu Excel
             string rango = "Operadores!A:L";
-
-            var valueRange = new ValueRange
-            {
-                Values = new List<IList<object>> { new List<object>(datos) }
-            };
+            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
 
             var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
             appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
 
             await appendRequest.ExecuteAsync();
-            Console.WriteLine("Datos escritos correctamente en Sheets.");
         }
         catch (Google.GoogleApiException gEx)
         {
-            // Esto te dirá si el error es de Permisos (403) o de ID no encontrado (404)
-            // Esto imprimirá en la consola de Salida el motivo real (403 Forbidden, 404 Not Found, etc.)
-            Console.WriteLine("--- ERROR DE GOOGLE DETECTADO ---");
-            Console.WriteLine($"Mensaje: {gEx.Error.Message}");
-            Console.WriteLine($"Código: {gEx.Error.Code}");
-            Console.WriteLine("---------------------------------");
+            Console.WriteLine($"--- ERROR SHEETS API --- \nCódigo: {gEx.Error.Code} \nMensaje: {gEx.Error.Message}");
             throw;
         }
     }
 
-    // READ: Obtener todos los operadores
-    public async Task<IList<IList<object>>> LeerOperadoresAsync()
-    {
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:C").ExecuteAsync();
-        return response.Values;
-    }
-
-    // UPDATE: Actualizar una celda específica (ej. cambiar nombre)
-    public async Task ActualizarOperadorAsync(string rango, string nuevoValor)
-    {
-        var values = new ValueRange { Values = new List<IList<object>> { new List<object> { nuevoValor } } };
-        var request = _service.Spreadsheets.Values.Update(values, _spreadsheetId, rango);
-        request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-        await request.ExecuteAsync();
-    }
-
-    // DELETE: Limpiar rango (borrar datos de una fila)
-    public async Task BorrarDatosFilaAsync(string rango)
-    {
-        await _service.Spreadsheets.Values.Clear(new ClearValuesRequest(), _spreadsheetId, rango).ExecuteAsync();
-    }
-
-
-    // Cambiamos el retorno a Task<string> porque ahora devolvemos "OP-00X"
+    /// <summary>
+    /// Genera un folio único incremental con formato profesional (Ej: OP-001).
+    /// </summary>
     public async Task<string> GenerarIdUnicoFormateadoAsync()
     {
-        var rango = "Operadores!A:A";
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
+        return await GenerarFolioSecuencialAsync("Operadores!A:A", "OP");
+    }
 
-        var idsExistentes = new HashSet<int>();
-        if (response.Values != null)
-        {
-            foreach (var fila in response.Values.Skip(1))
-            {
-                string valorCelda = fila.FirstOrDefault()?.ToString() ?? "";
+    #endregion
 
-                // Extraemos solo el número del formato "OP-003"
-                if (valorCelda.Contains("-"))
-                {
-                    string soloNumero = valorCelda.Split('-').Last();
-                    if (int.TryParse(soloNumero, out int num))
-                        idsExistentes.Add(num);
-                }
-            }
-        }
+    #region SECCIÓN 2: SEGURIDAD Y ACCESO
 
-        // Buscamos el máximo y sumamos 1
-        int siguienteNum = idsExistentes.Count > 0 ? idsExistentes.Max() + 1 : 1;
-
-        // Retornamos el formato profesional para tu Excel
-        return $"OP-{siguienteNum:D3}";
-    }  
-
-    //Consutar usuarios y contraseñas
+    /// <summary>
+    /// Valida las credenciales comparándolas con la pestaña 'Test'.
+    /// </summary>
     public async Task<bool> ValidarUsuarioAsync(string usuario, string contrasena)
     {
         try
         {
-            // Leemos el rango de la pestaña "Test"
             var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Test!A:B").ExecuteAsync();
             var valores = response.Values;
 
-            if (valores == null || valores.Count == 0) return false;
+            if (valores == null) return false;
 
-            // Recorremos las filas buscando coincidencia (saltando el encabezado)
-            foreach (var fila in valores.Skip(1))
-            {
-                if (fila.Count >= 2)
-                {
-                    string u = fila[0]?.ToString();
-                    string c = fila[1]?.ToString();
-
-                    if (u == usuario && c == contrasena)
-                        return true; // Credenciales correctas
-                }
-            }
+            return valores.Skip(1).Any(fila => fila.Count >= 2 &&
+                                              fila[0]?.ToString() == usuario &&
+                                              fila[1]?.ToString() == contrasena);
         }
-        catch (Exception)
-        {
-            return false;
-        }
-        return false;
+        catch { return false; }
     }
 
-    public async Task<string> ValidarEstructuraAsync()
-    {
+    /// <summary>
+    /// Método silenciado para evitar ventanas emergentes molestas.
+    /// </summary>
+    //public async Task<string> ValidarEstructuraAsync()
+    //{
+
+        /* Lógica anterior comentada por mantenimiento
         try
         {
-            // 1. Intentamos obtener metadatos del archivo
-            var request = _service.Spreadsheets.Get(_spreadsheetId);
-            var spreadsheet = await request.ExecuteAsync();
-
-            // 2. Revisamos si existe la pestaña 'Operadores'
-            var existePestana = spreadsheet.Sheets.Any(s => s.Properties.Title == "Operadores");
-
-            if (existePestana)
-                return "✅ Conexión perfecta: Archivo y pestaña 'Operadores' localizados.";
-            else
-            {
-                var nombres = string.Join(", ", spreadsheet.Sheets.Select(s => s.Properties.Title));
-                return $"⚠️ Archivo encontrado, pero la pestaña 'Operadores' NO existe. Pestañas encontradas: {nombres}";
-            }
+            var spreadsheet = await _service.Spreadsheets.Get(_spreadsheetId).ExecuteAsync();
+            bool existePestana = spreadsheet.Sheets.Any(s => s.Properties.Title == "Operadores");
+            return existePestana ? "✅ OK" : "⚠️ Error";
         }
-        catch (Google.GoogleApiException e) when (e.Error.Code == 404)
-        {
-            return "❌ ERROR 404: El ID del Spreadsheet es incorrecto o no tengo permisos para verlo.";
-        }
-        catch (Exception ex)
-        {
-            return $"❌ Error desconocido: {ex.Message}";
-        }
-    }
+        catch (Exception ex) { return $"❌ Error: {ex.Message}"; }
+        */
+    //}
 
-    // Generador automático de folios para Mantenimiento
+    #endregion
+
+    #region SECCIÓN 3: MANTENIMIENTO
+
+    /// <summary>
+    /// Genera un folio incremental para la pestaña de Mantenimiento (Ej: MT-001).
+    /// </summary>
     public async Task<string> GenerarFolioMantenimientoAsync()
     {
-        var rango = "Mantenimiento!A:A"; // Columna de Folios
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
-
-        var idsExistentes = new HashSet<int>();
-        if (response.Values != null)
-        {
-            foreach (var fila in response.Values.Skip(1))
-            {
-                string valorCelda = fila.FirstOrDefault()?.ToString() ?? "";
-                if (valorCelda.Contains("-"))
-                {
-                    string soloNumero = valorCelda.Split('-').Last();
-                    if (int.TryParse(soloNumero, out int num))
-                        idsExistentes.Add(num);
-                }
-            }
-        }
-        int siguienteNum = idsExistentes.Count > 0 ? idsExistentes.Max() + 1 : 1;
-        return $"MT-{siguienteNum:D3}"; // Ejemplo: MT-001
+        return await GenerarFolioSecuencialAsync("Mantenimiento!A:A", "MT");
     }
 
-    // Envío de los 14 campos a la pestaña Mantenimiento
+    /// <summary>
+    /// Registra los 14 campos técnicos en la pestaña 'Mantenimiento'.
+    /// </summary>
     public async Task RegistrarMantenimientoAsync(params string[] datos)
     {
         try
         {
             string rango = "Mantenimiento!A:N";
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
-            var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
-            appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-            await appendRequest.ExecuteAsync();
+
+            var request = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
+            request.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+
+            await request.ExecuteAsync();
         }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error al escribir en pestaña Mantenimiento: {ex.Message}");
-        }
+        catch (Exception ex) { throw new Exception($"Fallo en registro de Mantenimiento: {ex.Message}"); }
     }
+
+    #endregion
+
+    #region SECCIÓN 4: MÉTODOS PRIVADOS DE APOYO
+
+    private async Task<string> GenerarFolioSecuencialAsync(string rangoColumna, string prefijo)
+    {
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rangoColumna).ExecuteAsync();
+        int maxId = 0;
+
+        if (response.Values != null)
+        {
+            foreach (var fila in response.Values.Skip(1))
+            {
+                string valor = fila.FirstOrDefault()?.ToString() ?? "";
+                if (valor.Contains("-") && int.TryParse(valor.Split('-').Last(), out int num))
+                {
+                    if (num > maxId) maxId = num;
+                }
+            }
+        }
+        return $"{prefijo}-{(maxId + 1):D3}";
+    }
+
+    #endregion
 }

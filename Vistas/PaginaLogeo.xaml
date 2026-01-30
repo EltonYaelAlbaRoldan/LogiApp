@@ -5,35 +5,46 @@
              Title="LogiApp - Logeo"
              NavigationPage.HasNavigationBar="False">
 
+    <!-- Diseño de la página de logeo -->
     <Grid>
+        <!-- Imagen de fondo -->
         <Image Source="principal.png" 
-                Aspect="AspectFill" />
-        <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="End">
-            <Label Text=" " 
+               Aspect="AspectFill" />
+
+        <!-- Contenedor de botones -->
+        <VerticalStackLayout Spacing="25" 
+                             Padding="30" 
+                             VerticalOptions="End">
+
+            <!-- Espaciador -->
+            <Label FontAttributes="Bold" 
                    FontSize="32" 
-                   FontAttributes="Bold" 
-                   TextColor="#0A0A33" 
-                   HorizontalOptions="Center" />
+                   HorizontalOptions="Center" 
+                   Text=" " 
+                   TextColor="#0A0A33" />
 
+            <!-- Botón de inicio de sesión -->
             <Button x:Name="BtnLogin"
-                    Text="INICIAR SESIÓN"
+                    BackgroundColor="#0A0A33"
                     Clicked="OnLoginClicked"
+                    FontAttributes="Bold"
                     FontFamily="sans-serif-black" 
                     FontSize="25" 
-                    FontAttributes="Bold"
-                    TextColor="White"
-                    BackgroundColor="#0A0A33"
-                    HeightRequest="60" />
+                    HeightRequest="60"
+                    Text="INICIAR SESIÓN"
+                    TextColor="White" />
 
+            <!-- Botón de registro -->
             <Button x:Name="BtnRegistro"
-                    Text="REGISTRO"
+                    BackgroundColor="#0A0A33"
+                    Clicked="OnRegisterClicked"
+                    FontAttributes="Bold"
                     FontFamily="sans-serif-black" 
                     FontSize="25" 
-                    FontAttributes="Bold"
-                    TextColor="White" 
-                    Clicked="OnRegisterClicked"
-                    BackgroundColor="#0A0A33"
-                    HeightRequest="60" />
+                    HeightRequest="60"
+                    Text="REGISTRO"
+                    TextColor="White" />
+
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

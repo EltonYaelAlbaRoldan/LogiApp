@@ -2,70 +2,111 @@ using LogiApp.Servicios;
 
 namespace LogiApp.Vistas;
 
+/// <summary>
+/// Pantalla de acceso principal. Gestiona la autenticación contra Google Sheets.
+/// </summary>
 public partial class InicioSesion : ContentPage
 {
+    // --- ATRIBUTOS Y SERVICIOS ---
     private ConsultasGoogleSheets _sheets;
     private readonly ConexionGoogleAuth _authService = new();
 
+    // --- CONSTRUCTOR ---
     public InicioSesion()
     {
         InitializeComponent();
         InicializarServicio();
     }
 
+    // --- CONFIGURACIÓN INICIAL ---
+
+    /// <summary>
+    /// Conecta la vista con los servicios de Google API al cargar la página.
+    /// </summary>
     private async void InicializarServicio()
     {
-        // Obtenemos los servicios de Google
-        var (sService, _) = await _authService.ObtenerServiciosAsync();
-        _sheets = new ConsultasGoogleSheets(sService);
+        try
+        {
+            // Obtenemos solo el servicio de Sheets (el de Drive se ignora con '_')
+            var (sService, _) = await _authService.ObtenerServiciosAsync();
+            _sheets = new ConsultasGoogleSheets(sService);
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error de Conexión", "No se pudo conectar con la base de datos: " + ex.Message, "OK");
+        }
     }
 
+    // --- EVENTOS DE USUARIO (LÓGICA DE NEGOCIO) ---
+
+    /// <summary>
+    /// Proceso de autenticación: Valida campos, activa el loader y consulta Sheets.
+    /// </summary>
     private async void OnLoginClicked(object sender, EventArgs e)
     {
+        // 1. Validación de interfaz (Campos vacíos)
         if (string.IsNullOrWhiteSpace(UsuarioEntry.Text) || string.IsNullOrWhiteSpace(ContrasenaEntry.Text))
         {
-            await DisplayAlert("Campos Vacíos", "Ingresa tus datos.", "OK");
+            await DisplayAlert("Campos Vacíos", "Por favor, ingresa tus credenciales.", "OK");
             return;
         }
 
-        CargandoIndicator.IsVisible = true;
-        CargandoIndicator.IsRunning = true;
+        // 2. Estado visual de carga
+        SetLoadingState(true);
 
-        // VALIDACIÓN REAL DESDE GOOGLE SHEETS
-        bool esValido = await _sheets.ValidarUsuarioAsync(UsuarioEntry.Text, ContrasenaEntry.Text);
-
-        if (esValido)
+        try
         {
-            Application.Current.MainPage = new NavigationPage(new PaginaMenu());
-        }
-        else
-        {
-            await DisplayAlert("Error", "Usuario o contraseña no encontrados en la base de datos.", "Reintentar");
-        }
+            // 3. Consulta asíncrona a la base de datos en la nube
+            bool esValido = await _sheets.ValidarUsuarioAsync(UsuarioEntry.Text, ContrasenaEntry.Text);
 
-        CargandoIndicator.IsRunning = false;
-        CargandoIndicator.IsVisible = false;
+            if (esValido)
+            {
+                // Navegación exitosa: Resetea la pila de navegación al menú principal
+                Application.Current.MainPage = new NavigationPage(new PaginaMenu());
+            }
+            else
+            {
+                await DisplayAlert("Acceso Denegado", "Usuario o contraseña incorrectos.", "Reintentar");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error Crítico", "Fallo en el servidor: " + ex.Message, "OK");
+        }
+        finally
+        {
+            // 4. Restaurar interfaz
+            SetLoadingState(false);
+        }
     }
 
-    private async void OnVolverClicked(object sender, EventArgs e)
-    {
-        // Esto te regresa a la pantalla anterior en la pila de navegación
-        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
-    }
+    // --- MÉTODOS DE APOYO E INTERFAZ ---
 
+    /// <summary>
+    /// Alterna la visibilidad de la contraseña y cambia el icono del botón.
+    /// </summary>
     private void OnTogglePasswordClicked(object sender, EventArgs e)
     {
-        // Cambiamos el estado de visibilidad
         ContrasenaEntry.IsPassword = !ContrasenaEntry.IsPassword;
+        TogglePasswordButton.Source = ContrasenaEntry.IsPassword ? "ver.png" : "nover.png";
+    }
 
-        // Cambiamos el icono (asegúrate de tener ambas imágenes en Resources/Images)
-        if (ContrasenaEntry.IsPassword)
-        {
-            TogglePasswordButton.Source = "ver.png"; // Icono de mostrar
-        }
-        else
-        {
-            TogglePasswordButton.Source = "nover.png"; // Icono de ocultar
-        }
+    /// <summary>
+    /// Controla la visibilidad del ActivityIndicator para evitar código duplicado.
+    /// </summary>
+    private void SetLoadingState(bool isLoading)
+    {
+        CargandoIndicator.IsVisible = isLoading;
+        CargandoIndicator.IsRunning = isLoading;
+        // Opcional: Bloquear el botón de login mientras carga
+        //BotonLogin.IsEnabled = !isLoading; 
+    }
+
+    /// <summary>
+    /// Regresa a la página de selección de perfil (Logeo).
+    /// </summary>
+    private async void OnVolverClicked(object sender, EventArgs e)
+    {
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
     }
 }

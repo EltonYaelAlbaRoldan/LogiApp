@@ -2,47 +2,57 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LogiApp.Vistas.PaginaMenu"
-             Title=" ">
+             Title="Menú Principal"
+             NavigationPage.HasNavigationBar="False">
 
+    <!-- Diseño de la página de menú principal -->
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30" VerticalOptions="Center">
+        <!-- Contenedor principal -->
+        <VerticalStackLayout Padding="30"
+                             Spacing="25"
+                             VerticalOptions="Center">
 
-            <Image Source="bienvenido.png" 
-                   HeightRequest="150" 
-                   HorizontalOptions="Center" 
-                   Margin="0,0,0,20"/>
+            <!-- Imagen de bienvenida -->
+            <Image HeightRequest="150"
+                   HorizontalOptions="Center"
+                   Source="bienvenido.png"
+                   Margin="0,0,0,20" />
 
-            <Label Text="Seleccione una opción" 
-                   FontSize="20" 
-                   FontAttributes="Bold" 
-                   HorizontalOptions="Center" />
-
-            <Button Text="GESTIÓN DE VIAJES"
-                    HeightRequest="80"
-                    FontSize="18"
-                    BackgroundColor="#2196F3"
-                    TextColor="White"
+            <!-- Etiqueta de selección -->
+            <Label FontAttributes="Bold"
+                   FontSize="20"
+                   HorizontalOptions="Center"
+                   Text="Seleccione una opción" />
+            
+            <!-- Botones de navegación -->
+            <Button BackgroundColor="#2196F3"
+                    Clicked="OnViajesClicked"
                     CornerRadius="15"
-                    Clicked="OnViajesClicked" />
-
-            <Button Text="MANTENIMIENTO"
-                    HeightRequest="80"
                     FontSize="18"
-                    BackgroundColor="#FF9800"
-                    TextColor="White"
-                    CornerRadius="15"
-                    Clicked="OnMantenimientoClicked" />
+                    HeightRequest="80"
+                    Text="GESTIÓN DE VIAJES"
+                    TextColor="White" />
 
-            <Button Text="Cerrar Sesión" 
-                    Clicked="OnLogoutClicked"
-                    BackgroundColor="Transparent"
-                    TextColor="Grey"
+            <!-- Botón de Mantenimiento -->
+            <Button BackgroundColor="#FF9800"
+                    Clicked="OnMantenimientoClicked"
+                    CornerRadius="15"
+                    FontSize="18"
+                    HeightRequest="80"
+                    Text="MANTENIMIENTO"
+                    TextColor="White" />
+
+            <!-- Botón cerrar sesion -->
+            <Button BackgroundColor="Transparent"
                     BorderColor="Grey"
                     BorderWidth="1"
+                    Clicked="OnLogoutClicked"
                     CornerRadius="20"
                     HorizontalOptions="Center"
-                    Padding="20,0" 
-                    Margin="0,20,0,0" />
+                    Margin="0,20,0,0"
+                    Padding="20,0"
+                    Text="Cerrar Sesión"
+                    TextColor="Grey" />
 
         </VerticalStackLayout>
     </ScrollView>

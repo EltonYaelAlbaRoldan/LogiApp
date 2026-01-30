@@ -1,41 +1,62 @@
 ﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
-using Google.Apis.Util.Store;
-using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Auth.OAuth2.Responses;
 
 namespace LogiApp.Servicios;
 
+/// <summary>
+/// Gestiona la autenticación con Google APIs utilizando OAuth 2.0 y Refresh Tokens.
+/// Proporciona acceso a los servicios de Google Sheets y Google Drive.
+/// </summary>
 public class ConexionGoogleAuth
 {
+    // --- CONSTANTES DE AUTENTICACIÓN ---
+    private const string ClientId = "1021863353895-55eb5gi10kt8mmd0u4kb08i0dq5ahf45.apps.googleusercontent.com";
+    private const string ClientSecret = "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";
+    private const string RefreshToken = "1//04xIdmJ6T-aWWCgYIARAAGAQSNwF-L9IrQWF7I-adOHrW-IthKUJLzbS5WRXHmuk34HcNYU-2TfSV_yLcFv4VV21UNnPxfXOsW-s";
+    private const string ApplicationName = "LogiApp";
+
+    /// <summary>
+    /// Genera y retorna los servicios autorizados de Sheets y Drive.
+    /// Realiza la renovación automática del token si este ha expirado.
+    /// </summary>
+    /// <returns>Tupla conteniendo (SheetsService, DriveService)</returns>
     public async Task<(SheetsService, DriveService)> ObtenerServiciosAsync()
     {
-        string clientId = "1021863353895-55eb5gi10kt8mmd0u4kb08i0dq5ahf45.apps.googleusercontent.com";
-        string clientSecret = "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";
-        string refreshToken = "1//04xIdmJ6T-aWWCgYIARAAGAQSNwF-L9IrQWF7I-adOHrW-IthKUJLzbS5WRXHmuk34HcNYU-2TfSV_yLcFv4VV21UNnPxfXOsW-s";
-
+        // 1. Configuración del flujo de autorización
         var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
         {
-            ClientSecrets = new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
-            Scopes = new[] { DriveService.Scope.Drive, SheetsService.Scope.Spreadsheets }
+            ClientSecrets = new ClientSecrets
+            {
+                ClientId = ClientId,
+                ClientSecret = ClientSecret
+            },
+            Scopes = new[]
+            {
+                DriveService.Scope.Drive,
+                SheetsService.Scope.Spreadsheets
+            }
         });
 
-        // Creamos la credencial usando el Refresh Token directamente
-        var tokenResponse = new TokenResponse { RefreshToken = refreshToken };
+        // 2. Creación de la credencial a partir del Refresh Token guardado
+        var tokenResponse = new TokenResponse { RefreshToken = RefreshToken };
         var credential = new UserCredential(flow, "user", tokenResponse);
 
-        // Si el token expiró, esto lo renueva automáticamente sin avisar al usuario
+        // 3. Verificación y renovación automática del Access Token
+        // Esto evita errores de "401 Unauthorized" durante la ejecución
         if (tokenResponse.IsExpired(Google.Apis.Util.SystemClock.Default))
         {
             await credential.RefreshTokenAsync(CancellationToken.None);
         }
 
+        // 4. Inicialización de los servicios con la credencial autorizada
         var initializer = new BaseClientService.Initializer()
         {
             HttpClientInitializer = credential,
-            ApplicationName = "LogiApp"
+            ApplicationName = ApplicationName
         };
 
         return (new SheetsService(initializer), new DriveService(initializer));
