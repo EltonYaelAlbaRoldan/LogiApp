@@ -32,6 +32,7 @@ public partial class PaginaRegistro : ContentPage
             BtnRegistrarDatos.IsEnabled = false;
             BtnSubirArchivos.IsEnabled = true;
             BtnVolver.IsEnabled = false;
+            BloquearFormulario(true);
             BtnVolver.Opacity = 0.5;
 
             DisplayAlert("Registro Pendiente", "Se detectó un registro sin finalizar. Por favor, sube los archivos correspondientes.", "Continuar");
@@ -101,6 +102,7 @@ public partial class PaginaRegistro : ContentPage
         {
             _estaProcesando = true;
             IsBusy = true;
+            BloquearFormulario(true);
             OnPropertyChanged(nameof(IsNotBusy));
 
             _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
@@ -180,5 +182,22 @@ public partial class PaginaRegistro : ContentPage
         }
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); BtnSubirArchivos.IsEnabled = true; }
         finally { _estaProcesando = false; IsBusy = false; }
+    }
+
+    private void BloquearFormulario(bool bloquear)
+    {
+        // Invertimos el valor: si bloquear es true, IsEnabled debe ser false
+        bool estado = !bloquear;
+
+        NombreEntry.IsEnabled = estado;
+        EdadEntry.IsEnabled = estado;
+        CorreoEntry.IsEnabled = estado;
+        Tel1Entry.IsEnabled = estado;
+        Tel2Entry.IsEnabled = estado;
+        ClaveInterbancariaEntry.IsEnabled = estado;
+        NumLicenciaEntry.IsEnabled = estado;
+        VigenciaLicenciaPicker.IsEnabled = estado;
+        VigenciaMedicoPicker.IsEnabled = estado;
+        ContrasenaOperadorEntry.IsEnabled = estado;
     }
 }
