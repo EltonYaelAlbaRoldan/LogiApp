@@ -45,8 +45,13 @@ public partial class PaginaMenu : ContentPage
 
         if (deseaSalir)
         {
-            // Reiniciamos la raíz de la aplicación al portal inicial
-            Application.Current.MainPage = new NavigationPage(new PaginaLogeo());
+            // Solo borramos los datos de la sesión y registros pendientes
+            Preferences.Default.Remove("UsuarioLogeado");
+            Preferences.Default.Remove("IdPendiente");
+            Preferences.Default.Remove("CarpetaPendiente");
+
+            // Regresamos a la página de logeo
+            Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
         }
     }
 

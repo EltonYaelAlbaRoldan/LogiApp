@@ -50,6 +50,8 @@ public partial class InicioSesion : ContentPage
 
             if (esValido)
             {
+                // GUARDAR SESIÓN: Guardamos el ID del usuario para el auto-login
+                Preferences.Set("UsuarioLogeado", UsuarioEntry.Text);
                 // Aquí podrías agregar otra verificación contra Sheets para ver si ya subió archivos
                 Application.Current.MainPage = new NavigationPage(new PaginaMenu());
             }
