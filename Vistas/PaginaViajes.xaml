@@ -25,14 +25,14 @@
             <VerticalStackLayout Spacing="18" Padding="25,20">
                 <Label Text="Detalles de la Ruta" FontSize="18" TextColor="#606060" FontAttributes="Bold" />
 
-                <Entry x:Name="OrigenEntry" Placeholder="Ciudad de Origen" Visual="Material" />
-                <Entry x:Name="DestinoEntry" Placeholder="Ciudad de Destino" Visual="Material" />
-                <Entry x:Name="ClienteEntry" Placeholder="Nombre del Cliente" Visual="Material" />
+                <Entry x:Name="OrigenEntry" Placeholder="Ciudad de Origen" />
+                <Entry x:Name="DestinoEntry" Placeholder="Ciudad de Destino" />
+                <Entry x:Name="ClienteEntry" Placeholder="Nombre del Cliente" />
 
-                <BoxView HeightRequest="1" Color="#E0E0E0" />
+                <BoxView HeightRequest="1" Color="#E0E0E0" Margin="0,10" />
 
                 <Label Text="Datos del Vehículo" FontSize="18" TextColor="#606060" FontAttributes="Bold" />
-                <Entry x:Name="UnidadEntry" Placeholder="Número Económico de Unidad" Visual="Material" />
+                <Entry x:Name="UnidadEntry" Placeholder="Número Económico de Unidad" />
                 <Entry x:Name="KmSalidaEntry" Placeholder="Kilometraje de Salida" Keyboard="Numeric" />
 
                 <Button x:Name="BtnGuardarViaje" 
