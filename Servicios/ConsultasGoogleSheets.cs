@@ -1,11 +1,10 @@
 ﻿using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using LogiApp.Modelos;
 
 namespace LogiApp.Servicios;
 
-/// <summary>
-/// Gestiona todas las operaciones de lectura y escritura en el Spreadsheet de Google.
-/// </summary>
+// Gestiona todas las operaciones de lectura y escritura en el Spreadsheet de Google.
 public class ConsultasGoogleSheets
 {
     private readonly SheetsService _service;
@@ -15,9 +14,9 @@ public class ConsultasGoogleSheets
 
     #region SECCIÓN 1: OPERACIONES DE OPERADORES
 
-    /// <summary>
-    /// Registra una nueva fila en la pestaña 'Operadores' (ID, Nombre, Edad, Correo, Tel1, Tel2, Clave, Licencia, VigenciaL, VigenciaM, Carpeta, Contraseña).
-    /// </summary>
+
+    // Registra una nueva fila en la pestaña 'Operadores' (ID, Nombre, Edad, Correo, Tel1, Tel2, Clave, Licencia, VigenciaL, VigenciaM, Carpeta, Contraseña).
+
     public async Task RegistrarOperadorAsync(params string[] datos)
     {
         try
@@ -37,9 +36,7 @@ public class ConsultasGoogleSheets
         }
     }
 
-    /// <summary>
     /// Genera un folio único incremental con formato profesional (Ej: OP-001).
-    /// </summary>
     public async Task<string> GenerarIdUnicoFormateadoAsync()
     {
         return await GenerarFolioSecuencialAsync("Operadores!A:A", "OP");
@@ -49,9 +46,7 @@ public class ConsultasGoogleSheets
 
     #region SECCIÓN 2: SEGURIDAD Y ACCESO
 
-    /// <summary>
     /// Valida las credenciales comparándolas con la pestaña 'Test'.
-    /// </summary>
     public async Task<bool> ValidarUsuarioAsync(string usuario, string contrasena)
     {
         try
@@ -89,9 +84,7 @@ public class ConsultasGoogleSheets
 
     #region SECCIÓN 3: MANTENIMIENTO
 
-    /// <summary>
-    /// Genera un folio incremental para la pestaña de Mantenimiento (Ej: MT-001).
-    /// </summary>
+    //Genera un folio incremental para la pestaña de Mantenimiento (Ej: MT-001).
     public async Task<string> GenerarFolioMantenimientoAsync()
     {
         return await GenerarFolioSecuencialAsync("Mantenimiento!A:A", "MT");
@@ -139,4 +132,73 @@ public class ConsultasGoogleSheets
     }
 
     #endregion
+
+    //Información del operador
+    public async Task<Operador> ObtenerDatosOperadorAsync(string idOperador)
+    {
+        var range = "Operadores!A:L"; // Ajusta según tus columnas
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, range).ExecuteAsync();
+        var values = response.Values;
+
+        if (values != null)
+        {
+            foreach (var row in values)
+            {
+                if (row[0].ToString() == idOperador)
+                {
+                    return new Operador
+                    {
+                        Id = row[0].ToString(),
+                        Nombre = row[1].ToString(),
+                        VigenciaLicencia = DateTime.Parse(row[8].ToString()),
+                        VigenciaMedico = DateTime.Parse(row[9].ToString()),
+                        LinkCarpeta = row[10].ToString()
+                    };
+                }
+            }
+        }
+        return null;
+    }
+    // Método para actualizar la contraseña en el Excel
+    public async Task<bool> ActualizarPasswordAsync(string idOperador, string nuevaPass)
+    {
+        try
+        {
+            int fila = await ObtenerNumeroFilaPorIdAsync(idOperador);
+            if (fila == -1) return false;
+
+            // IMPORTANTE: Usamos "Operadores" que es el nombre real de tu pestaña
+            string rango = $"Operadores!L{fila}";
+
+            var body = new ValueRange { Values = new List<IList<object>> { new List<object> { nuevaPass } } };
+
+            // CORRECCIÓN CS0117: UpdateRequest
+            var updateRequest = _service.Spreadsheets.Values.Update(body, _spreadsheetId, rango);
+            updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+
+            await updateRequest.ExecuteAsync();
+            return true;
+        }
+        catch { return false; }
+    }
+
+    // Método auxiliar para encontrar el número de fila real en Google Sheets
+    private async Task<int> ObtenerNumeroFilaPorIdAsync(string idOperador)
+    {
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:A").ExecuteAsync();
+        var values = response.Values;
+
+        if (values != null)
+        {
+            for (int i = 0; i < values.Count; i++)
+            {
+                if (values[i].Count > 0 && values[i][0].ToString() == idOperador)
+                {
+                    // Sumamos 1 porque las filas en Sheets empiezan en 1, no en 0
+                    return i + 1;
+                }
+            }
+        }
+        return -1;
+    }
 }

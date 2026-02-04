@@ -16,9 +16,13 @@ public partial class PaginaMenu : ContentPage
 
     // --- GESTIÓN DE MÓDULOS (NAVEGACIÓN) ---
 
-    /// <summary>
-    /// Dirige al usuario al módulo de Gestión de Viajes.
-    /// </summary>
+    private async void OnPerfilClicked(object sender, EventArgs e)
+    {
+        // Navegación a la página de Perfil (Asegúrate de que el nombre coincida)
+        await Navigation.PushAsync(new Vistas.PaginaPerfil());
+    }
+
+    // Dirige al usuario al módulo de Gestión de Viajes.
     private async void OnViajesClicked(object sender, EventArgs e)
     {
         // Cambia a la nueva página de Viajes
