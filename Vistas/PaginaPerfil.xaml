@@ -4,60 +4,115 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Mi Perfil"
-    BackgroundColor="White">
+    BackgroundColor="White"
+    NavigationPage.HasNavigationBar="False">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="25" Spacing="15">
+    <Grid RowDefinitions="Auto,*">
+
+        <Grid
+            Grid.Row="0"
+            Padding="10,15"
+            BackgroundColor="White"
+            ColumnDefinitions="50,*">
+            <Border
+                Grid.Column="0"
+                Margin="5,0,0,0"
+                BackgroundColor="White"
+                HeightRequest="40"
+                HorizontalOptions="Start"
+                Stroke="#E0E0E0"
+                StrokeThickness="1"
+                WidthRequest="40">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnVolverClicked" />
+                </Border.GestureRecognizers>
+                <Label
+                    Margin="0,0,4,8"
+                    FontAttributes="Bold"
+                    FontSize="26"
+                    HorizontalOptions="Center"
+                    Text="‹"
+                    TextColor="#0A0A33"
+                    VerticalOptions="Center" />
+            </Border>
+
             <Label
-                x:Name="LblNombre"
+                Grid.Column="1"
+                Margin="5,0,0,0"
+                CharacterSpacing="0.5"
                 FontAttributes="Bold"
-                FontSize="22"
-                HorizontalOptions="Center" />
-            <Label
-                x:Name="LblId"
-                Margin="0,0,0,10"
-                FontSize="14"
-                HorizontalOptions="Center"
-                TextColor="Gray" />
+                FontSize="16"
+                Text="MI PERFIL"
+                TextColor="#0A0A33"
+                VerticalOptions="Center" />
+        </Grid>
 
-            <Frame
-                x:Name="FrameLicencia"
-                CornerRadius="10"
-                HasShadow="False">
-                <HorizontalStackLayout Spacing="10">
-                    <Label FontAttributes="Bold" Text="📅 Licencia:" />
-                    <Label x:Name="LblVigenciaLicencia" Text="--/--/----" />
-                </HorizontalStackLayout>
-            </Frame>
+        <ScrollView Grid.Row="1">
+            
+            <VerticalStackLayout Padding="25" Spacing="15">
+                <Label
+                    x:Name="LblNombre"
+                    FontAttributes="Bold"
+                    FontSize="22"
+                    HorizontalOptions="Center"
+                    Text="Cargando nombre..." />
+                <Label
+                    x:Name="LblId"
+                    Margin="0,0,0,10"
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    Text="ID: ---"
+                    TextColor="Gray" />
 
-            <Frame
-                x:Name="FrameMedico"
-                CornerRadius="10"
-                HasShadow="False">
-                <HorizontalStackLayout Spacing="10">
-                    <Label FontAttributes="Bold" Text="🏥 Médico:" />
-                    <Label x:Name="LblVigenciaMedico" Text="--/--/----" />
-                </HorizontalStackLayout>
-            </Frame>
+                <Frame
+                    x:Name="FrameLicencia"
+                    BorderColor="#E0E0E0"
+                    CornerRadius="10"
+                    HasShadow="False">
+                    <HorizontalStackLayout Spacing="10">
+                        <Label FontAttributes="Bold" Text="📅 Licencia:" />
+                        <Label x:Name="LblVigenciaLicencia" Text="--/--/----" />
+                    </HorizontalStackLayout>
+                </Frame>
 
-            <BoxView
-                Margin="0,10"
-                HeightRequest="1"
-                Color="#EEE" />
+                <Frame
+                    x:Name="FrameMedico"
+                    BorderColor="#E0E0E0"
+                    CornerRadius="10"
+                    HasShadow="False">
+                    <HorizontalStackLayout Spacing="10">
+                        <Label FontAttributes="Bold" Text="🏥 Médico:" />
+                        <Label x:Name="LblVigenciaMedico" Text="--/--/----" />
+                    </HorizontalStackLayout>
+                </Frame>
 
-            <Label
-                FontAttributes="Bold"
-                FontSize="18"
-                Text="Seguridad" />
-            <Entry
-                x:Name="NuevaPassEntry"
-                IsPassword="True"
-                Placeholder="Nueva Contraseña" />
-            <Button
-                BackgroundColor="#2196F3"
-                Clicked="OnCambiarPassClicked"
-                Text="ACTUALIZAR CONTRASEÑA"
-                TextColor="White" />
-        </VerticalStackLayout>
-    </ScrollView>
+                <BoxView
+                    Margin="0,10"
+                    HeightRequest="1"
+                    Color="#EEE" />
+
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="Seguridad" />
+
+                <Entry
+                    x:Name="NuevaPassEntry"
+                    IsPassword="True"
+                    Placeholder="Nueva Contraseña" />
+
+                <Button
+                    BackgroundColor="#2196F3"
+                    Clicked="OnCambiarPassClicked"
+                    CornerRadius="10"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    Text="ACTUALIZAR CONTRASEÑA"
+                    TextColor="White" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

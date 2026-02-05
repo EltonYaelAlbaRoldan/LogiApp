@@ -201,4 +201,39 @@ public class ConsultasGoogleSheets
         }
         return -1;
     }
+
+
+    public async Task<List<string>> ObtenerListaUnidadesAsync()
+    {
+        // Leemos las columnas A (Nombre) y B (Placas)
+        string rango = "Unidades!A2:B100";
+
+        var request = _service.Spreadsheets.Values.Get(_spreadsheetId, rango);
+        var response = await request.ExecuteAsync();
+
+        var listaFormateada = new List<string>();
+
+        if (response.Values != null && response.Values.Count > 0)
+        {
+            foreach (var fila in response.Values)
+            {
+                // Verificamos que existan al menos las dos columnas
+                if (fila.Count >= 2)
+                {
+                    string nombre = fila[0]?.ToString() ?? "S/N";
+                    string placas = fila[1]?.ToString() ?? "S/P";
+
+                    // Concatenamos para que el usuario vea ambos datos
+                    listaFormateada.Add($"{nombre} - {placas}");
+                }
+                else if (fila.Count == 1)
+                {
+                    listaFormateada.Add(fila[0].ToString());
+                }
+            }
+        }
+        return listaFormateada;
+    }
+
+
 }

@@ -64,7 +64,7 @@
 
             <!--  Botón de Mantenimiento  -->
             <Button
-                BackgroundColor="#FF9800"
+                BackgroundColor="#2196F3"
                 Clicked="OnMantenimientoClicked"
                 CornerRadius="15"
                 FontSize="18"

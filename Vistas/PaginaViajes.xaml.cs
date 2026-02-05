@@ -10,7 +10,7 @@ public partial class PaginaViajes : ContentPage
     private async void OnVolverClicked(object sender, EventArgs e)
     {
         // Regresa a la página anterior de forma segura
-        await Navigation.PopAsync();
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
     }
 
     private async void OnGuardarViajeClicked(object sender, EventArgs e)

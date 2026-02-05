@@ -59,20 +59,45 @@
                     Text="Información del Servicio"
                     TextColor="Gray" />
 
+                <Label
+                    Margin="0,5,0,0"
+                    FontSize="14"
+                    Text="Operador Responsable"
+                    TextColor="Gray" />
+                <Frame
+                    Padding="15,10"
+                    BackgroundColor="#F0F0F0"
+                    BorderColor="#E0E0E0"
+                    CornerRadius="10">
+                    <Label
+                        x:Name="OperadorLabel"
+                        FontAttributes="Bold"
+                        Text="Cargando operador..."
+                        TextColor="#0A0A33"
+                        VerticalOptions="Center" />
+                </Frame>
+
                 <DatePicker
                     x:Name="FechaMantenimientoPicker"
                     Format="dd/MM/yyyy"
                     MinimumDate="01/01/2024" />
 
-                <Entry
-                    x:Name="OperadorEntry"
-                    Placeholder="Nombre del Operador"
-                    Visual="Material" />
+                <Grid>
+                    <Picker
+                        x:Name="UnidadPicker"
+                        Title="Seleccione Unidad"
+                        HorizontalOptions="FillAndExpand"
+                        TitleColor="Gray"
+                        Visual="Material" />
 
-                <Entry
-                    x:Name="PlacasEntry"
-                    Placeholder="Placas (Caja y/o Tráiler)"
-                    Visual="Material" />
+                    <ActivityIndicator
+                        x:Name="CargandoUnidades"
+                        Margin="0,0,10,0"
+                        HeightRequest="20"
+                        HorizontalOptions="End"
+                        IsRunning="False"
+                        Color="#2196F3" />
+                </Grid>
 
                 <BoxView HeightRequest="1" Color="#E0E0E0" />
 

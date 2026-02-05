@@ -1,135 +1,162 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LogiApp.Vistas.InicioSesion"
-             Title="LogiApp - Acceso"
-             NavigationPage.HasNavigationBar="False">
+<ContentPage
+    x:Class="LogiApp.Vistas.InicioSesion"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="LogiApp - Acceso"
+    NavigationPage.HasNavigationBar="False">
 
-    <!-- Diseño de la página de inicio de sesión -->
+    <!--  Diseño de la página de inicio de sesión  -->
     <Grid RowDefinitions="Auto,*">
-        
-        <!-- Encabezado con botón de volver y título -->
-        <Grid Grid.Row="0"
-              Padding="20,15"
-              BackgroundColor="White"
-              ColumnDefinitions="60,*"
-              VerticalOptions="Start">
-            
-            <!-- Botón de volver -->
-            <Border Grid.Column="0"
-                    BackgroundColor="White"
-                    HeightRequest="40"
-                    HorizontalOptions="Start"
-                    Stroke="#E0E0E0"
-                    StrokeThickness="1"
-                    WidthRequest="40">
+
+        <!--  Encabezado con botón de volver y título  -->
+        <Grid
+            Grid.Row="0"
+            Padding="20,15"
+            BackgroundColor="White"
+            ColumnDefinitions="60,*"
+            VerticalOptions="Start">
+
+            <!--  Botón de volver  -->
+            <Border
+                Grid.Column="0"
+                BackgroundColor="White"
+                HeightRequest="40"
+                HorizontalOptions="Start"
+                Stroke="#E0E0E0"
+                StrokeThickness="1"
+                WidthRequest="40">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="20" />
                 </Border.StrokeShape>
                 <Border.Shadow>
-                    <Shadow Brush="Black"
-                            Opacity="0.1"
-                            Radius="3"
-                            Offset="0,2" />
+                    <Shadow
+                        Brush="Black"
+                        Opacity="0.1"
+                        Radius="3"
+                        Offset="0,2" />
                 </Border.Shadow>
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnVolverClicked" />
                 </Border.GestureRecognizers>
 
-                <!-- Ícono de flecha hacia atrás -->
-                <Label FontAttributes="Bold"
-                       FontSize="26"
-                       HorizontalOptions="Center"
-                       Text="&#x2039;"
-                       TextColor="#0A0A33"
-                       VerticalOptions="Center"
-                       Margin="0,0,4,8" />
+                <!--  Ícono de flecha hacia atrás  -->
+                <Label
+                    Margin="0,0,4,8"
+                    FontAttributes="Bold"
+                    FontSize="26"
+                    HorizontalOptions="Center"
+                    Text="&#x2039;"
+                    TextColor="#0A0A33"
+                    VerticalOptions="Center" />
             </Border>
 
-            <!-- Título de la página -->
-            <Label Grid.Column="1"
-                   CharacterSpacing="0.5"
-                   FontAttributes="Bold"
-                   FontSize="16"
-                   HorizontalOptions="Start"
-                   Text="Acceso"
-                   TextColor="#0A0A33"
-                   VerticalOptions="Center" />
+            <!--  Título de la página  -->
+            <Label
+                Grid.Column="1"
+                CharacterSpacing="0.5"
+                FontAttributes="Bold"
+                FontSize="16"
+                HorizontalOptions="Start"
+                Text="Acceso"
+                TextColor="#0A0A33"
+                VerticalOptions="Center" />
         </Grid>
 
-        <!-- Contenido principal de la página -->
+        <!--  Contenido principal de la página  -->
         <ScrollView Grid.Row="1">
-            <!-- Diseño del formulario de inicio de sesión -->
-            <VerticalStackLayout Padding="30"
-                                 Spacing="20"
-                                 VerticalOptions="Center">
-                
-                <!-- Imagen de inicio de sesión -->
-                <Image HeightRequest="120"
-                       HorizontalOptions="Center"
-                       Source="login.png"
-                       Margin="0,0,0,15" />
+            <!--  Diseño del formulario de inicio de sesión  -->
+            <VerticalStackLayout
+                Padding="30"
+                Spacing="20"
+                VerticalOptions="Center">
 
-                <!-- Título -->
-                <Label FontAttributes="Bold"
-                       FontSize="28"
-                       HorizontalOptions="Center"
-                       Text="Iniciar Sesión" />
+                <!--  Imagen de inicio de sesión  -->
+                <Image
+                    Margin="0,0,0,15"
+                    HeightRequest="120"
+                    HorizontalOptions="Center"
+                    Source="login.png" />
 
-                <!-- Subtítulo -->
-                <Label FontSize="14"
-                       HorizontalOptions="Center"
-                       Text="Ingresa tus credenciales para continuar"
-                       TextColor="Gray"
-                       Margin="0,0,0,10" />
+                <!--  Título  -->
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="28"
+                    HorizontalOptions="Center"
+                    Text="Iniciar Sesión" />
 
-                <!-- Campo de entrada para el usuario -->
-                <Frame Padding="5,0"
-                       BorderColor="#E0E0E0"
-                       CornerRadius="10">
-                    <Entry x:Name="UsuarioEntry"
-                           Keyboard="Text"
-                           Placeholder="Usuario" />
+                <!--  Subtítulo  -->
+                <Label
+                    Margin="0,0,0,10"
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    Text="Ingresa tus credenciales para continuar"
+                    TextColor="Gray" />
+
+                <!--  Campo de entrada para el usuario  -->
+                <Frame
+                    Padding="5,0"
+                    BorderColor="#E0E0E0"
+                    CornerRadius="10">
+                    <Entry
+                        x:Name="UsuarioEntry"
+                        Keyboard="Text"
+                        Placeholder="Usuario" />
                 </Frame>
 
-                <!-- Campo de entrada para la contraseña con botón para mostrar/ocultar -->
-                <Frame Padding="10,0"
-                       BorderColor="#E0E0E0"
-                       CornerRadius="10">
-                    <Grid ColumnDefinitions="*, Auto">
-                        <Entry x:Name="ContrasenaEntry"
-                               Grid.Column="0"
-                               IsPassword="True"
-                               Placeholder="Contraseña"
-                               VerticalOptions="Center" />
+                <!--  Campo de entrada para la contraseña con botón para mostrar/ocultar  -->
+                <Frame
+                    Padding="10,0"
+                    BorderColor="#E0E0E0"
+                    CornerRadius="10"
+                    HasShadow="False"
+                    HeightRequest="50">
+                    <Grid ColumnDefinitions="*, 40">
 
-                        <ImageButton x:Name="TogglePasswordButton"
-                                     Grid.Column="1"
-                                     BackgroundColor="Transparent"
-                                     Clicked="OnTogglePasswordClicked"
-                                     HeightRequest="25"
-                                     Source="ver.png"
-                                     VerticalOptions="Center"
-                                     WidthRequest="25"
-                                     Margin="5,0" />
+                        <Entry
+                            x:Name="ContrasenaEntry"
+                            Grid.Column="0"
+                            IsPassword="True"
+                            Placeholder="Contraseña"
+                            VerticalOptions="Center" />
+
+                        <ContentView
+                            Grid.Column="1"
+                            Padding="8"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                            <ContentView.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnTogglePasswordClicked" />
+                            </ContentView.GestureRecognizers>
+
+                            <Image
+                                x:Name="TogglePasswordButton"
+                                Aspect="AspectFit"
+                                HeightRequest="28"
+                                Opacity="0.6"
+                                Source="ver.png"
+                                WidthRequest="28" />
+                        </ContentView>
                     </Grid>
                 </Frame>
 
-                <!-- Botón de inicio de sesión -->
-                <Button Margin="0,10,0,0"
-                        BackgroundColor="#2196F3"
-                        Clicked="OnLoginClicked"
-                        CornerRadius="25"
-                        FontAttributes="Bold"
-                        HeightRequest="50"
-                        Text="INICIAR SESIÓN"
-                        TextColor="White" />
+                <!--  Botón de inicio de sesión  -->
+                <Button
+                    Margin="0,10,0,0"
+                    BackgroundColor="#2196F3"
+                    Clicked="OnLoginClicked"
+                    CornerRadius="25"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    Text="INICIAR SESIÓN"
+                    TextColor="White" />
 
-                <!-- Indicador de carga -->
-                <ActivityIndicator x:Name="CargandoIndicator"
-                                   IsRunning="False"
-                                   IsVisible="False"
-                                   Color="#2196F3" />
+                <!--  Indicador de carga  -->
+                <ActivityIndicator
+                    x:Name="CargandoIndicator"
+                    IsRunning="False"
+                    IsVisible="False"
+                    Color="#2196F3" />
 
             </VerticalStackLayout>
         </ScrollView>

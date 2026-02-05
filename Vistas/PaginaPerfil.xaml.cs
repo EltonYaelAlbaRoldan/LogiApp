@@ -54,6 +54,11 @@ public partial class PaginaPerfil : ContentPage
         else if (dias <= 30) frame.BackgroundColor = Color.FromArgb("#FFF9C4"); // Amarillo
         else frame.BackgroundColor = Color.FromArgb("#C8E6C9"); // Verde
     }
+    private async void OnVolverClicked(object sender, EventArgs e)
+    {
+        // Regresa a la página anterior de forma segura
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
+    }
 
     private async void OnCambiarPassClicked(object sender, EventArgs e)
     {

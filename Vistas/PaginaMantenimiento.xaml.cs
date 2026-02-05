@@ -11,34 +11,87 @@ public partial class PaginaMantenimiento : ContentPage
     // Constructor de la página
     public PaginaMantenimiento()
 	{
-		InitializeComponent();
-        InicializarConexion();
+        InitializeComponent();
+        InicializarDatos();
     }
-    private async void InicializarConexion()
+    /// <summary>
+    /// Configura la sesión del operador y conecta con Google Sheets.
+    /// </summary>
+    private async void InicializarDatos()
     {
-        // Configura la conexión con Google Sheets al iniciar la página
         try
         {
+            // 1. Obtener automáticamente el nombre del operador logueado
+            // Se asume que se guardó en el Login como Preferences.Set("UsuarioLogeado", ...)
+            string operadorActual = Preferences.Get("UsuarioLogeado", "Operador no detectado");
+            OperadorLabel.Text = operadorActual;
+
+            // 2. Inicializar servicios de Google
             var (sService, _) = await _authService.ObtenerServiciosAsync();
-            _sheets = new ConsultasGoogleSheets(sService); 
+            _sheets = new ConsultasGoogleSheets(sService);
+
+            // 3. Cargar la lista de unidades desde la pestaña "Unidades"
+            await CargarUnidades();
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error de Conexión", ex.Message, "OK");
+            await DisplayAlert("Error de Inicio", "No se pudo preparar el formulario: " + ex.Message, "OK");
         }
     }
-    private async void OnVolverClicked(object sender, EventArgs e)
+
+    /// <summary>
+    /// Carga las unidades de la BD y las muestra como "Nombre - Placas"
+    /// </summary>
+    private async Task CargarUnidades()
     {
-        // Regresa a la pagina de menú principal
-        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
+        CargandoUnidades.IsVisible = true;
+        CargandoUnidades.IsRunning = true;
+
+        try
+        {
+            // Llama al método que lee las columnas A y B de la pestaña Unidades
+            var listaUnidades = await _sheets.ObtenerListaUnidadesAsync();
+
+            if (listaUnidades != null && listaUnidades.Count > 0)
+            {
+                UnidadPicker.ItemsSource = listaUnidades;
+            }
+            else
+            {
+                await DisplayAlert("Base de Datos", "No hay unidades registradas en Sheets.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudieron cargar las unidades: " + ex.Message, "OK");
+        }
+        finally
+        {
+            CargandoUnidades.IsVisible = false;
+            CargandoUnidades.IsRunning = false;
+        }
     }
 
+    private async void OnVolverClicked(object sender, EventArgs e)
+    {
+        // Regresa al menú principal (ajustar según tu flujo de navegación)
+        await Navigation.PopAsync();
+    }
+
+    /// <summary>
+    /// Procesa el guardado del reporte con los datos manuales y automáticos.
+    /// </summary>
     private async void OnGuardarMantenimientoClicked(object sender, EventArgs e)
     {
-        // Validación de controles del XAML (Todos obligatorios excepto evidencia)
-        bool camposIncompletos =
-            string.IsNullOrWhiteSpace(OperadorEntry.Text) ||
-            string.IsNullOrWhiteSpace(PlacasEntry.Text) ||
+        // 1. Validaciones de selección
+        if (UnidadPicker.SelectedIndex == -1)
+        {
+            await DisplayAlert("Atención", "Selecciona una unidad de la lista.", "OK");
+            return;
+        }
+
+        // 2. Validación de campos de texto
+        bool faltanDatos =
             string.IsNullOrWhiteSpace(LugarEntry.Text) ||
             string.IsNullOrWhiteSpace(EstablecimientoEntry.Text) ||
             string.IsNullOrWhiteSpace(TipoMantenimientoEntry.Text) ||
@@ -46,49 +99,53 @@ public partial class PaginaMantenimiento : ContentPage
             string.IsNullOrWhiteSpace(KilometrajeEntry.Text) ||
             string.IsNullOrWhiteSpace(CostoEntry.Text);
 
-        // Verificar que los campos obligatorios estén completos
-        if (camposIncompletos)
+        if (faltanDatos)
         {
-            await DisplayAlert("Atención", "Todos los campos son obligatorios para generar el reporte de analítica.", "OK");
+            await DisplayAlert("Campos Vacíos", "Por favor completa todos los detalles del trabajo.", "OK");
             return;
         }
 
         try
         {
-            IsBusy = true;
-            await DisplayAlert("Procesando", "Sincronizando con Analítica...", "OK");
+            BtnGuardarMantenimiento.IsEnabled = false;
+            BtnGuardarMantenimiento.Text = "ENVIANDO REPORTE...";
 
-            // Generar folio y estatus KPI
+            // Generar datos automáticos y de negocio
             string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync();
             string estatusKpi = (CheckAceite.IsChecked && CheckFrenos.IsChecked) ? "OPERATIVO" : "CRÍTICO";
 
-            // Enviar los 14 datos configurados en la tabla de Sheets
+            // Obtener el valor seleccionado del Picker (Nombre - Placas)
+            string unidadSeleccionada = UnidadPicker.SelectedItem.ToString();
+
+            // Enviar a Google Sheets
             await _sheets.RegistrarMantenimientoAsync(
                 nuevoFolio,                                   // A: Folio
-                DateTime.Now.ToString("g"),                   // B: Registro
-                FechaMantenimientoPicker.Date.ToString("d"),  // C: Fecha Servicio
-                OperadorEntry.Text,                           // D: Operador
-                PlacasEntry.Text,                             // E: Placas
-                LugarEntry.Text,                              // F: Lugar
+                DateTime.Now.ToString("g"),                   // B: Registro automático
+                FechaMantenimientoPicker.Date.ToString("d"),  // C: Fecha del taller
+                OperadorLabel.Text,                           // D: Operador (Automático)
+                unidadSeleccionada,                           // E: Unidad y Placa (Picker)
+                LugarEntry.Text,                              // F: Ciudad/Estado
                 EstablecimientoEntry.Text,                    // G: Taller
-                TipoMantenimientoEntry.Text,                  // H: Tipo
-                PiezasCambiadasEntry.Text,                    // I: Piezas
+                TipoMantenimientoEntry.Text,                  // H: Descripción
+                PiezasCambiadasEntry.Text,                    // I: Refacciones
                 KilometrajeEntry.Text,                        // J: KM
-                CostoEntry.Text,                              // K: Costo
-                CheckAceite.IsChecked ? "OK" : "FALLA",       // L: Aceite
-                CheckFrenos.IsChecked ? "OK" : "FALLA",       // M: Frenos
-                estatusKpi                                    // N: KPI
+                CostoEntry.Text,                              // K: Costo ($)
+                CheckAceite.IsChecked ? "OK" : "REVISAR",     // L: Aceite
+                CheckFrenos.IsChecked ? "OK" : "REVISAR",     // M: Frenos
+                estatusKpi                                    // N: Resultado KPI
             );
 
-            // Confirmación al usuario
-            await DisplayAlert("Éxito", $"Reporte {nuevoFolio} guardado correctamente.", "OK");
+            await DisplayAlert("Éxito", $"Reporte {nuevoFolio} guardado en la nube.", "OK");
             await Navigation.PopAsync();
         }
-        // Manejo de errores durante la sincronización
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudo sincronizar: " + ex.Message, "Cerrar");
+            await DisplayAlert("Error de Sincronización", "No se pudo guardar: " + ex.Message, "Cerrar");
         }
-        finally { IsBusy = false; }
+        finally
+        {
+            BtnGuardarMantenimiento.IsEnabled = true;
+            BtnGuardarMantenimiento.Text = "GUARDAR REPORTE COMPLETO";
+        }
     }
 }
