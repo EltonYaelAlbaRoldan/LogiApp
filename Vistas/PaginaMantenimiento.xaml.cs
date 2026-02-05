@@ -75,7 +75,7 @@ public partial class PaginaMantenimiento : ContentPage
     private async void OnVolverClicked(object sender, EventArgs e)
     {
         // Regresa al menú principal (ajustar según tu flujo de navegación)
-        await Navigation.PopAsync();
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
     }
 
     /// <summary>
