@@ -16,7 +16,7 @@ public class ConexionGoogleAuth
     // --- CONSTANTES DE AUTENTICACIÓN ---
     private const string ClientId = "1021863353895-55eb5gi10kt8mmd0u4kb08i0dq5ahf45.apps.googleusercontent.com";
     private const string ClientSecret = "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";
-    private const string RefreshToken = "1//04xIdmJ6T-aWWCgYIARAAGAQSNwF-L9IrQWF7I-adOHrW-IthKUJLzbS5WRXHmuk34HcNYU-2TfSV_yLcFv4VV21UNnPxfXOsW-s";
+    private const string RefreshToken = "1//04EHNDjplHNepCgYIARAAGAQSNwF-L9IrNlnTSVCnFUOmZ6KsiDStc9lpanE-ct1a5yYWCri_WAHq9y5NmwmrlthXEoUfRC0lScc";
     private const string ApplicationName = "LogiApp";
 
     /// <summary>
