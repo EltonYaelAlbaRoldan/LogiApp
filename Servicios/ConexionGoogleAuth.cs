@@ -20,7 +20,7 @@ public class ConexionGoogleAuth
     private const string ApplicationName = "LogiApp";
 
     /// <summary>
-    /// Genera y retorna los servicios autorizados de Sheets y Drive.
+    /// Genera y retorna los servicios autorizados de Sheets y Drive
     /// Realiza la renovación automática del token si este ha expirado.
     /// </summary>
     /// <returns>Tupla conteniendo (SheetsService, DriveService)</returns>
