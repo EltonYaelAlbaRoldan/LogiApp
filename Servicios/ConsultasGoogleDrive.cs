@@ -121,4 +121,61 @@ public class ConsultasGoogleDrive
             throw new Exception($"Error en DriveService: {ex.Message}");
         }
     }
+    /// <summary>
+    /// Busca una carpeta por nombre. Si no existe, la crea.
+    /// </summary>
+    private async Task<string> ObtenerOCrearCarpetaAsync(string nombreCarpeta, string idPadre)
+    {
+        // Consulta para buscar la carpeta por nombre dentro del padre específico
+        var request = _service.Files.List();
+        request.Q = $"name = '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
+        request.Fields = "files(id)";
+
+        var resultado = await request.ExecuteAsync();
+        var carpetaExistente = resultado.Files.FirstOrDefault();
+
+        // Si ya existe, retornamos su ID para no duplicar
+        if (carpetaExistente != null) return carpetaExistente.Id;
+
+        // Si no existe, usamos tu método auxiliar para crearla
+        return await CrearSubcarpetaAsync(nombreCarpeta, idPadre);
+    }
+
+    /// <summary>
+    /// Método genérico para subir imágenes JPG.
+    /// </summary>
+    private async Task<string> SubirArchivoGenericoAsync(string rutaLocal, string nombreDeseado, string folderId)
+    {
+        var metadata = new DriveData.File()
+        {
+            Name = nombreDeseado,
+            Parents = new List<string> { folderId }
+        };
+
+        using (var stream = new FileStream(rutaLocal, FileMode.Open))
+        {
+            // Usamos image/jpeg para las evidencias fotográficas
+            var request = _service.Files.Create(metadata, stream, "image/jpeg");
+            request.Fields = "id";
+
+            var progreso = await request.UploadAsync();
+
+            if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
+                throw new Exception(progreso.Exception?.Message);
+
+            return request.ResponseBody?.Id ?? string.Empty;
+        }
+    }
+    public async Task<string> SubirEvidenciaMantenimientoAsync(string rutaLocal, string placas, string folio)
+    {
+        // Busca o crea carpeta de la unidad
+        string idCarpetaUnidad = await ObtenerOCrearCarpetaAsync(placas, _rootFolderId);
+
+        // Busca o crea carpeta del año actual
+        string idCarpetaAño = await ObtenerOCrearCarpetaAsync(DateTime.Now.Year.ToString(), idCarpetaUnidad);
+
+        string nombreArchivo = $"{folio}_{DateTime.Now:yyyyMMdd}_{placas}.jpg"; //
+
+        return await SubirArchivoGenericoAsync(rutaLocal, nombreArchivo, idCarpetaAño);
+    }
 }

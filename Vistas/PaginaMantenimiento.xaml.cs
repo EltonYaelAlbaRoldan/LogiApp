@@ -4,9 +4,10 @@ namespace LogiApp.Vistas;
 
 public partial class PaginaMantenimiento : ContentPage
 {
-    // Servicio para interactuar con Google Sheets
     private ConsultasGoogleSheets _sheets;
+    private ConsultasGoogleDrive _driveService; 
     private readonly ConexionGoogleAuth _authService = new();
+    private string _rutaFotoLocal = string.Empty;
 
     // Constructor de la página
     public PaginaMantenimiento()
@@ -21,22 +22,16 @@ public partial class PaginaMantenimiento : ContentPage
     {
         try
         {
-            // 1. Obtener automáticamente el nombre del operador logueado
-            // Se asume que se guardó en el Login como Preferences.Set("UsuarioLogeado", ...)
-            string operadorActual = Preferences.Get("UsuarioLogeado", "Operador no detectado");
-            OperadorLabel.Text = operadorActual;
+            OperadorLabel.Text = Preferences.Get("UsuarioLogeado", "Operador no detectado");
 
-            // 2. Inicializar servicios de Google
-            var (sService, _) = await _authService.ObtenerServiciosAsync();
+            // Capturamos Sheets y Drive del servicio de autenticación
+            var (sService, dService) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
+            _driveService = new ConsultasGoogleDrive(dService);
 
-            // 3. Cargar la lista de unidades desde la pestaña "Unidades"
             await CargarUnidades();
         }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error de Inicio", "No se pudo preparar el formulario: " + ex.Message, "OK");
-        }
+        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
     /// <summary>
@@ -108,43 +103,53 @@ public partial class PaginaMantenimiento : ContentPage
         try
         {
             BtnGuardarMantenimiento.IsEnabled = false;
-            BtnGuardarMantenimiento.Text = "ENVIANDO REPORTE...";
+            BtnGuardarMantenimiento.Text = "SUBIENDO... ESPERE";
 
-            // Generar datos automáticos y de negocio
-            string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync();
-            string estatusKpi = (CheckAceite.IsChecked && CheckFrenos.IsChecked) ? "OPERATIVO" : "CRÍTICO";
+            string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync(); //
+            string unidadTexto = UnidadPicker.SelectedItem.ToString();
+            string placa = unidadTexto.Contains("-") ? unidadTexto.Split('-').Last().Trim() : unidadTexto; //
 
-            // Obtener el valor seleccionado del Picker (Nombre - Placas)
-            string unidadSeleccionada = UnidadPicker.SelectedItem.ToString();
+            // 1. Subir a Drive si hay imagen
+            if (!string.IsNullOrEmpty(_rutaFotoLocal))
+            {
+                await _driveService.SubirEvidenciaMantenimientoAsync(_rutaFotoLocal, placa, nuevoFolio);
+            }
 
-            // Enviar a Google Sheets
+            // 2. Registrar en Sheets (13 columnas)
             await _sheets.RegistrarMantenimientoAsync(
-                nuevoFolio,                                   // A
-                DateTime.Now.ToString("g"),                   // B
-                FechaMantenimientoPicker.Date.ToString("d"),  // C
-                OperadorLabel.Text,                           // D
-                unidadSeleccionada,                           // E
-                LugarEntry.Text,                              // F
-                EstablecimientoEntry.Text,                    // G
-                TipoMantenimientoEntry.Text,                  // H
-                PiezasCambiadasEntry.Text,                    // I
-                KilometrajeEntry.Text,                        // J
-                CostoEntry.Text,                              // K
-                CheckAceite.IsChecked ? "OK" : "REVISAR",     // L
-                CheckFrenos.IsChecked ? "OK" : "REVISAR"      // M
+                nuevoFolio, DateTime.Now.ToString("g"), FechaMantenimientoPicker.Date.ToString("d"),
+                OperadorLabel.Text, unidadTexto, LugarEntry.Text, EstablecimientoEntry.Text,
+                TipoMantenimientoEntry.Text, PiezasCambiadasEntry.Text ?? "N/A",
+                KilometrajeEntry.Text, CostoEntry.Text,
+                CheckAceite.IsChecked ? "OK" : "REVISAR", CheckFrenos.IsChecked ? "OK" : "REVISAR"
             );
 
-            await DisplayAlert("Éxito", $"Reporte {nuevoFolio} guardado en la nube.", "OK");
+            await DisplayAlert("Éxito", "Reporte y evidencia guardados.", "OK");
+
+            // Regresar al menú
             Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
-        catch (Exception ex)
+        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
+        finally { BtnGuardarMantenimiento.IsEnabled = true; }
+    }
+
+    private async void OnAdjuntarEvidenciaClicked(object sender, EventArgs e)
+    {
+        try
         {
-            await DisplayAlert("Error de Sincronización", "No se pudo guardar: " + ex.Message, "Cerrar");
+            // Abrir la galería de imágenes
+            FileResult photo = await MediaPicker.Default.PickPhotoAsync();
+
+            if (photo != null)
+            {
+                _rutaFotoLocal = photo.FullPath;
+
+                // Solución al error de ambigüedad de Color
+                BtnAdjuntar.Text = "? Imagen Cargada";
+                BtnAdjuntar.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#4CAF50");
+                BtnAdjuntar.TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#FFFFFF");
+            }
         }
-        finally
-        {
-            BtnGuardarMantenimiento.IsEnabled = true;
-            BtnGuardarMantenimiento.Text = "GUARDAR REPORTE COMPLETO";
-        }
+        catch (Exception ex) { await DisplayAlert("Error", "No se pudo cargar la imagen: " + ex.Message, "OK"); }
     }
 }

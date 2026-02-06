@@ -179,12 +179,14 @@
                 </Border>
 
                 <Button
+                    x:Name="BtnAdjuntar"
                     Margin="0,10,0,0"
                     BackgroundColor="#F8F8F8"
                     BorderColor="#D0D0D0"
                     BorderWidth="1"
                     Text="📷 Adjuntar Evidencia"
-                    TextColor="#0A0A33" />
+                    TextColor="#0A0A33" 
+                    Clicked="OnAdjuntarEvidenciaClicked"/>
 
                 <!--  Botón de envío  -->
                 <Button
