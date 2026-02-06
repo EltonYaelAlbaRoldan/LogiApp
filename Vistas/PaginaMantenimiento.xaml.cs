@@ -119,24 +119,23 @@ public partial class PaginaMantenimiento : ContentPage
 
             // Enviar a Google Sheets
             await _sheets.RegistrarMantenimientoAsync(
-                nuevoFolio,                                   // A: Folio
-                DateTime.Now.ToString("g"),                   // B: Registro automático
-                FechaMantenimientoPicker.Date.ToString("d"),  // C: Fecha del taller
-                OperadorLabel.Text,                           // D: Operador (Automático)
-                unidadSeleccionada,                           // E: Unidad y Placa (Picker)
-                LugarEntry.Text,                              // F: Ciudad/Estado
-                EstablecimientoEntry.Text,                    // G: Taller
-                TipoMantenimientoEntry.Text,                  // H: Descripción
-                PiezasCambiadasEntry.Text,                    // I: Refacciones
-                KilometrajeEntry.Text,                        // J: KM
-                CostoEntry.Text,                              // K: Costo ($)
-                CheckAceite.IsChecked ? "OK" : "REVISAR",     // L: Aceite
-                CheckFrenos.IsChecked ? "OK" : "REVISAR",     // M: Frenos
-                estatusKpi                                    // N: Resultado KPI
+                nuevoFolio,                                   // A
+                DateTime.Now.ToString("g"),                   // B
+                FechaMantenimientoPicker.Date.ToString("d"),  // C
+                OperadorLabel.Text,                           // D
+                unidadSeleccionada,                           // E
+                LugarEntry.Text,                              // F
+                EstablecimientoEntry.Text,                    // G
+                TipoMantenimientoEntry.Text,                  // H
+                PiezasCambiadasEntry.Text,                    // I
+                KilometrajeEntry.Text,                        // J
+                CostoEntry.Text,                              // K
+                CheckAceite.IsChecked ? "OK" : "REVISAR",     // L
+                CheckFrenos.IsChecked ? "OK" : "REVISAR"      // M
             );
 
             await DisplayAlert("Éxito", $"Reporte {nuevoFolio} guardado en la nube.", "OK");
-            await Navigation.PopAsync();
+            Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
         catch (Exception ex)
         {

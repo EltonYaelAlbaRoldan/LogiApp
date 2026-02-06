@@ -4,87 +4,75 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Menú Principal"
+    Padding="0"
     NavigationPage.HasNavigationBar="False">
 
-    <!--  Diseño de la página de menú principal  -->
-    <ScrollView>
+    <Grid RowDefinitions="*">
 
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout
+                Padding="30"
+                Spacing="25"
+                VerticalOptions="Center">
 
-        <!--  Contenedor principal  -->
-        <VerticalStackLayout
-            Padding="30"
-            Spacing="25"
-            VerticalOptions="Center">
+                <Image
+                    Margin="0,140,0,20"
+                    HeightRequest="150"
+                    HorizontalOptions="Center"
+                    Source="bienvenido.png" />
 
-            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Start">
+                <BoxView
+                    Margin="0,5"
+                    HeightRequest="1"
+                    Color="#E0E0E0" />
 
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="20"
+                    HorizontalOptions="Center"
+                    Text="Seleccione una opción" />
 
                 <Button
-                    Grid.Column="1"
+                    BackgroundColor="#2196F3"
+                    Clicked="OnViajesClicked"
+                    CornerRadius="15"
+                    FontSize="18"
+                    HeightRequest="80"
+                    Text="GESTIÓN DE VIAJES"
+                    TextColor="White" />
+
+                <Button
+                    BackgroundColor="#2196F3"
+                    Clicked="OnMantenimientoClicked"
+                    CornerRadius="15"
+                    FontSize="18"
+                    HeightRequest="80"
+                    Text="MANTENIMIENTO"
+                    TextColor="White" />
+
+                <Button
+                    Margin="0,20,0,0"
+                    Padding="20,0"
                     BackgroundColor="Transparent"
-                    Clicked="OnPerfilClicked"
-                    CornerRadius="30"
-                    FontSize="24"
-                    HeightRequest="60"
-                    Text="👤"
-                    TextColor="Black"
-                    VerticalOptions="Start"
-                    WidthRequest="60" />
-            </Grid>
+                    BorderColor="Grey"
+                    BorderWidth="1"
+                    Clicked="OnLogoutClicked"
+                    CornerRadius="20"
+                    HorizontalOptions="Center"
+                    Text="Cerrar Sesión"
+                    TextColor="Grey" />
+            </VerticalStackLayout>
+        </ScrollView>
 
-            <!--  Imagen de bienvenida  -->
-
-            <Image
-                Margin="0,0,0,20"
-                HeightRequest="150"
-                HorizontalOptions="Center"
-                Source="bienvenido.png" />
-
-            <BoxView
-                Margin="0,5"
-                HeightRequest="1"
-                Color="#E0E0E0" />
-
-            <!--  Etiqueta de selección  -->
-            <Label
-                FontAttributes="Bold"
-                FontSize="20"
-                HorizontalOptions="Center"
-                Text="Seleccione una opción" />
-
-            <!--  Botones de navegación  -->
-            <Button
-                BackgroundColor="#2196F3"
-                Clicked="OnViajesClicked"
-                CornerRadius="15"
-                FontSize="18"
-                HeightRequest="80"
-                Text="GESTIÓN DE VIAJES"
-                TextColor="White" />
-
-            <!--  Botón de Mantenimiento  -->
-            <Button
-                BackgroundColor="#2196F3"
-                Clicked="OnMantenimientoClicked"
-                CornerRadius="15"
-                FontSize="18"
-                HeightRequest="80"
-                Text="MANTENIMIENTO"
-                TextColor="White" />
-
-            <!--  Botón cerrar sesion  -->
-            <Button
-                Margin="0,20,0,0"
-                Padding="20,0"
-                BackgroundColor="Transparent"
-                BorderColor="Grey"
-                BorderWidth="1"
-                Clicked="OnLogoutClicked"
-                CornerRadius="20"
-                HorizontalOptions="Center"
-                Text="Cerrar Sesión"
-                TextColor="Grey" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+        <ImageButton
+            Margin="0,20,20,0"
+            Aspect="AspectFit"
+            BackgroundColor="Transparent"
+            Clicked="OnPerfilClicked"
+            HeightRequest="70"
+            HorizontalOptions="End"
+            Source="perfil.png"
+            VerticalOptions="Start"
+            WidthRequest="70" />
+    </Grid>
 </ContentPage>

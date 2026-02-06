@@ -97,7 +97,7 @@ public class ConsultasGoogleSheets
     {
         try
         {
-            string rango = "Mantenimiento!A:N";
+            string rango = "Mantenimiento!A:M";
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
 
             var request = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
