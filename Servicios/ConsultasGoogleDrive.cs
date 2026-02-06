@@ -124,20 +124,28 @@ public class ConsultasGoogleDrive
     /// <summary>
     /// Busca una carpeta por nombre. Si no existe, la crea.
     /// </summary>
-    private async Task<string> ObtenerOCrearCarpetaAsync(string nombreCarpeta, string idPadre)
+    private async Task<string> ObtenerOCrearCarpetaAsync(string nombreCarpeta, string idPadre, bool esBusquedaDeOperador = false)
     {
-        // Consulta para buscar la carpeta por nombre dentro del padre específico
         var request = _service.Files.List();
-        request.Q = $"name = '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
-        request.Fields = "files(id)";
+
+        // Si es búsqueda de operador, usamos 'contains' para que "OP-003" encuentre a "OP-003 - Nili Lopez"
+        if (esBusquedaDeOperador)
+        {
+            request.Q = $"name contains '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
+        }
+        else
+        {
+            request.Q = $"name = '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
+        }
+
+        request.Fields = "files(id, name)";
 
         var resultado = await request.ExecuteAsync();
-        var carpetaExistente = resultado.Files.FirstOrDefault();
+        // Priorizamos la carpeta que empiece exactamente con el folio para evitar confusiones
+        var carpetaExistente = resultado.Files.FirstOrDefault(f => f.Name.StartsWith(nombreCarpeta));
 
-        // Si ya existe, retornamos su ID para no duplicar
         if (carpetaExistente != null) return carpetaExistente.Id;
 
-        // Si no existe, usamos tu método auxiliar para crearla
         return await CrearSubcarpetaAsync(nombreCarpeta, idPadre);
     }
 
@@ -166,16 +174,30 @@ public class ConsultasGoogleDrive
             return request.ResponseBody?.Id ?? string.Empty;
         }
     }
-    public async Task<string> SubirEvidenciaMantenimientoAsync(string rutaLocal, string placas, string folio)
+    public async Task<(string fileId, string folderLink)> SubirEvidenciaMantenimientoAsync(string rutaLocal, string idOperador, string folio)
     {
-        // Busca o crea carpeta de la unidad
-        string idCarpetaUnidad = await ObtenerOCrearCarpetaAsync(placas, _rootFolderId);
+        try
+        {
+            // 1. Buscamos la carpeta del operador
+            string idCarpetaOperador = await ObtenerOCrearCarpetaAsync(idOperador, _rootFolderId, true);
 
-        // Busca o crea carpeta del año actual
-        string idCarpetaAño = await ObtenerOCrearCarpetaAsync(DateTime.Now.Year.ToString(), idCarpetaUnidad);
+            // 2. Busca o crea "mantenimiento"
+            string idCarpetaMantenimiento = await ObtenerOCrearCarpetaAsync("mantenimiento", idCarpetaOperador, false);
 
-        string nombreArchivo = $"{folio}_{DateTime.Now:yyyyMMdd}_{placas}.jpg"; //
+            // 3. Nombre del archivo
+            string nombreArchivo = $"Folio_{folio}.jpg";
 
-        return await SubirArchivoGenericoAsync(rutaLocal, nombreArchivo, idCarpetaAño);
+            // 4. Subimos el archivo
+            string fileId = await SubirArchivoGenericoAsync(rutaLocal, nombreArchivo, idCarpetaMantenimiento);
+
+            // 5. Construimos el link de la CARPETA de mantenimiento
+            string folderLink = $"https://drive.google.com/drive/folders/{idCarpetaMantenimiento}";
+
+            return (fileId, folderLink);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error al organizar Drive: {ex.Message}");
+        }
     }
 }

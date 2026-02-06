@@ -105,28 +105,38 @@ public partial class PaginaMantenimiento : ContentPage
             BtnGuardarMantenimiento.IsEnabled = false;
             BtnGuardarMantenimiento.Text = "SUBIENDO... ESPERE";
 
-            string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync(); //
+            string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync();
             string unidadTexto = UnidadPicker.SelectedItem.ToString();
-            string placa = unidadTexto.Contains("-") ? unidadTexto.Split('-').Last().Trim() : unidadTexto; //
 
-            // 1. Subir a Drive si hay imagen
+            string linkCarpeta = "Sin evidencia"; // Valor por defecto si no hay foto
+
+            // 1. Subir a Drive y obtener el link
             if (!string.IsNullOrEmpty(_rutaFotoLocal))
             {
-                await _driveService.SubirEvidenciaMantenimientoAsync(_rutaFotoLocal, placa, nuevoFolio);
+                string idOperador = Preferences.Get("IdOperadorLogeado", "");
+                var resultadoDrive = await _driveService.SubirEvidenciaMantenimientoAsync(_rutaFotoLocal, idOperador, nuevoFolio);
+                linkCarpeta = resultadoDrive.folderLink; // Guardamos el link de la carpeta
             }
 
-            // 2. Registrar en Sheets (13 columnas)
+            // 2. Registrar en Sheets pasando el link al final
             await _sheets.RegistrarMantenimientoAsync(
-                nuevoFolio, DateTime.Now.ToString("g"), FechaMantenimientoPicker.Date.ToString("d"),
-                OperadorLabel.Text, unidadTexto, LugarEntry.Text, EstablecimientoEntry.Text,
-                TipoMantenimientoEntry.Text, PiezasCambiadasEntry.Text ?? "N/A",
-                KilometrajeEntry.Text, CostoEntry.Text,
-                CheckAceite.IsChecked ? "OK" : "REVISAR", CheckFrenos.IsChecked ? "OK" : "REVISAR"
+                nuevoFolio,
+                DateTime.Now.ToString("g"),
+                FechaMantenimientoPicker.Date.ToString("d"),
+                OperadorLabel.Text,
+                unidadTexto,
+                LugarEntry.Text,
+                EstablecimientoEntry.Text,
+                TipoMantenimientoEntry.Text,
+                PiezasCambiadasEntry.Text ?? "N/A",
+                KilometrajeEntry.Text,
+                CostoEntry.Text,
+                CheckAceite.IsChecked ? "OK" : "REVISAR",
+                CheckFrenos.IsChecked ? "OK" : "REVISAR",
+                linkCarpeta // <--- Pasamos el link aquí
             );
 
-            await DisplayAlert("Éxito", "Reporte y evidencia guardados.", "OK");
-
-            // Regresar al menú
+            await DisplayAlert("Éxito", "Reporte guardado con link a evidencia.", "OK");
             Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
@@ -145,7 +155,7 @@ public partial class PaginaMantenimiento : ContentPage
                 _rutaFotoLocal = photo.FullPath;
 
                 // Solución al error de ambigüedad de Color
-                BtnAdjuntar.Text = "? Imagen Cargada";
+                BtnAdjuntar.Text = "Imagen Cargada";
                 BtnAdjuntar.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#4CAF50");
                 BtnAdjuntar.TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#FFFFFF");
             }

@@ -93,19 +93,26 @@ public class ConsultasGoogleSheets
     /// <summary>
     /// Registra los 14 campos técnicos en la pestaña 'Mantenimiento'.
     /// </summary>
-    public async Task RegistrarMantenimientoAsync(params string[] datos)
+    public async Task RegistrarMantenimientoAsync(
+    string folio, string fechaRegistro, string fechaManto, string operador,
+    string unidad, string lugar, string taller, string tipo, string piezas,
+    string km, string costo, string aceite, string frenos, string linkDrive) // <--- Nuevo parámetro
     {
-        try
-        {
-            string rango = "Mantenimiento!A:M";
-            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
+        var range = "Mantenimiento!A:N"; // Extendemos el rango a la columna N (14)
+        var valueRange = new ValueRange { Values = new List<IList<object>>() };
 
-            var request = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
-            request.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+        var nuevaFila = new List<object>
+    {
+        folio, fechaRegistro, fechaManto, operador, unidad,
+        lugar, taller, tipo, piezas, km, costo, aceite, frenos,
+        linkDrive // <--- Columna 14
+    };
 
-            await request.ExecuteAsync();
-        }
-        catch (Exception ex) { throw new Exception($"Fallo en registro de Mantenimiento: {ex.Message}"); }
+        valueRange.Values.Add(nuevaFila);
+
+        var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, range);
+        appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+        await appendRequest.ExecuteAsync();
     }
 
     #endregion
