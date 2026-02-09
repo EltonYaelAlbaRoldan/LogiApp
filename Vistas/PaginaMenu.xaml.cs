@@ -4,28 +4,36 @@ namespace LogiApp.Vistas;
 
 /// <summary>
 /// Panel principal de control después del acceso. 
-/// Permite navegar a los módulos de Viajes, Mantenimiento y cerrar la sesión.
+/// Permite navegar a los módulos de Viajes, Mantenimiento y gestionar la sesión del usuario.
 /// </summary>
 public partial class PaginaMenu : ContentPage
 {
-    // --- CONSTRUCTOR ---
+    #region Constructor
+
     public PaginaMenu()
     {
         InitializeComponent();
     }
 
-    // --- GESTIÓN DE MÓDULOS (NAVEGACIÓN) ---
+    #endregion
 
+    #region Gestión de Módulos (Navegación)
+
+    /// <summary>
+    /// Navega a la página de visualización del perfil del usuario.
+    /// </summary>
     private async void OnPerfilClicked(object sender, EventArgs e)
     {
-        // Navegación a la página de Perfil (Asegúrate de que el nombre coincida)
+        // Navegación a la página de Perfil usando el stack de navegación actual
         await Navigation.PushAsync(new Vistas.PaginaPerfil());
     }
 
-    // Dirige al usuario al módulo de Gestión de Viajes.
+    /// <summary>
+    /// Dirige al usuario al módulo de Gestión de Viajes.
+    /// </summary>
     private async void OnViajesClicked(object sender, EventArgs e)
     {
-        // Cambia a la nueva página de Viajes
+        // Establece la página de Viajes como nueva raíz de navegación
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaViajes());
     }
 
@@ -34,29 +42,33 @@ public partial class PaginaMenu : ContentPage
     /// </summary>
     private async void OnMantenimientoClicked(object sender, EventArgs e)
     {
+        // Establece la página de Mantenimiento como nueva raíz de navegación
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMantenimiento());
     }
 
-    // ---  CERRAR SESIÓN ---
+    #endregion
+
+    #region Gestión de Sesión
 
     /// <summary>
-    /// Solicita confirmación y cierra la sesión actual regresando al portal de acceso.
+    /// Solicita confirmación al usuario y limpia las credenciales locales para cerrar la sesión.
     /// </summary>
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
-        // "Cerrar sesión"
+        // Confirmación de salida
         bool deseaSalir = await DisplayAlert("Cerrar Sesión", "¿Está seguro que desea cerrar la sesión?", "Sí", "No");
 
         if (deseaSalir)
         {
-            // Solo borramos los datos de la sesión y registros pendientes
+            // Limpieza de datos de sesión y registros pendientes en preferencias locales
             Preferences.Default.Remove("UsuarioLogeado");
             Preferences.Default.Remove("IdPendiente");
             Preferences.Default.Remove("CarpetaPendiente");
 
-            // Regresamos a la página de logeo
+            // Regreso a la página de acceso principal (Login)
             Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
         }
     }
 
+    #endregion
 }
