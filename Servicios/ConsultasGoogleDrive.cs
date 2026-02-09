@@ -103,7 +103,13 @@ public class ConsultasGoogleDrive
                 if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
                     throw new Exception(progreso.Exception?.Message ?? "Error en la carga.");
 
-                return request.ResponseBody?.Id ?? string.Empty;
+                var archivoSubido = request.ResponseBody;
+                if (archivoSubido == null)
+                {
+                    throw new Exception("La subida fue exitosa pero no se recibió el link de confirmación.");
+                }
+
+                return archivoSubido.WebViewLink;
             }
         }
         catch (Exception ex)

@@ -102,7 +102,8 @@ public class ConsultasGoogleSheets
     }
     #endregion
 
-    #region SECCIÓN 3: PERFIL Y DOCUMENTACIÓN
+    #region SECCIÓN 3: ACTUALIZACIÓN DE PERFIL (DOCUMENTOS Y FECHAS)
+
     public async Task<bool> ActualizarDocumentoYFechaAsync(string id, string tipo, DateTime fecha, string link)
     {
         try
@@ -110,17 +111,19 @@ public class ConsultasGoogleSheets
             int fila = await ObtenerNumeroFilaPorIdAsync(id);
             if (fila == -1) return false;
 
-            // I = Licencia (9), J = Médico (10), K = Link Carpeta/Archivo (11)
+            // I = Licencia (9), J = Médico (10), K = Link de documentos (11)
             string columnaFecha = (tipo == "Licencia") ? "I" : "J";
             string columnaLink = "K";
 
             var bodyFecha = new ValueRange { Values = new List<IList<object>> { new List<object> { fecha.ToString("dd/MM/yyyy") } } };
             var bodyLink = new ValueRange { Values = new List<IList<object>> { new List<object> { link } } };
 
+            // Actualizamos la fecha
             var updateFecha = _service.Spreadsheets.Values.Update(bodyFecha, _spreadsheetId, $"Operadores!{columnaFecha}{fila}");
             updateFecha.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await updateFecha.ExecuteAsync();
 
+            // Actualizamos el link del documento
             var updateLink = _service.Spreadsheets.Values.Update(bodyLink, _spreadsheetId, $"Operadores!{columnaLink}{fila}");
             updateLink.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await updateLink.ExecuteAsync();
@@ -129,6 +132,7 @@ public class ConsultasGoogleSheets
         }
         catch { return false; }
     }
+
     #endregion
 
     #region SECCIÓN 4: MANTENIMIENTO Y UNIDADES

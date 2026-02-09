@@ -3,116 +3,201 @@
     x:Class="LogiApp.Vistas.PaginaPerfil"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="this"
     Title="Mi Perfil"
     BackgroundColor="White"
     NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid>
+        <Grid RowDefinitions="Auto,*">
 
-        <Grid
-            Grid.Row="0"
-            Padding="10,15"
-            BackgroundColor="White"
-            ColumnDefinitions="50,*">
-            <Border
-                Grid.Column="0"
-                Margin="5,0,0,0"
+            <Grid
+                Grid.Row="0"
+                Padding="10,15"
                 BackgroundColor="White"
-                HeightRequest="40"
-                HorizontalOptions="Start"
-                Stroke="#E0E0E0"
-                StrokeThickness="1"
-                WidthRequest="40">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="20" />
-                </Border.StrokeShape>
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnVolverClicked" />
-                </Border.GestureRecognizers>
+                ColumnDefinitions="50,*">
+                <Border
+                    Grid.Column="0"
+                    Margin="5,0,0,0"
+                    BackgroundColor="White"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="1"
+                    WidthRequest="40">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnVolverClicked" />
+                    </Border.GestureRecognizers>
+                    <Label
+                        Margin="0,0,4,8"
+                        FontAttributes="Bold"
+                        FontSize="26"
+                        HorizontalOptions="Center"
+                        Text="‹"
+                        TextColor="#0A0A33"
+                        VerticalOptions="Center" />
+                </Border>
+
                 <Label
-                    Margin="0,0,4,8"
+                    Grid.Column="1"
+                    Margin="5,0,0,0"
+                    CharacterSpacing="0.5"
                     FontAttributes="Bold"
-                    FontSize="26"
-                    HorizontalOptions="Center"
-                    Text="‹"
+                    FontSize="16"
+                    Text="MI PERFIL"
                     TextColor="#0A0A33"
                     VerticalOptions="Center" />
-            </Border>
+            </Grid>
 
-            <Label
-                Grid.Column="1"
-                Margin="5,0,0,0"
-                CharacterSpacing="0.5"
-                FontAttributes="Bold"
-                FontSize="16"
-                Text="MI PERFIL"
-                TextColor="#0A0A33"
-                VerticalOptions="Center" />
+            <ScrollView Grid.Row="1">
+                <VerticalStackLayout Padding="25" Spacing="15">
+
+                    <Label
+                        x:Name="LblNombre"
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        HorizontalOptions="Center"
+                        Text="Cargando nombre..." />
+                    <Label
+                        x:Name="LblId"
+                        Margin="0,0,0,10"
+                        FontSize="14"
+                        HorizontalOptions="Center"
+                        Text="ID: ---"
+                        TextColor="Gray" />
+
+                    <Frame
+                        x:Name="FrameLicencia"
+                        BorderColor="#E0E0E0"
+                        CornerRadius="10"
+                        HasShadow="False">
+                        <VerticalStackLayout Spacing="8">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="📅 Licencia:"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    x:Name="LblVigenciaLicencia"
+                                    Text="--/--/----"
+                                    VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                            <BoxView HeightRequest="1" Color="#F0F0F0" />
+
+                            <Grid Margin="0,5,0,0" ColumnDefinitions="*, Auto">
+                                <DatePicker
+                                    x:Name="PickerLicencia"
+                                    Grid.Column="0"
+                                    FontSize="13"
+                                    Format="dd/MM/yyyy" />
+                                <Button
+                                    Grid.Column="1"
+                                    Padding="10,0"
+                                    BackgroundColor="#2196F3"
+                                    Clicked="OnUpdateLicenciaClicked"
+                                    FontSize="10"
+                                    HeightRequest="35"
+                                    Text="📁 ACTUALIZAR PDF"
+                                    TextColor="White" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame
+                        x:Name="FrameMedico"
+                        BorderColor="#E0E0E0"
+                        CornerRadius="10"
+                        HasShadow="False">
+                        <VerticalStackLayout Spacing="8">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="🏥 Médico:"
+                                    VerticalOptions="Center" />
+                                <Label
+                                    x:Name="LblVigenciaMedico"
+                                    Text="--/--/----"
+                                    VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                            <BoxView HeightRequest="1" Color="#F0F0F0" />
+
+                            <Grid Margin="0,5,0,0" ColumnDefinitions="*, Auto">
+                                <DatePicker
+                                    x:Name="PickerMedico"
+                                    Grid.Column="0"
+                                    FontSize="13"
+                                    Format="dd/MM/yyyy" />
+                                <Button
+                                    Grid.Column="1"
+                                    Padding="10,0"
+                                    BackgroundColor="#2196F3"
+                                    Clicked="OnUpdateMedicoClicked"
+                                    FontSize="10"
+                                    HeightRequest="35"
+                                    Text="📁 ACTUALIZAR PDF"
+                                    TextColor="White" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <BoxView
+                        Margin="0,10"
+                        HeightRequest="1"
+                        Color="#EEE" />
+
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Text="Seguridad" />
+
+                    <Entry
+                        x:Name="NuevaPassEntry"
+                        IsPassword="True"
+                        Placeholder="Nueva Contraseña" />
+
+                    <Button
+                        BackgroundColor="#2196F3"
+                        Clicked="OnCambiarPassClicked"
+                        CornerRadius="10"
+                        FontAttributes="Bold"
+                        HeightRequest="50"
+                        Text="ACTUALIZAR CONTRASEÑA"
+                        TextColor="White" />
+                </VerticalStackLayout>
+            </ScrollView>
         </Grid>
 
-        <ScrollView Grid.Row="1">
-            
-            <VerticalStackLayout Padding="25" Spacing="15">
+        <Grid
+            BackgroundColor="#CCFFFFFF"
+            HorizontalOptions="FillAndExpand"
+            InputTransparent="False"
+            IsVisible="{Binding IsBusy, Source={x:Reference this}}"
+            VerticalOptions="FillAndExpand">
+            <VerticalStackLayout
+                HorizontalOptions="Center"
+                Spacing="20"
+                VerticalOptions="Center">
+                <ActivityIndicator
+                    HeightRequest="60"
+                    IsRunning="True"
+                    WidthRequest="60"
+                    Color="#2196F3" />
                 <Label
-                    x:Name="LblNombre"
                     FontAttributes="Bold"
-                    FontSize="22"
                     HorizontalOptions="Center"
-                    Text="Cargando nombre..." />
+                    Text="Procesando actualización..."
+                    TextColor="#0A0A33" />
                 <Label
-                    x:Name="LblId"
-                    Margin="0,0,0,10"
-                    FontSize="14"
+                    FontSize="12"
                     HorizontalOptions="Center"
-                    Text="ID: ---"
+                    Text="Por favor, no cierre la aplicación"
                     TextColor="Gray" />
-
-                <Frame
-                    x:Name="FrameLicencia"
-                    BorderColor="#E0E0E0"
-                    CornerRadius="10"
-                    HasShadow="False">
-                    <HorizontalStackLayout Spacing="10">
-                        <Label FontAttributes="Bold" Text="📅 Licencia:" />
-                        <Label x:Name="LblVigenciaLicencia" Text="--/--/----" />
-                    </HorizontalStackLayout>
-                </Frame>
-
-                <Frame
-                    x:Name="FrameMedico"
-                    BorderColor="#E0E0E0"
-                    CornerRadius="10"
-                    HasShadow="False">
-                    <HorizontalStackLayout Spacing="10">
-                        <Label FontAttributes="Bold" Text="🏥 Médico:" />
-                        <Label x:Name="LblVigenciaMedico" Text="--/--/----" />
-                    </HorizontalStackLayout>
-                </Frame>
-
-                <BoxView
-                    Margin="0,10"
-                    HeightRequest="1"
-                    Color="#EEE" />
-
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="18"
-                    Text="Seguridad" />
-
-                <Entry
-                    x:Name="NuevaPassEntry"
-                    IsPassword="True"
-                    Placeholder="Nueva Contraseña" />
-
-                <Button
-                    BackgroundColor="#2196F3"
-                    Clicked="OnCambiarPassClicked"
-                    CornerRadius="10"
-                    FontAttributes="Bold"
-                    HeightRequest="50"
-                    Text="ACTUALIZAR CONTRASEÑA"
-                    TextColor="White" />
             </VerticalStackLayout>
-        </ScrollView>
+        </Grid>
     </Grid>
 </ContentPage>
