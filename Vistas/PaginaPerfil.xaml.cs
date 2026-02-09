@@ -50,8 +50,8 @@ public partial class PaginaPerfil : ContentPage
     private void PintarSemaforo(DateTime fecha, Frame frame)
     {
         double dias = (fecha - DateTime.Now).TotalDays;
-        if (dias < 0) frame.BackgroundColor = Color.FromArgb("#FFCDD2"); // Rojo
-        else if (dias <= 30) frame.BackgroundColor = Color.FromArgb("#FFF9C4"); // Amarillo
+        if (dias < 30) frame.BackgroundColor = Color.FromArgb("#FFCDD2"); // Rojo
+        else if (dias <= 90) frame.BackgroundColor = Color.FromArgb("#FFF9C4"); // Amarillo
         else frame.BackgroundColor = Color.FromArgb("#C8E6C9"); // Verde
     }
     private async void OnVolverClicked(object sender, EventArgs e)
