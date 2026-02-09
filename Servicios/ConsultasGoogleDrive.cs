@@ -1,24 +1,18 @@
 ﻿using Google.Apis.Drive.v3;
-using DriveData = Google.Apis.Drive.v3.Data; // Alias para limpiar el código
+using DriveData = Google.Apis.Drive.v3.Data;
 
 namespace LogiApp.Servicios;
 
-/// <summary>
-/// Gestiona la jerarquía de carpetas y carga de archivos en Google Drive.
-/// </summary>
 public class ConsultasGoogleDrive
 {
+    #region CONFIGURACIÓN
     private readonly DriveService _service;
     private readonly string _rootFolderId = "18UK5_tCQmtOLyEOoIWCqaeKqNKJsaFGM";
 
     public ConsultasGoogleDrive(DriveService service) => _service = service;
+    #endregion
 
-    // --- SECCIÓN: GESTIÓN DE ESTRUCTURA (CARPETAS) ---
-
-    /// <summary>
-    /// Crea la carpeta raíz del operador y sus subcarpetas necesarias.
-    /// Retorna el ID de la subcarpeta 'documentos' para vincularla al registro.
-    /// </summary>
+    #region GESTIÓN DE ESTRUCTURA (CARPETAS)
     public async Task<string> CrearEstructuraOperadorAsync(string nombreOperador)
     {
         // 1. Crear carpeta principal del Operador
@@ -38,9 +32,6 @@ public class ConsultasGoogleDrive
         return idDocumentos;
     }
 
-    /// <summary>
-    /// Método auxiliar para crear carpetas dentro de otras.
-    /// </summary>
     private async Task<string> CrearSubcarpetaAsync(string nombreSubcarpeta, string idPadre)
     {
         var metaSub = new DriveData.File
@@ -53,11 +44,24 @@ public class ConsultasGoogleDrive
         return sub.Id;
     }
 
-    // --- SECCIÓN: OPERACIONES CRUD ---
+    private async Task<string> ObtenerOCrearCarpetaAsync(string nombreCarpeta, string idPadre, bool esBusquedaDeOperador = false)
+    {
+        var request = _service.Files.List();
 
-    /// <summary>
-    /// Lista todas las carpetas activas dentro del directorio raíz.
-    /// </summary>
+        if (esBusquedaDeOperador)
+            request.Q = $"name contains '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
+        else
+            request.Q = $"name = '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
+
+        request.Fields = "files(id, name)";
+        var resultado = await request.ExecuteAsync();
+        var carpetaExistente = resultado.Files.FirstOrDefault(f => f.Name.StartsWith(nombreCarpeta));
+
+        return carpetaExistente?.Id ?? await CrearSubcarpetaAsync(nombreCarpeta, idPadre);
+    }
+    #endregion
+
+    #region OPERACIONES CRUD
     public async Task<List<DriveData.File>> ListarCarpetasAsync()
     {
         var request = _service.Files.List();
@@ -66,33 +70,20 @@ public class ConsultasGoogleDrive
         return result.Files.ToList();
     }
 
-    /// <summary>
-    /// Actualiza el nombre de una carpeta o archivo existente.
-    /// </summary>
     public async Task ActualizarNombreCarpetaAsync(string fileId, string nuevoNombre)
     {
         var meta = new DriveData.File { Name = nuevoNombre };
         await _service.Files.Update(meta, fileId).ExecuteAsync();
     }
 
-    /// <summary>
-    /// Envía un elemento a la papelera de reciclaje de Drive.
-    /// </summary>
     public async Task BorrarCarpetaAsync(string fileId)
     {
         var meta = new DriveData.File { Trashed = true };
         await _service.Files.Update(meta, fileId).ExecuteAsync();
     }
+    #endregion
 
-    // --- SECCIÓN: CARGA DE ARCHIVOS (UPLOAD) ---
-
-    /// <summary>
-    /// Sube un archivo PDF desde el almacenamiento local a una carpeta específica en Drive.
-    /// </summary>
-    /// <param name="rutaLocal">Ruta física del archivo en el dispositivo.</param>
-    /// <param name="nombreDeseado">Nombre que tendrá el archivo en la nube.</param>
-    /// <param name="folderId">ID de la carpeta de destino.</param>
-    /// <returns>ID del archivo creado en Drive.</returns>
+    #region CARGA DE ARCHIVOS (UPLOAD)
     public async Task<string> SubirArchivoAsync(string rutaLocal, string nombreDeseado, string folderId)
     {
         try
@@ -107,11 +98,10 @@ public class ConsultasGoogleDrive
             {
                 var request = _service.Files.Create(metadata, stream, "application/pdf");
                 request.Fields = "id";
-
                 var progreso = await request.UploadAsync();
 
                 if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
-                    throw new Exception(progreso.Exception?.Message ?? "Error desconocido en la carga.");
+                    throw new Exception(progreso.Exception?.Message ?? "Error en la carga.");
 
                 return request.ResponseBody?.Id ?? string.Empty;
             }
@@ -121,37 +111,7 @@ public class ConsultasGoogleDrive
             throw new Exception($"Error en DriveService: {ex.Message}");
         }
     }
-    /// <summary>
-    /// Busca una carpeta por nombre. Si no existe, la crea.
-    /// </summary>
-    private async Task<string> ObtenerOCrearCarpetaAsync(string nombreCarpeta, string idPadre, bool esBusquedaDeOperador = false)
-    {
-        var request = _service.Files.List();
 
-        // Si es búsqueda de operador, usamos 'contains' para que "OP-003" encuentre a "OP-003 - Nili Lopez"
-        if (esBusquedaDeOperador)
-        {
-            request.Q = $"name contains '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
-        }
-        else
-        {
-            request.Q = $"name = '{nombreCarpeta}' and '{idPadre}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false";
-        }
-
-        request.Fields = "files(id, name)";
-
-        var resultado = await request.ExecuteAsync();
-        // Priorizamos la carpeta que empiece exactamente con el folio para evitar confusiones
-        var carpetaExistente = resultado.Files.FirstOrDefault(f => f.Name.StartsWith(nombreCarpeta));
-
-        if (carpetaExistente != null) return carpetaExistente.Id;
-
-        return await CrearSubcarpetaAsync(nombreCarpeta, idPadre);
-    }
-
-    /// <summary>
-    /// Método genérico para subir imágenes JPG.
-    /// </summary>
     private async Task<string> SubirArchivoGenericoAsync(string rutaLocal, string nombreDeseado, string folderId)
     {
         var metadata = new DriveData.File()
@@ -162,10 +122,8 @@ public class ConsultasGoogleDrive
 
         using (var stream = new FileStream(rutaLocal, FileMode.Open))
         {
-            // Usamos image/jpeg para las evidencias fotográficas
             var request = _service.Files.Create(metadata, stream, "image/jpeg");
             request.Fields = "id";
-
             var progreso = await request.UploadAsync();
 
             if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
@@ -174,23 +132,16 @@ public class ConsultasGoogleDrive
             return request.ResponseBody?.Id ?? string.Empty;
         }
     }
+
     public async Task<(string fileId, string folderLink)> SubirEvidenciaMantenimientoAsync(string rutaLocal, string idOperador, string folio)
     {
         try
         {
-            // 1. Buscamos la carpeta del operador
             string idCarpetaOperador = await ObtenerOCrearCarpetaAsync(idOperador, _rootFolderId, true);
-
-            // 2. Busca o crea "mantenimiento"
             string idCarpetaMantenimiento = await ObtenerOCrearCarpetaAsync("mantenimiento", idCarpetaOperador, false);
-
-            // 3. Nombre del archivo
             string nombreArchivo = $"Folio_{folio}.jpg";
 
-            // 4. Subimos el archivo
             string fileId = await SubirArchivoGenericoAsync(rutaLocal, nombreArchivo, idCarpetaMantenimiento);
-
-            // 5. Construimos el link de la CARPETA de mantenimiento
             string folderLink = $"https://drive.google.com/drive/folders/{idCarpetaMantenimiento}";
 
             return (fileId, folderLink);
@@ -200,4 +151,5 @@ public class ConsultasGoogleDrive
             throw new Exception($"Error al organizar Drive: {ex.Message}");
         }
     }
+    #endregion
 }

@@ -5,8 +5,9 @@ namespace LogiApp.Servicios;
 
 public class ServicioEmail
 {
-    private const string CorreoEmisor = "eltonyaelalbaroldan@gmail.com"; // Tu correo
-    private const string PasswordApp = "ecyk przx ymdz otzu"; // El que generaste
+    #region CONFIGURACIÓN Y ENVÍO
+    private const string CorreoEmisor = "eltonyaelalbaroldan@gmail.com";
+    private const string PasswordApp = "ecyk przx ymdz otzu";
 
     public async Task EnviarCredencialesAsync(string correoDestino, string nombre, string idOperador, string password)
     {
@@ -23,11 +24,12 @@ public class ServicioEmail
                 <h2>¡Bienvenido a LogiApp, {nombre}!</h2>
                 <p>Se ha creado tu expediente digital exitosamente.</p>
                 <p>Tus credenciales de acceso son:</p>
-                <ul>
-                    <li><b>Usuario:</b> {idOperador}</li>
-                    <li><b>Contraseña:</b> {password}</li>
+                <ul style='list-style:none; padding:0;'>
+                    <li><b>Usuario:</b> <span style='color:#2196F3;'>{idOperador}</span></li>
+                    <li><b>Contraseña:</b> <span style='color:#2196F3;'>{password}</span></li>
                 </ul>
-                <p>Por favor, no compartas estos datos con nadie.</p>";
+                <p>Por favor, cambia tu contraseña desde tu perfil al iniciar sesión por primera vez.</p>
+                <p><i>Este es un mensaje automático, no responder.</i></p>";
 
             var mensaje = new MailMessage
             {
@@ -43,8 +45,8 @@ public class ServicioEmail
         }
         catch (Exception ex)
         {
-            // Solo lanzamos el error para que la página lo atrape
             throw new Exception("Error al enviar el correo: " + ex.Message);
         }
     }
+    #endregion
 }

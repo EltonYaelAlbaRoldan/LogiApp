@@ -7,26 +7,19 @@ using Google.Apis.Sheets.v4;
 
 namespace LogiApp.Servicios;
 
-/// <summary>
-/// Gestiona la autenticación con Google APIs utilizando OAuth 2.0 y Refresh Tokens.
-/// Proporciona acceso a los servicios de Google Sheets y Google Drive.
-/// </summary>
 public class ConexionGoogleAuth
 {
-    // --- CONSTANTES DE AUTENTICACIÓN ---
+    #region CONFIGURACIÓN Y CREDENCIALES
     private const string ClientId = "1021863353895-55eb5gi10kt8mmd0u4kb08i0dq5ahf45.apps.googleusercontent.com";
-    private const string ClientSecret = "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";
+    private const string ClientSecret = "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"; 
     private const string RefreshToken = "1//04EHNDjplHNepCgYIARAAGAQSNwF-L9IrNlnTSVCnFUOmZ6KsiDStc9lpanE-ct1a5yYWCri_WAHq9y5NmwmrlthXEoUfRC0lScc";
     private const string ApplicationName = "LogiApp";
+    #endregion
 
-    /// <summary>
-    /// Genera y retorna los servicios autorizados de Sheets y Drive.
-    /// Realiza la renovación automática del token si este ha expirado.
-    /// </summary>
-    /// <returns>Tupla conteniendo (SheetsService, DriveService)</returns>
+    #region MÉTODOS DE SERVICIO
     public async Task<(SheetsService, DriveService)> ObtenerServiciosAsync()
     {
-        // 1. Configuración del flujo de autorización
+        // 1. Configuración del flujo de autorización (Scopes para Drive y Sheets)
         var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
         {
             ClientSecrets = new ClientSecrets
@@ -41,18 +34,17 @@ public class ConexionGoogleAuth
             }
         });
 
-        // 2. Creación de la credencial a partir del Refresh Token guardado
+        // 2. Uso del Refresh Token para mantener la sesión activa
         var tokenResponse = new TokenResponse { RefreshToken = RefreshToken };
         var credential = new UserCredential(flow, "user", tokenResponse);
 
-        // 3. Verificación y renovación automática del Access Token
-        // Esto evita errores de "401 Unauthorized" durante la ejecución
+        // 3. Renovación automática si el token expiró
         if (tokenResponse.IsExpired(Google.Apis.Util.SystemClock.Default))
         {
             await credential.RefreshTokenAsync(CancellationToken.None);
         }
 
-        // 4. Inicialización de los servicios con la credencial autorizada
+        // 4. Inicializador base para los servicios
         var initializer = new BaseClientService.Initializer()
         {
             HttpClientInitializer = credential,
@@ -61,4 +53,5 @@ public class ConexionGoogleAuth
 
         return (new SheetsService(initializer), new DriveService(initializer));
     }
+    #endregion
 }

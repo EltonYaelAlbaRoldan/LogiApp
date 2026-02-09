@@ -15,9 +15,8 @@ public partial class PaginaMantenimiento : ContentPage
         InitializeComponent();
         InicializarDatos();
     }
-    /// <summary>
-    /// Configura la sesión del operador y conecta con Google Sheets.
-    /// </summary>
+
+    // Configura la sesión del operador y conecta con Google Sheets.
     private async void InicializarDatos()
     {
         try
@@ -34,9 +33,7 @@ public partial class PaginaMantenimiento : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
-    /// <summary>
-    /// Carga las unidades de la BD y las muestra como "Nombre - Placas"
-    /// </summary>
+    // Carga las unidades de la BD y las muestra como "Nombre - Placas"
     private async Task CargarUnidades()
     {
         CargandoUnidades.IsVisible = true;
