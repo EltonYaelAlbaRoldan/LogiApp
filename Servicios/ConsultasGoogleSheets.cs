@@ -54,14 +54,34 @@ public class ConsultasGoogleSheets
                     {
                         Id = row[0].ToString(),
                         Nombre = row[1].ToString(),
-                        VigenciaLicencia = DateTime.Parse(row[8].ToString()),
-                        VigenciaMedico = DateTime.Parse(row[9].ToString()),
-                        LinkCarpeta = row[10].ToString()
+                        VigenciaLicencia = ParsearFechaSegura(row[8]?.ToString()),
+                        VigenciaMedico = ParsearFechaSegura(row[9]?.ToString()),
+                        LinkCarpeta = row.Count > 10 ? row[10].ToString() : ""
                     };
                 }
             }
         }
         return null;
+    }
+    /// <summary>
+    /// Intenta convertir el texto de Sheets a DateTime aceptando varios formatos comunes.
+    /// </summary>
+    private DateTime ParsearFechaSegura(string fechaTexto)
+    {
+        if (string.IsNullOrWhiteSpace(fechaTexto)) return DateTime.MinValue;
+
+        // Definimos los formatos que Sheets suele enviar (con y sin ceros iniciales)
+        string[] formatosAceptados = { "d/M/yyyy", "dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "yyyy-MM-dd" };
+
+        if (DateTime.TryParseExact(fechaTexto, formatosAceptados,
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.None, out DateTime fechaResult))
+        {
+            return fechaResult;
+        }
+
+        // Si falla el parseo exacto, intentamos el parseo general por si la cultura del sistema ayuda
+        return DateTime.TryParse(fechaTexto, out DateTime fechaGeneral) ? fechaGeneral : DateTime.MinValue;
     }
     #endregion
 
