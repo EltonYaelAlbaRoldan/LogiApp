@@ -233,4 +233,52 @@ public class ConsultasGoogleSheets
         return -1;
     }
     #endregion
+
+    #region SECCIÓN 6: GESTIÓN DE VIAJES
+
+    // Recupera los destinos de la pestaña "Destinos"
+    public async Task<List<string>> ObtenerListaDestinosAsync()
+    {
+        try
+        {
+            string rango = "Destinos!A2:A100";
+            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
+            var lista = new List<string>();
+
+            if (response.Values != null)
+            {
+                foreach (var fila in response.Values)
+                {
+                    if (fila.Count > 0) lista.Add(fila[0].ToString());
+                }
+            }
+            return lista;
+        }
+        catch { return new List<string>(); }
+    }
+
+    // Guarda el inicio del viaje en la pestaña "Viajes"
+    public async Task<bool> RegistrarInicioViajeAsync(params string[] datos)
+    {
+        try
+        {
+            // El rango para la pestaña Viajes (A a J según la estructura que definimos)
+            string rango = "Viajes!A:J";
+            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
+
+            var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
+            appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+
+            await appendRequest.ExecuteAsync();
+            return true;
+        }
+        catch { return false; }
+    }
+
+    public async Task<string> GenerarFolioViajeAsync()
+    {
+        return await GenerarFolioSecuencialAsync("Viajes!A:A", "VJ");
+    }
+
+    #endregion
 }

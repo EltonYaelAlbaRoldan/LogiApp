@@ -1,53 +1,112 @@
+using LogiApp.Servicios;
+
 namespace LogiApp.Vistas;
 
 public partial class PaginaViajes : ContentPage
 {
-	public PaginaViajes()
-	{
-		InitializeComponent();
-	}
+    private ConsultasGoogleSheets _sheets;
+    private readonly ConexionGoogleAuth _authService = new();
 
-    private async void OnVolverClicked(object sender, EventArgs e)
+    public PaginaViajes()
     {
-        // Regresa a la página anterior de forma segura
-        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
+        InitializeComponent();
+        InicializarDatos();
+    }
+
+    private async void InicializarDatos()
+    {
+        try
+        {
+            var (sService, _) = await _authService.ObtenerServiciosAsync();
+            _sheets = new ConsultasGoogleSheets(sService);
+
+            // Carga simultánea de Unidades y Destinos desde la DB
+            await Task.WhenAll(CargarUnidades(), CargarDestinos());
+        }
+        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
+    }
+
+    private async Task CargarUnidades()
+    {
+        CargandoUnidades.IsVisible = true;
+        CargandoUnidades.IsRunning = true;
+        try
+        {
+            var lista = await _sheets.ObtenerListaUnidadesAsync();
+            UnidadPicker.ItemsSource = lista;
+        }
+        finally
+        {
+            CargandoUnidades.IsVisible = false;
+            CargandoUnidades.IsRunning = false;
+        }
+    }
+
+    private async Task CargarDestinos()
+    {
+        try
+        {
+            // Recupera la lista dinámica desde la pestaña "Destinos"
+            var destinos = await _sheets.ObtenerListaDestinosAsync();
+            OrigenPicker.ItemsSource = destinos;
+            DestinoPicker.ItemsSource = destinos;
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudieron cargar los destinos: " + ex.Message, "OK");
+        }
     }
 
     private async void OnGuardarViajeClicked(object sender, EventArgs e)
     {
-        // 1. Validación de campos vacíos
-        if (string.IsNullOrWhiteSpace(OrigenEntry.Text) ||
-            string.IsNullOrWhiteSpace(DestinoEntry.Text) ||
-            string.IsNullOrWhiteSpace(ClienteEntry.Text) ||
-            string.IsNullOrWhiteSpace(UnidadEntry.Text) ||
-            string.IsNullOrWhiteSpace(KmSalidaEntry.Text))
+        if (OrigenPicker.SelectedIndex == -1 || DestinoPicker.SelectedIndex == -1 ||
+            UnidadPicker.SelectedIndex == -1 || string.IsNullOrWhiteSpace(KmSalidaEntry.Text) ||
+            string.IsNullOrWhiteSpace(CombustibleEntry.Text))
         {
             await DisplayAlert("Datos Incompletos", "Por favor, completa todos los campos para continuar.", "Aceptar");
             return;
         }
 
-        // 2. Mostrar indicador de carga (Opcional pero recomendado)
         BtnGuardarViaje.IsEnabled = false;
-        BtnGuardarViaje.Text = "GUARDANDO...";
+        IsBusy = true;
 
         try
         {
-            // Aquí llamarás a tu servicio de Google Sheets próximamente
-            // Ejemplo: await _googleSheetsService.RegistrarViajeAsync(...);
+            string folio = await _sheets.GenerarFolioViajeAsync();
+            string idOp = Preferences.Default.Get("UsuarioLogeado", "Sin ID");
 
-            await DisplayAlert("Éxito", "Viaje registrado e iniciado correctamente.", "OK");
+            bool exito = await _sheets.RegistrarInicioViajeAsync(
+                folio,                                  // A: Folio
+                DateTime.Now.ToString("dd/MM/yyyy HH:mm"), // B: Fecha Inicio
+                idOp,                                   // C: ID Operador
+                UnidadPicker.SelectedItem.ToString(),   // D: Unidad
+                OrigenPicker.SelectedItem.ToString(),   // E: Origen
+                DestinoPicker.SelectedItem.ToString(),  // F: Destino
+                ClienteEntry.Text,                      // G: Cliente
+                KmSalidaEntry.Text,                     // H: KM Salida
+                CombustibleEntry.Text,                  // I: Combustible Salida
+                "EN TRANSITO"                           // J: Estatus
+            );
 
-            // Regresar al menú
-            await Navigation.PopAsync();
+            if (exito)
+            {
+                await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
+                Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
+            }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"No se pudo guardar: {ex.Message}", "OK");
+            await DisplayAlert("Error", "Error al guardar en Sheets: " + ex.Message, "OK");
         }
         finally
         {
             BtnGuardarViaje.IsEnabled = true;
-            BtnGuardarViaje.Text = "INICIAR VIAJE";
+            IsBusy = false;
         }
+    }
+
+    private async void OnVolverClicked(object sender, EventArgs e)
+    {
+        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
     }
 }
