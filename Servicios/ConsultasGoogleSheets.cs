@@ -236,6 +236,7 @@ public class ConsultasGoogleSheets
 
     #region SECCIÓN 6: GESTIÓN DE VIAJES
 
+    // Obtiene destinos para el picker
     public async Task<List<string>> ObtenerListaDestinosAsync()
     {
         try
@@ -255,6 +256,7 @@ public class ConsultasGoogleSheets
         catch { return new List<string>(); }
     }
 
+    // Registra el inicio (Columnas A a J)
     public async Task<bool> RegistrarInicioViajeAsync(params string[] datos)
     {
         try
@@ -269,31 +271,55 @@ public class ConsultasGoogleSheets
         catch { return false; }
     }
 
+    // Genera folio VJ-000
     public async Task<string> GenerarFolioViajeAsync()
     {
         return await GenerarFolioSecuencialAsync("Viajes!A:A", "VJ");
     }
-    // Actualizamos el monitoreo para incluir la hora en la celda
+
+    // Monitoreo GPS con hora
     public async Task<bool> ActualizarUbicacionViajeAsync(string folio, string nuevaUbicacion)
     {
         try
         {
             int fila = await ObtenerNumeroFilaPorIdViajeAsync(folio);
             if (fila == -1) return false;
-
-            string horaReporte = DateTime.Now.ToString("HH:mm");
-            string estatusConHora = $"EN TRANSITO - ({nuevaUbicacion}) - {horaReporte}"; //
-
+            string estatusConHora = $"EN TRANSITO - ({nuevaUbicacion}) - {DateTime.Now:HH:mm}";
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object> { estatusConHora } } };
-            var updateRequest = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"Viajes!J{fila}");
-            updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-
-            await updateRequest.ExecuteAsync();
+            var update = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"Viajes!J{fila}");
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            await update.ExecuteAsync();
             return true;
         }
         catch { return false; }
     }
 
+    // ARRIBO A DESTINO (Estatus J y Fecha K)
+    public async Task<bool> ActualizarEstatusYLlegadaAsync(string folio, string nuevoEstatus, string horaLlegada)
+    {
+        try
+        {
+            int fila = await ObtenerNumeroFilaPorIdViajeAsync(folio);
+            if (fila == -1) return false;
+
+            // Actualizamos J (Estatus)
+            var bodyJ = new ValueRange { Values = new List<IList<object>> { new List<object> { nuevoEstatus } } };
+            var reqJ = _service.Spreadsheets.Values.Update(bodyJ, _spreadsheetId, $"Viajes!J{fila}");
+            reqJ.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            await reqJ.ExecuteAsync();
+
+            // Actualizamos K (Llegada)
+            var bodyK = new ValueRange { Values = new List<IList<object>> { new List<object> { horaLlegada } } };
+            var reqK = _service.Spreadsheets.Values.Update(bodyK, _spreadsheetId, $"Viajes!K{fila}");
+            reqK.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            await reqK.ExecuteAsync();
+
+            return true;
+        }
+        catch { return false; }
+    }
+
+    // FINALIZACIÓN DEFINITIVA (L, M, N y Estatus J)
     public async Task<bool> FinalizarViajeAsync(string folio, string fechaFin, string kmFin, string fuelFin, string observaciones)
     {
         try
@@ -301,84 +327,40 @@ public class ConsultasGoogleSheets
             int fila = await ObtenerNumeroFilaPorIdViajeAsync(folio);
             if (fila == -1) return false;
 
-            // Limpieza de datos: Evitamos celdas vacías [cite: 2026-02-17]
             string obsFinal = string.IsNullOrWhiteSpace(observaciones) ? "N/A" : observaciones;
 
-            // 1. Preparamos el rango de cierre (L: KM_FIN, M: FUEL_FIN, N: OBSERVACIONES)
+            // 1. Enviamos bloque técnico (L, M, N)
             var datosCierre = new List<object> { kmFin, fuelFin, obsFinal };
-            var valueRange = new ValueRange { Values = new List<IList<object>> { datosCierre } };
+            var bodyCierre = new ValueRange { Values = new List<IList<object>> { datosCierre } };
+            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!L{fila}:N{fila}");
+            req1.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            await req1.ExecuteAsync();
 
-            // Actualizamos el bloque de datos técnicos
-            var updateCierre = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"Viajes!L{fila}:N{fila}");
-            updateCierre.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-            var resultadoCierre = await updateCierre.ExecuteAsync();
+            // 2. Pequeña pausa para asegurar que Sheets procese el cambio anterior
+            await Task.Delay(500);
 
-            // 2. Actualizamos el ESTATUS a FINALIZADO (Columna J)
+            // 3. Forzamos el cambio de estatus a FINALIZADO en J
             var statusBody = new ValueRange { Values = new List<IList<object>> { new List<object> { "FINALIZADO" } } };
-            var updateStatus = _service.Spreadsheets.Values.Update(statusBody, _spreadsheetId, $"Viajes!J{fila}");
-            updateStatus.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-            var resultadoStatus = await updateStatus.ExecuteAsync();
+            var req2 = _service.Spreadsheets.Values.Update(statusBody, _spreadsheetId, $"Viajes!J{fila}");
+            req2.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            var finalResponse = await req2.ExecuteAsync();
 
-            // Si ambas peticiones devolvieron un ETag o una respuesta, confirmamos éxito
-            return resultadoCierre != null && resultadoStatus != null;
+            return finalResponse != null;
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error de confirmación: {ex.Message}");
-            return false;
-        }
+        catch { return false; }
     }
 
-
-    public async Task<bool> ActualizarEstatusYLlegadaAsync(string folio, string nuevoEstatus, string horaLlegada)
-    {
-        try
-        {
-            int fila = await ObtenerNumeroFilaPorIdViajeAsync(folio);
-            if (fila == -1) throw new Exception("Folio no encontrado en la base de datos.");
-
-            // J = Estatus, K = Fecha Llegada
-            var bodyJ = new ValueRange { Values = new List<IList<object>> { new List<object> { nuevoEstatus } } };
-            var bodyK = new ValueRange { Values = new List<IList<object>> { new List<object> { horaLlegada } } };
-
-            // Actualizamos Estatus
-            var reqJ = _service.Spreadsheets.Values.Update(bodyJ, _spreadsheetId, $"Viajes!J{fila}");
-            reqJ.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-            await reqJ.ExecuteAsync();
-
-            // Actualizamos Fecha
-            var reqK = _service.Spreadsheets.Values.Update(bodyK, _spreadsheetId, $"Viajes!K{fila}");
-            reqK.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-            await reqK.ExecuteAsync();
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"ERROR SHEETS: {ex.Message}");
-            return false;
-        }
-    }
-
+    // Buscador de fila por folio
     private async Task<int> ObtenerNumeroFilaPorIdViajeAsync(string folio)
     {
-        // Aseguramos que el rango sea solo la columna A
         var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:A").ExecuteAsync();
         var values = response.Values;
-
         if (values != null)
         {
             for (int i = 0; i < values.Count; i++)
             {
-                if (values[i].Count > 0)
-                {
-                    // Comparamos limpiando espacios y convirtiendo a mayúsculas
-                    string valorCelda = values[i][0].ToString().Trim().ToUpper();
-                    string folioBuscado = folio.Trim().ToUpper();
-
-                    if (valorCelda == folioBuscado)
-                        return i + 1; // Retorna la fila real en Sheets
-                }
+                if (values[i].Count > 0 && values[i][0].ToString().Trim().ToUpper() == folio.Trim().ToUpper())
+                    return i + 1;
             }
         }
         return -1;
