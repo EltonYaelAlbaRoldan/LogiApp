@@ -97,6 +97,9 @@
 	  <MauiXaml Update="Vistas\PaginaRegistro.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Vistas\PaginaTerminarViaje.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Vistas\PaginaViajes.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

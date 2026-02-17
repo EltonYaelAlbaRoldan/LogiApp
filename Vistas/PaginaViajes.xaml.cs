@@ -91,7 +91,9 @@ public partial class PaginaViajes : ContentPage
             if (exito)
             {
                 await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
-                Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
+
+                // PASAMOS EL FOLIO GENERADO A LA SIGUIENTE PÁGINA
+                Application.Current.MainPage = new NavigationPage(new Vistas.PaginaTerminarViaje(folio));
             }
         }
         catch (Exception ex)

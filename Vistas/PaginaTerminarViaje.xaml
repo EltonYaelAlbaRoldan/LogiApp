@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="LogiApp.Vistas.PaginaTerminarViaje"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Finalizar Viaje">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="25" Spacing="15">
+            <Frame
+                BackgroundColor="#F0F8FF"
+                BorderColor="#2196F3"
+                CornerRadius="10">
+                <VerticalStackLayout Spacing="5">
+                    <Label
+                        FontAttributes="Bold"
+                        HorizontalOptions="Center"
+                        Text="VIAJE ACTIVO"
+                        TextColor="#2196F3" />
+                    <Label
+                        x:Name="LblFolio"
+                        FontSize="18"
+                        HorizontalOptions="Center"
+                        Text="Folio: Cargando..." />
+                    <Label
+                        x:Name="LblDestino"
+                        HorizontalOptions="Center"
+                        Text="Destino: ---"
+                        TextColor="Gray" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label
+                Margin="0,10,0,0"
+                FontAttributes="Bold"
+                Text="Monitoreo en Ruta" />
+            <Button
+                x:Name="BtnReportar"
+                BackgroundColor="#4CAF50"
+                Clicked="OnReportarUbicacionClicked"
+                CornerRadius="8"
+                Text="REPORTAR UBICACIÓN ACTUAL"
+                TextColor="White" />
+            <Label
+                x:Name="LblUltimaActualizacion"
+                FontSize="12"
+                HorizontalOptions="Center"
+                Text="Último reporte: Pendiente" />
+
+            <BoxView
+                Margin="0,10"
+                HeightRequest="1"
+                Color="#E0E0E0" />
+
+            <Button
+                x:Name="BtnArribo"
+                BackgroundColor="#FF9800"
+                Clicked="OnMarcarLlegadaClicked"
+                CornerRadius="12"
+                HeightRequest="50"
+                Text="📍 MARCAR LLEGADA A DESTINO"
+                TextColor="White" />
+
+            <VerticalStackLayout
+                x:Name="SeccionCierre"
+                IsEnabled="False"
+                Opacity="0.5"
+                Spacing="15">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="Datos de Cierre y Evidencias" />
+                <Label Text="Kilometraje de Llegada:" />
+                <Entry
+                    x:Name="KmLlegadaEntry"
+                    Keyboard="Numeric"
+                    Placeholder="000000" />
+                <Label Text="Combustible de Llegada (%):" />
+                <Entry
+                    x:Name="CombustibleLlegadaEntry"
+                    Keyboard="Numeric"
+                    Placeholder="0 - 100" />
+                <Label Text="Observaciones:" />
+                <Editor
+                    x:Name="ObservacionesEditor"
+                    HeightRequest="80"
+                    Placeholder="Notas de entrega..." />
+                <Button
+                    BackgroundColor="Gray"
+                    Clicked="OnTomarFotoClicked"
+                    Text="📷 Tomar Foto de Evidencia"
+                    TextColor="White" />
+                <Image
+                    x:Name="ImgPreview"
+                    Aspect="AspectFit"
+                    HeightRequest="150"
+                    IsVisible="False" />
+                <Button
+                    x:Name="BtnFinalizar"
+                    BackgroundColor="#F44336"
+                    Clicked="OnTerminarViajeClicked"
+                    CornerRadius="12"
+                    FontAttributes="Bold"
+                    HeightRequest="60"
+                    Text="CONFIRMAR CIERRE DE VIAJE"
+                    TextColor="White" />
+            </VerticalStackLayout>
+
+            <ActivityIndicator
+                x:Name="IndicadorCarga"
+                IsRunning="False"
+                IsVisible="False"
+                Color="#2196F3" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
