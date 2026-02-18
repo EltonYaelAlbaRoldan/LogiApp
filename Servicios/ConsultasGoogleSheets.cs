@@ -278,17 +278,50 @@ public class ConsultasGoogleSheets
     }
 
     // Monitoreo GPS con hora
-    public async Task<bool> ActualizarUbicacionViajeAsync(string folio, string nuevaUbicacion)
+    public async Task<bool> ActualizarUbicacionViajeAsync(string folio, double latitud, double longitud)
     {
         try
         {
             int fila = await ObtenerNumeroFilaPorIdViajeAsync(folio);
             if (fila == -1) return false;
-            string estatusConHora = $"EN TRANSITO - ({nuevaUbicacion}) - {DateTime.Now:HH:mm}";
-            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object> { estatusConHora } } };
-            var update = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"Viajes!J{fila}");
-            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-            await update.ExecuteAsync();
+
+            // VALOR POR DEFECTO: Si todo falla, manda las coordenadas
+            string ubicacionFinal = $"{latitud:F4}, {longitud:F4}";
+
+            try
+            {
+                // Intentamos obtener el nombre del lugar
+                var placemarks = await Geocoding.Default.GetPlacemarksAsync(latitud, longitud);
+                var lugar = placemarks?.FirstOrDefault();
+
+                if (lugar != null)
+                {
+                    // Prioridad 1: Ciudad (Locality)
+                    // Prioridad 2: Estado/Provincia (AdminArea)
+                    if (!string.IsNullOrEmpty(lugar.Locality))
+                    {
+                        ubicacionFinal = lugar.Locality;
+                    }
+                    else if (!string.IsNullOrEmpty(lugar.AdminArea))
+                    {
+                        ubicacionFinal = lugar.AdminArea;
+                    }
+                }
+            }
+            catch
+            {
+                // Si no hay internet o falla el servicio de mapas, 
+                // se queda con las coordenadas del valor por defecto
+            }
+
+            string horaReporte = DateTime.Now.ToString("HH:mm");
+            string estatusConLugar = $"EN TRANSITO - ({ubicacionFinal}) - {horaReporte}";
+
+            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object> { estatusConLugar } } };
+            var updateRequest = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"Viajes!J{fila}");
+            updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+
+            await updateRequest.ExecuteAsync();
             return true;
         }
         catch { return false; }

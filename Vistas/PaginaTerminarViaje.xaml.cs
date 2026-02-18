@@ -56,7 +56,7 @@ public partial class PaginaTerminarViaje : ContentPage
     #region Lógica de Monitoreo (GPS)
 
     /// <summary>
-    /// Captura las coordenadas actuales y actualiza el estatus del viaje en la nube.
+    /// Captura las coordenadas actuales y solicita al servicio que las convierta a nombre de lugar.
     /// </summary>
     private async void OnReportarUbicacionClicked(object sender, EventArgs e)
     {
@@ -64,27 +64,29 @@ public partial class PaginaTerminarViaje : ContentPage
         {
             BtnReportar.IsEnabled = false;
 
-            // Solicitamos ubicación con precisión media para rapidez y ahorro de batería
+            // Solicitamos ubicación con precisión media
             var ubicacion = await Geolocation.Default.GetLocationAsync(new GeolocationRequest(
                 GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10)));
 
             if (ubicacion != null)
             {
-                string coordenadas = $"{ubicacion.Latitude:F4}, {ubicacion.Longitude:F4}";
-
-                // Actualiza el estatus en Sheets incluyendo la hora del reporte
-                bool exito = await _sheets.ActualizarUbicacionViajeAsync(_folioActual, coordenadas);
+                // Ahora enviamos la latitud y longitud por separado al servicio
+                // El servicio se encargará de convertir esto a un nombre (Ej: "Pachuca, Centro")
+                bool exito = await _sheets.ActualizarUbicacionViajeAsync(_folioActual, ubicacion.Latitude, ubicacion.Longitude);
 
                 if (exito)
                 {
-                    LblUltimaActualizacion.Text = $"Último reporte: {coordenadas} ({DateTime.Now:HH:mm})";
-                    await DisplayAlert("GPS", "Ubicación reportada correctamente.", "OK");
+                    // En la etiqueta local seguimos mostrando coordenadas por rapidez
+                    string coordsBreves = $"{ubicacion.Latitude:F4}, {ubicacion.Longitude:F4}";
+                    LblUltimaActualizacion.Text = $"Último reporte: {coordsBreves} ({DateTime.Now:HH:mm})";
+
+                    await DisplayAlert("GPS", "Ubicación enviada.", "OK");
                 }
             }
         }
         catch (Exception)
         {
-            await DisplayAlert("Error GPS", "Asegúrate de tener el GPS encendido y dar permisos a la App.", "OK");
+            await DisplayAlert("Error GPS", "Verifica los permisos de ubicación e internet.", "OK");
         }
         finally
         {
@@ -93,7 +95,6 @@ public partial class PaginaTerminarViaje : ContentPage
     }
 
     #endregion
-
     #region Gestión de Arribo y Cierre
 
     /// <summary>
