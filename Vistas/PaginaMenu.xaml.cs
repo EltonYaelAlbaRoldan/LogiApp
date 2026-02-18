@@ -29,12 +29,25 @@ public partial class PaginaMenu : ContentPage
     }
 
     /// <summary>
-    /// Dirige al usuario al módulo de Gestión de Viajes.
+    /// Dirige al usuario al módulo de Viajes, redirigiendo si hay uno pendiente.
     /// </summary>
     private async void OnViajesClicked(object sender, EventArgs e)
     {
-        // Establece la página de Viajes como nueva raíz de navegación
-        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaViajes());
+        // Revisamos si existe un folio guardado en la memoria local [cite: 2026-02-17]
+        bool tieneViajeActivo = Preferences.Default.Get("ViajeEnCurso", false);
+        string folio = Preferences.Default.Get("FolioPendiente", string.Empty);
+
+        if (tieneViajeActivo && !string.IsNullOrEmpty(folio))
+        {
+            // REDIRECCIÓN AUTOMÁTICA: Si hay viaje, lo mandamos a terminarlo [cite: 2026-02-17]
+            await DisplayAlert("Viaje en Curso", $"Redirigiendo al viaje pendiente: {folio}", "Aceptar");
+            await Navigation.PushAsync(new Vistas.PaginaTerminarViaje(folio));
+        }
+        else
+        {
+            // FLUJO NORMAL: Si no hay nada pendiente, puede crear uno nuevo [cite: 2026-02-17]
+            Application.Current.MainPage = new NavigationPage(new Vistas.PaginaViajes());
+        }
     }
 
     /// <summary>
@@ -71,4 +84,43 @@ public partial class PaginaMenu : ContentPage
     }
 
     #endregion
+
+    #region Gestión de Ciclo de Vida (Persistencia)
+
+    /// <summary>
+    /// Se ejecuta al entrar al menú. Verifica si existe un viaje pendiente 
+    /// para bloquear el acceso a nuevos viajes y ofrecer la reanudación.
+    /// </summary>
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // REVISAR SI HAY UN VIAJE QUE NO SE CERRÓ [cite: 2026-02-17]
+        bool tieneViajeActivo = Preferences.Default.Get("ViajeEnCurso", false);
+
+        if (tieneViajeActivo)
+        {
+            // BLOQUEO VISUAL: Como no usamos x:Name aún, buscamos el botón por su texto 
+            // o simplemente deshabilitamos la navegación lógica.
+            // Nota: Es altamente recomendable poner x:Name="BtnModuloViajes" en el XAML.
+
+            string folio = Preferences.Default.Get("FolioPendiente", "Sin Folio");
+
+            // Pequeña pausa para que la UI termine de renderizar antes del alert
+            await Task.Delay(500);
+
+            bool irAViaje = await DisplayAlert("Viaje en Curso",
+                $"Debes terminar el viaje {folio} antes de iniciar uno nuevo.",
+                "Ir a completar viaje", "Entendido");
+
+            if (irAViaje)
+            {
+                // Navegación directa al monitoreo del viaje guardado [cite: 2026-02-17]
+                await Navigation.PushAsync(new Vistas.PaginaTerminarViaje(folio));
+            }
+        }
+    }
+
+    #endregion
+
 }

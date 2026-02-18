@@ -90,9 +90,12 @@ public partial class PaginaViajes : ContentPage
 
             if (exito)
             {
-                await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
+                // --- PERSISTENCIA: Guardamos el estado del viaje ---
+                Preferences.Default.Set("ViajeEnCurso", true);
+                Preferences.Default.Set("FolioPendiente", folio);
+                // ---------------------------------------------------
 
-                // PASAMOS EL FOLIO GENERADO A LA SIGUIENTE PÁGINA
+                await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
                 Application.Current.MainPage = new NavigationPage(new Vistas.PaginaTerminarViaje(folio));
             }
         }

@@ -95,60 +95,67 @@ public partial class PaginaTerminarViaje : ContentPage
     }
 
     #endregion
+
     #region Gestión de Arribo y Cierre
 
-    /// <summary>
-    /// Registra la llegada al destino, detiene el monitoreo y habilita la sección de evidencias.
-    /// </summary>
+    // --- DENTRO DE PaginaTerminarViaje.xaml.cs ---
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // REVISAR SI YA SE HABÍA MARCADO LA LLEGADA ANTES [cite: 2026-02-17]
+        bool yaLlego = Preferences.Default.Get("ArriboConfirmado_" + _folioActual, false);
+
+        if (yaLlego)
+        {
+            // Restauramos la interfaz sin disparar el evento de la base de datos
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                BtnReportar.IsEnabled = false;
+                BtnReportar.Opacity = 0.5;
+                BtnReportar.Text = "UBICACIÓN FINALIZADA";
+
+                BtnArribo.IsEnabled = false;
+                BtnArribo.Text = "LLEGADA REGISTRADA ✅";
+
+                SeccionCierre.IsEnabled = true;
+                SeccionCierre.Opacity = 1.0;
+            });
+        }
+    }
+
     private async void OnMarcarLlegadaClicked(object sender, EventArgs e)
     {
         var confirmar = await DisplayAlert("Confirmar", "¿Has llegado a tu destino?", "Sí", "No");
         if (!confirmar) return;
 
         IndicadorCarga.IsVisible = true;
-        IndicadorCarga.IsRunning = true;
-
         try
         {
             string hora = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-
-            // Actualiza el estatus a "EN DESTINO" y registra la hora de llegada
             bool exito = await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", hora);
 
             if (exito)
             {
-                // Actualización de la UI en el hilo principal
+                // --- PERSISTENCIA DEL ARRIBO ---
+                // Guardamos que este folio específico ya marcó llegada [cite: 2026-02-17]
+                Preferences.Default.Set("ArriboConfirmado_" + _folioActual, true);
+
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    // Deshabilitar monitoreo GPS
                     BtnReportar.IsEnabled = false;
-                    BtnReportar.Opacity = 0.5;
-                    BtnReportar.Text = "UBICACIÓN FINALIZADA";
-
-                    // Habilitar sección de evidencias y datos técnicos
                     BtnArribo.IsEnabled = false;
                     BtnArribo.Text = "LLEGADA REGISTRADA ✅";
                     SeccionCierre.IsEnabled = true;
                     SeccionCierre.Opacity = 1.0;
                 });
-
-                await DisplayAlert("Éxito", "Llegada marcada. El monitoreo GPS se ha detenido.", "OK");
+                await DisplayAlert("Éxito", "Llegada marcada.", "OK");
             }
         }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", "No se pudo marcar la llegada: " + ex.Message, "OK");
-        }
-        finally
-        {
-            IndicadorCarga.IsRunning = false;
-            IndicadorCarga.IsVisible = false;
-        }
+        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
+        finally { IndicadorCarga.IsVisible = false; }
     }
-
-    /// <summary>
-    /// Valida y envía los datos finales (KM, Combustible, Obs) a Sheets y regresa al menú.
-    /// </summary>
     private async void OnTerminarViajeClicked(object sender, EventArgs e)
     {
         // Validación de campos obligatorios
@@ -174,12 +181,13 @@ public partial class PaginaTerminarViaje : ContentPage
 
             if (exito)
             {
-                await DisplayAlert("Viaje Finalizado", "Registro guardado y estatus actualizado.", "OK");
+                // Limpiamos todo el rastro del viaje actual [cite: 2026-02-17]
+                Preferences.Default.Remove("ViajeEnCurso");
+                Preferences.Default.Remove("FolioPendiente");
+                Preferences.Default.Remove("ArriboConfirmado_" + _folioActual);
 
-                // Reinicia la navegación hacia el Menú Principal
-                MainThread.BeginInvokeOnMainThread(() => {
-                    Application.Current.MainPage = new NavigationPage(new PaginaMenu());
-                });
+                await DisplayAlert("Viaje Finalizado", "Registro completado.", "OK");
+                Application.Current.MainPage = new NavigationPage(new PaginaMenu());
             }
             else
             {
