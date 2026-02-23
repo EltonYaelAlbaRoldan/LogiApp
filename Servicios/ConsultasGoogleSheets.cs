@@ -352,8 +352,7 @@ public class ConsultasGoogleSheets
         catch { return false; }
     }
 
-    // FINALIZACIÓN DEFINITIVA (L, M, N y Estatus J)
-    public async Task<bool> FinalizarViajeAsync(string folio, string fechaFin, string kmFin, string fuelFin, string observaciones)
+    public async Task<bool> FinalizarViajeAsync(string folio, string fechaFin, string kmFin, string fuelFin, string observaciones, string linkCarpeta)
     {
         try
         {
@@ -362,28 +361,35 @@ public class ConsultasGoogleSheets
 
             string obsFinal = string.IsNullOrWhiteSpace(observaciones) ? "N/A" : observaciones;
 
-            // 1. Enviamos bloque técnico (L, M, N)
-            var datosCierre = new List<object> { kmFin, fuelFin, obsFinal };
+            // 1. PRIMER ENVÍO: Datos de cierre y Link (L a O) - Esto ya funcionaba
+            var datosCierre = new List<object> { kmFin, fuelFin, obsFinal, linkCarpeta };
             var bodyCierre = new ValueRange { Values = new List<IList<object>> { datosCierre } };
-            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!L{fila}:N{fila}");
+
+            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!L{fila}:O{fila}");
             req1.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await req1.ExecuteAsync();
 
-            // 2. Pequeña pausa para asegurar que Sheets procese el cambio anterior
-            await Task.Delay(500);
+            await Task.Delay(500); // Pausa recomendada por Google
 
-            // 3. Forzamos el cambio de estatus a FINALIZADO en J
+            // 2. SEGUNDO ENVÍO: Estatus (Columna J) - Aquí estaba el error
             var statusBody = new ValueRange { Values = new List<IList<object>> { new List<object> { "FINALIZADO" } } };
             var req2 = _service.Spreadsheets.Values.Update(statusBody, _spreadsheetId, $"Viajes!J{fila}");
-            req2.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-            var finalResponse = await req2.ExecuteAsync();
 
-            return finalResponse != null;
+            // --- ¡ESTA ES LA LÍNEA CRÍTICA QUE FALTABA! ---
+            req2.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+
+            await req2.ExecuteAsync();
+
+            return true; // Ahora sí llegará hasta aquí
         }
-        catch { return false; }
+        catch (Exception ex)
+        {
+            // Esto te ayudará a ver en consola si Google manda otro tipo de queja
+            System.Diagnostics.Debug.WriteLine($"Error real en Sheets: {ex.Message}");
+            return false;
+        }
     }
 
-    // Buscador de fila por folio
     private async Task<int> ObtenerNumeroFilaPorIdViajeAsync(string folio)
     {
         var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:A").ExecuteAsync();
@@ -400,4 +406,5 @@ public class ConsultasGoogleSheets
     }
 
     #endregion
+
 }

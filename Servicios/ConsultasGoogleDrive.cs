@@ -139,6 +139,38 @@ public class ConsultasGoogleDrive
         }
     }
 
+    // Agrega este método al final de ConsultasGoogleDrive.cs
+    public async Task<string> SubirEvidenciaViajeRapidoAsync(string rutaLocal, string idOperador, string folio)
+    {
+        try
+        {
+            // 1. Obtener o crear carpeta del operador y su subcarpeta "evidencias"
+            string idCarpetaOperador = await ObtenerOCrearCarpetaAsync(idOperador, _rootFolderId, true);
+            string idCarpetaEvidencias = await ObtenerOCrearCarpetaAsync("evidencias", idCarpetaOperador, false);
+
+            var metadata = new DriveData.File()
+            {
+                Name = $"Evidencia_{folio}_{DateTime.Now:HHmm}.jpg",
+                Parents = new List<string> { idCarpetaEvidencias }
+            };
+
+            // 2. Subida del archivo usando FileStream seguro
+            using (var stream = new FileStream(rutaLocal, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                var request = _service.Files.Create(metadata, stream, "image/jpeg");
+                request.Fields = "id";
+                await request.UploadAsync();
+            }
+
+            // 3. Devolvemos el link de la CARPETA de evidencias (como pediste)
+            return $"https://drive.google.com/drive/folders/{idCarpetaEvidencias}";
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error al subir evidencia a Drive: " + ex.Message);
+        }
+    }
+
     public async Task<(string fileId, string folderLink)> SubirEvidenciaMantenimientoAsync(string rutaLocal, string idOperador, string folio)
     {
         try

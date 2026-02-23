@@ -12,17 +12,15 @@ public partial class PaginaTerminarViaje : ContentPage
     #region Atributos y Servicios
 
     private ConsultasGoogleSheets _sheets;
+    private ConsultasGoogleDrive _drive; // Nuevo servicio
     private readonly ConexionGoogleAuth _authService = new();
     private string _folioActual;
+    private string _rutaFotoTemporal = string.Empty; // Ruta para la evidencia
 
     #endregion
 
     #region Constructor
 
-    /// <summary>
-    /// Inicializa la página recibiendo el folio del viaje activo.
-    /// </summary>
-    /// <param name="folio">Folio único del viaje generado en Sheets.</param>
     public PaginaTerminarViaje(string folio)
     {
         InitializeComponent();
@@ -35,15 +33,14 @@ public partial class PaginaTerminarViaje : ContentPage
 
     #region Inicialización
 
-    /// <summary>
-    /// Obtiene y configura los servicios de Google para la sesión actual.
-    /// </summary>
     private async void InicializarServicio()
     {
         try
         {
-            var (sService, _) = await _authService.ObtenerServiciosAsync();
+            // Inicializamos ambos servicios: Sheets y Drive
+            var (sService, dService) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
+            _drive = new ConsultasGoogleDrive(dService);
         }
         catch (Exception ex)
         {
@@ -55,31 +52,23 @@ public partial class PaginaTerminarViaje : ContentPage
 
     #region Lógica de Monitoreo (GPS)
 
-    /// <summary>
-    /// Captura las coordenadas actuales y solicita al servicio que las convierta a nombre de lugar.
-    /// </summary>
     private async void OnReportarUbicacionClicked(object sender, EventArgs e)
     {
         try
         {
             BtnReportar.IsEnabled = false;
 
-            // Solicitamos ubicación con precisión media
             var ubicacion = await Geolocation.Default.GetLocationAsync(new GeolocationRequest(
                 GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10)));
 
             if (ubicacion != null)
             {
-                // Ahora enviamos la latitud y longitud por separado al servicio
-                // El servicio se encargará de convertir esto a un nombre (Ej: "Pachuca, Centro")
                 bool exito = await _sheets.ActualizarUbicacionViajeAsync(_folioActual, ubicacion.Latitude, ubicacion.Longitude);
 
                 if (exito)
                 {
-                    // En la etiqueta local seguimos mostrando coordenadas por rapidez
                     string coordsBreves = $"{ubicacion.Latitude:F4}, {ubicacion.Longitude:F4}";
                     LblUltimaActualizacion.Text = $"Último reporte: {coordsBreves} ({DateTime.Now:HH:mm})";
-
                     await DisplayAlert("GPS", "Ubicación enviada.", "OK");
                 }
             }
@@ -98,18 +87,14 @@ public partial class PaginaTerminarViaje : ContentPage
 
     #region Gestión de Arribo y Cierre
 
-    // --- DENTRO DE PaginaTerminarViaje.xaml.cs ---
-
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        // REVISAR SI YA SE HABÍA MARCADO LA LLEGADA ANTES [cite: 2026-02-17]
         bool yaLlego = Preferences.Default.Get("ArriboConfirmado_" + _folioActual, false);
 
         if (yaLlego)
         {
-            // Restauramos la interfaz sin disparar el evento de la base de datos
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 BtnReportar.IsEnabled = false;
@@ -138,8 +123,6 @@ public partial class PaginaTerminarViaje : ContentPage
 
             if (exito)
             {
-                // --- PERSISTENCIA DEL ARRIBO ---
-                // Guardamos que este folio específico ya marcó llegada [cite: 2026-02-17]
                 Preferences.Default.Set("ArriboConfirmado_" + _folioActual, true);
 
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -156,49 +139,70 @@ public partial class PaginaTerminarViaje : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
         finally { IndicadorCarga.IsVisible = false; }
     }
+
     private async void OnTerminarViajeClicked(object sender, EventArgs e)
     {
-        // Validación de campos obligatorios
         if (string.IsNullOrWhiteSpace(KmLlegadaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleLlegadaEntry.Text))
         {
             await DisplayAlert("Atención", "Captura kilometraje y combustible final.", "OK");
             return;
         }
 
+        BtnFinalizar.IsEnabled = false;
         IndicadorCarga.IsVisible = true;
         IndicadorCarga.IsRunning = true;
 
         try
         {
-            // Ejecuta el cierre formal en la base de datos
+            string linkCarpetaEvidencias = "Sin Evidencia";
+
+            // 1. SUBIR FOTO A DRIVE (Si existe captura)
+            if (!string.IsNullOrEmpty(_rutaFotoTemporal) && File.Exists(_rutaFotoTemporal))
+            {
+                string idOp = Preferences.Default.Get("UsuarioLogeado", "SinID");
+                // Usamos FileStream seguro para evitar crashes en Windows/Android
+                using (var stream = new FileStream(_rutaFotoTemporal, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    // Este método sube la foto y nos devuelve el link de la carpeta 'evidencias'
+                    linkCarpetaEvidencias = await _drive.SubirEvidenciaViajeRapidoAsync(_rutaFotoTemporal, idOp, _folioActual);
+                }
+            }
+
+            // 2. FINALIZAR EN GOOGLE SHEETS (Se envía el link a la columna O)
             bool exito = await _sheets.FinalizarViajeAsync(
                 _folioActual,
                 DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
                 KmLlegadaEntry.Text,
                 CombustibleLlegadaEntry.Text,
-                ObservacionesEditor.Text
+                ObservacionesEditor.Text,
+                linkCarpetaEvidencias
             );
 
             if (exito)
             {
-                // Limpiamos todo el rastro del viaje actual [cite: 2026-02-17]
+                // Limpiamos persistencia local
                 Preferences.Default.Remove("ViajeEnCurso");
                 Preferences.Default.Remove("FolioPendiente");
                 Preferences.Default.Remove("ArriboConfirmado_" + _folioActual);
 
-                await DisplayAlert("Viaje Finalizado", "Registro completado.", "OK");
-                Application.Current.MainPage = new NavigationPage(new PaginaMenu());
+                await DisplayAlert("Viaje Finalizado", "Registro y evidencias guardadas correctamente.", "OK");
+
+                // Navegación forzada para limpiar el stack
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Application.Current.MainPage = new NavigationPage(new PaginaMenu());
+                });
             }
             else
             {
-                // Plan de contingencia si la API no confirma pero los datos se enviaron
-                await DisplayAlert("Servidor Ocupado", "Los datos se enviaron, pero la confirmación tardó demasiado. Verifica tu menú principal.", "OK");
-                Application.Current.MainPage = new NavigationPage(new PaginaMenu());
+                await DisplayAlert("Error", "No se pudo actualizar la base de datos.", "OK");
+                BtnFinalizar.IsEnabled = true;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await DisplayAlert("Error de Red", "Verifica tu conexión a internet para finalizar el viaje.", "OK");
+            await DisplayAlert("Error Crítico", "Ocurrió un problema: " + ex.Message, "OK");
+            BtnFinalizar.IsEnabled = true;
         }
         finally
         {
@@ -211,9 +215,6 @@ public partial class PaginaTerminarViaje : ContentPage
 
     #region Manejo de Evidencias
 
-    /// <summary>
-    /// Abre la cámara del dispositivo para capturar evidencia del viaje.
-    /// </summary>
     private async void OnTomarFotoClicked(object sender, EventArgs e)
     {
         try
@@ -224,7 +225,9 @@ public partial class PaginaTerminarViaje : ContentPage
 
                 if (photo != null)
                 {
-                    // Muestra la vista previa de la foto capturada
+                    // Guardamos la ruta del archivo para subirlo al finalizar
+                    _rutaFotoTemporal = photo.FullPath;
+
                     var stream = await photo.OpenReadAsync();
                     ImgPreview.Source = ImageSource.FromStream(() => stream);
                     ImgPreview.IsVisible = true;
@@ -234,7 +237,7 @@ public partial class PaginaTerminarViaje : ContentPage
             }
             else
             {
-                await DisplayAlert("Error", "La cámara no está disponible en este dispositivo.", "OK");
+                await DisplayAlert("Error", "La cámara no está disponible.", "OK");
             }
         }
         catch (Exception ex)
