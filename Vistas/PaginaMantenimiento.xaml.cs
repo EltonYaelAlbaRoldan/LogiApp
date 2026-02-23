@@ -1,12 +1,9 @@
 using LogiApp.Servicios;
 using Google.Apis.Sheets.v4.Data;
 
+// Controla el registro de mantenimiento, subida de evidencias a Drive y guardado en Google Sheets.
 namespace LogiApp.Vistas;
 
-/// <summary>
-/// Pantalla encargada de registrar los reportes de mantenimiento, 
-/// vinculando datos en Google Sheets y evidencias fotográficas en Google Drive.
-/// </summary>
 public partial class PaginaMantenimiento : ContentPage
 {
     #region Atributos y Servicios
@@ -30,22 +27,16 @@ public partial class PaginaMantenimiento : ContentPage
 
     #region Inicialización de Datos
 
-    /// <summary>
-    /// Configura la sesión del operador y recupera los servicios de Google necesarios.
-    /// </summary>
     private async void InicializarDatos()
     {
         try
         {
-            // Recuperar el nombre del usuario desde las preferencias locales
             OperadorLabel.Text = Preferences.Get("UsuarioLogeado", "Operador no detectado");
 
-            // Capturamos los servicios de Sheets y Drive desde el motor de autenticación
             var (sService, dService) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
             _driveService = new ConsultasGoogleDrive(dService);
 
-            // Cargar la lista de vehículos disponibles
             await CargarUnidades();
         }
         catch (Exception ex)
@@ -54,9 +45,6 @@ public partial class PaginaMantenimiento : ContentPage
         }
     }
 
-    /// <summary>
-    /// Recupera las unidades registradas en la base de datos de Google Sheets.
-    /// </summary>
     private async Task CargarUnidades()
     {
         CargandoUnidades.IsVisible = true;
@@ -64,7 +52,6 @@ public partial class PaginaMantenimiento : ContentPage
 
         try
         {
-            // Llama al método que lee las columnas de la pestaña Unidades
             var listaUnidades = await _sheets.ObtenerListaUnidadesAsync();
 
             if (listaUnidades != null && listaUnidades.Count > 0)
@@ -91,19 +78,14 @@ public partial class PaginaMantenimiento : ContentPage
 
     #region Eventos de Formulario
 
-    /// <summary>
-    /// Procesa el guardado del reporte, subiendo la imagen a Drive y registrando los datos en Sheets.
-    /// </summary>
     private async void OnGuardarMantenimientoClicked(object sender, EventArgs e)
     {
-        // 1. Validaciones de selección de unidad
         if (UnidadPicker.SelectedIndex == -1)
         {
             await DisplayAlert("Atención", "Selecciona una unidad de la lista.", "OK");
             return;
         }
 
-        // 2. Validación de campos obligatorios
         bool faltanDatos =
             string.IsNullOrWhiteSpace(LugarEntry.Text) ||
             string.IsNullOrWhiteSpace(EstablecimientoEntry.Text) ||
@@ -125,18 +107,17 @@ public partial class PaginaMantenimiento : ContentPage
 
             string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync();
             string unidadTexto = UnidadPicker.SelectedItem.ToString();
+            string linkCarpeta = "Sin evidencia";
 
-            string linkCarpeta = "Sin evidencia"; // Valor por defecto si no hay foto
-
-            // 1. Subir a Drive si existe una ruta de foto local
+            // Subida a Drive (solo si se seleccionó una foto)
             if (!string.IsNullOrEmpty(_rutaFotoLocal))
             {
                 string idOperador = Preferences.Get("IdOperadorLogeado", "");
                 var resultadoDrive = await _driveService.SubirEvidenciaMantenimientoAsync(_rutaFotoLocal, idOperador, nuevoFolio);
-                linkCarpeta = resultadoDrive.folderLink; // Se recupera el link de la carpeta creada
+                linkCarpeta = resultadoDrive.folderLink;
             }
 
-            // 2. Registrar la fila en Google Sheets con toda la información recolectada
+            // Registro en Sheets
             await _sheets.RegistrarMantenimientoAsync(
                 nuevoFolio,
                 DateTime.Now.ToString("g"),
@@ -155,8 +136,6 @@ public partial class PaginaMantenimiento : ContentPage
             );
 
             await DisplayAlert("Éxito", "Reporte guardado con link a evidencia.", "OK");
-
-            // Regresar al menú principal
             Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
         catch (Exception ex)
@@ -170,21 +149,16 @@ public partial class PaginaMantenimiento : ContentPage
         }
     }
 
-    /// <summary>
-    /// Permite al usuario seleccionar una fotografía de la galería como evidencia.
-    /// </summary>
     private async void OnAdjuntarEvidenciaClicked(object sender, EventArgs e)
     {
         try
         {
-            // Invoca el selector de medios del dispositivo
             FileResult photo = await MediaPicker.Default.PickPhotoAsync();
 
             if (photo != null)
             {
                 _rutaFotoLocal = photo.FullPath;
 
-                // Actualización visual del botón (Uso de espacio de nombres explícito para evitar ambigüedad)
                 BtnAdjuntar.Text = "Imagen Cargada";
                 BtnAdjuntar.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#4CAF50");
                 BtnAdjuntar.TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#FFFFFF");
@@ -196,9 +170,6 @@ public partial class PaginaMantenimiento : ContentPage
         }
     }
 
-    /// <summary>
-    /// Cancela la operación y regresa al menú principal.
-    /// </summary>
     private async void OnVolverClicked(object sender, EventArgs e)
     {
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
