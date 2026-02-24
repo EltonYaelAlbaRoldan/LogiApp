@@ -236,7 +236,6 @@ public class ConsultasGoogleSheets
 
     #region SECCIÓN 6: GESTIÓN DE VIAJES
 
-    // Obtiene destinos para el picker
     public async Task<List<string>> ObtenerListaDestinosAsync()
     {
         try
@@ -256,7 +255,6 @@ public class ConsultasGoogleSheets
         catch { return new List<string>(); }
     }
 
-    // Registra el inicio (Columnas A a J)
     public async Task<bool> RegistrarInicioViajeAsync(params string[] datos)
     {
         try
@@ -271,13 +269,11 @@ public class ConsultasGoogleSheets
         catch { return false; }
     }
 
-    // Genera folio VJ-000
     public async Task<string> GenerarFolioViajeAsync()
     {
         return await GenerarFolioSecuencialAsync("Viajes!A:A", "VJ");
     }
 
-    // Monitoreo GPS con hora
     public async Task<bool> ActualizarUbicacionViajeAsync(string folio, double latitud, double longitud)
     {
         try
@@ -285,34 +281,22 @@ public class ConsultasGoogleSheets
             int fila = await ObtenerNumeroFilaPorIdViajeAsync(folio);
             if (fila == -1) return false;
 
-            // VALOR POR DEFECTO: Si todo falla, manda las coordenadas
             string ubicacionFinal = $"{latitud:F4}, {longitud:F4}";
 
             try
             {
-                // Intentamos obtener el nombre del lugar
                 var placemarks = await Geocoding.Default.GetPlacemarksAsync(latitud, longitud);
                 var lugar = placemarks?.FirstOrDefault();
 
                 if (lugar != null)
                 {
-                    // Prioridad 1: Ciudad (Locality)
-                    // Prioridad 2: Estado/Provincia (AdminArea)
                     if (!string.IsNullOrEmpty(lugar.Locality))
-                    {
                         ubicacionFinal = lugar.Locality;
-                    }
                     else if (!string.IsNullOrEmpty(lugar.AdminArea))
-                    {
                         ubicacionFinal = lugar.AdminArea;
-                    }
                 }
             }
-            catch
-            {
-                // Si no hay internet o falla el servicio de mapas, 
-                // se queda con las coordenadas del valor por defecto
-            }
+            catch { }
 
             string horaReporte = DateTime.Now.ToString("HH:mm");
             string estatusConLugar = $"EN TRANSITO - ({ubicacionFinal}) - {horaReporte}";
@@ -327,7 +311,6 @@ public class ConsultasGoogleSheets
         catch { return false; }
     }
 
-    // ARRIBO A DESTINO (Estatus J y Fecha K)
     public async Task<bool> ActualizarEstatusYLlegadaAsync(string folio, string nuevoEstatus, string horaLlegada)
     {
         try
@@ -335,13 +318,11 @@ public class ConsultasGoogleSheets
             int fila = await ObtenerNumeroFilaPorIdViajeAsync(folio);
             if (fila == -1) return false;
 
-            // Actualizamos J (Estatus)
             var bodyJ = new ValueRange { Values = new List<IList<object>> { new List<object> { nuevoEstatus } } };
             var reqJ = _service.Spreadsheets.Values.Update(bodyJ, _spreadsheetId, $"Viajes!J{fila}");
             reqJ.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await reqJ.ExecuteAsync();
 
-            // Actualizamos K (Llegada)
             var bodyK = new ValueRange { Values = new List<IList<object>> { new List<object> { horaLlegada } } };
             var reqK = _service.Spreadsheets.Values.Update(bodyK, _spreadsheetId, $"Viajes!K{fila}");
             reqK.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
@@ -352,7 +333,7 @@ public class ConsultasGoogleSheets
         catch { return false; }
     }
 
-    public async Task<bool> FinalizarViajeAsync(string folio, string fechaFin, string kmFin, string fuelFin, string observaciones, string linkCarpeta)
+    public async Task<bool> FinalizarViajeAsync(string folio, string fechaFin, string kmFin, string fuelFin, string observaciones, string linkCarpeta, string duracion, string recorridoKm, string consumoLitros)
     {
         try
         {
@@ -361,30 +342,25 @@ public class ConsultasGoogleSheets
 
             string obsFinal = string.IsNullOrWhiteSpace(observaciones) ? "N/A" : observaciones;
 
-            // 1. PRIMER ENVÍO: Datos de cierre y Link (L a O) - Esto ya funcionaba
-            var datosCierre = new List<object> { kmFin, fuelFin, obsFinal, linkCarpeta };
+            // Rango actualizado L:R (Q=Recorrido KM, R=Consumo Litros)
+            var datosCierre = new List<object> { kmFin, fuelFin, obsFinal, linkCarpeta, duracion, recorridoKm, consumoLitros };
             var bodyCierre = new ValueRange { Values = new List<IList<object>> { datosCierre } };
 
-            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!L{fila}:O{fila}");
+            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!L{fila}:R{fila}");
             req1.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await req1.ExecuteAsync();
 
-            await Task.Delay(500); // Pausa recomendada por Google
+            await Task.Delay(500);
 
-            // 2. SEGUNDO ENVÍO: Estatus (Columna J) - Aquí estaba el error
             var statusBody = new ValueRange { Values = new List<IList<object>> { new List<object> { "FINALIZADO" } } };
             var req2 = _service.Spreadsheets.Values.Update(statusBody, _spreadsheetId, $"Viajes!J{fila}");
-
-            // --- ¡ESTA ES LA LÍNEA CRÍTICA QUE FALTABA! ---
             req2.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-
             await req2.ExecuteAsync();
 
-            return true; // Ahora sí llegará hasta aquí
+            return true;
         }
         catch (Exception ex)
         {
-            // Esto te ayudará a ver en consola si Google manda otro tipo de queja
             System.Diagnostics.Debug.WriteLine($"Error real en Sheets: {ex.Message}");
             return false;
         }

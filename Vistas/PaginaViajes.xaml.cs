@@ -19,8 +19,6 @@ public partial class PaginaViajes : ContentPage
         {
             var (sService, _) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
-
-            // Carga simultánea de Unidades y Destinos desde la DB
             await Task.WhenAll(CargarUnidades(), CargarDestinos());
         }
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
@@ -46,7 +44,6 @@ public partial class PaginaViajes : ContentPage
     {
         try
         {
-            // Recupera la lista dinámica desde la pestaña "Destinos"
             var destinos = await _sheets.ObtenerListaDestinosAsync();
             OrigenPicker.ItemsSource = destinos;
             DestinoPicker.ItemsSource = destinos;
@@ -74,26 +71,30 @@ public partial class PaginaViajes : ContentPage
         {
             string folio = await _sheets.GenerarFolioViajeAsync();
             string idOp = Preferences.Default.Get("UsuarioLogeado", "Sin ID");
+            string fechaInicio = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 
             bool exito = await _sheets.RegistrarInicioViajeAsync(
-                folio,                                  // A: Folio
-                DateTime.Now.ToString("dd/MM/yyyy HH:mm"), // B: Fecha Inicio
-                idOp,                                   // C: ID Operador
-                UnidadPicker.SelectedItem.ToString(),   // D: Unidad
-                OrigenPicker.SelectedItem.ToString(),   // E: Origen
-                DestinoPicker.SelectedItem.ToString(),  // F: Destino
-                ClienteEntry.Text,                      // G: Cliente
-                KmSalidaEntry.Text,                     // H: KM Salida
-                CombustibleEntry.Text,                  // I: Combustible Salida
-                "EN TRANSITO"                           // J: Estatus
+                folio,
+                fechaInicio,
+                idOp,
+                UnidadPicker.SelectedItem.ToString(),
+                OrigenPicker.SelectedItem.ToString(),
+                DestinoPicker.SelectedItem.ToString(),
+                ClienteEntry.Text,
+                KmSalidaEntry.Text,
+                CombustibleEntry.Text,
+                "EN TRANSITO"
             );
 
             if (exito)
             {
-                // --- PERSISTENCIA: Guardamos el estado del viaje ---
                 Preferences.Default.Set("ViajeEnCurso", true);
                 Preferences.Default.Set("FolioPendiente", folio);
-                // ---------------------------------------------------
+                Preferences.Default.Set("Inicio_" + folio, fechaInicio);
+
+                // Guardamos los datos de salida para el cálculo matemático final
+                Preferences.Default.Set("KmSalida_" + folio, KmSalidaEntry.Text);
+                Preferences.Default.Set("FuelSalida_" + folio, CombustibleEntry.Text);
 
                 await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
                 Application.Current.MainPage = new NavigationPage(new Vistas.PaginaTerminarViaje(folio));

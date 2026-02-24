@@ -3,19 +3,15 @@ using Microsoft.Maui.Devices.Sensors;
 
 namespace LogiApp.Vistas;
 
-/// <summary>
-/// Pantalla para gestionar el monitoreo en ruta, marcar arribo a destino 
-/// y realizar el cierre formal del viaje con captura de evidencias.
-/// </summary>
 public partial class PaginaTerminarViaje : ContentPage
 {
     #region Atributos y Servicios
 
     private ConsultasGoogleSheets _sheets;
-    private ConsultasGoogleDrive _drive; // Nuevo servicio
+    private ConsultasGoogleDrive _drive;
     private readonly ConexionGoogleAuth _authService = new();
     private string _folioActual;
-    private string _rutaFotoTemporal = string.Empty; // Ruta para la evidencia
+    private string _rutaFotoTemporal = string.Empty;
 
     #endregion
 
@@ -37,7 +33,6 @@ public partial class PaginaTerminarViaje : ContentPage
     {
         try
         {
-            // Inicializamos ambos servicios: Sheets y Drive
             var (sService, dService) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
             _drive = new ConsultasGoogleDrive(dService);
@@ -118,8 +113,33 @@ public partial class PaginaTerminarViaje : ContentPage
         IndicadorCarga.IsVisible = true;
         try
         {
-            string hora = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-            bool exito = await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", hora);
+            string horaLlegada = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+
+            // 1. Cálculo de duración
+            string horaInicio = Preferences.Default.Get("Inicio_" + _folioActual, horaLlegada);
+            string duracionStr = "N/A";
+
+            if (DateTime.TryParseExact(horaInicio, "dd/MM/yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime dtInicio) &&
+                DateTime.TryParseExact(horaLlegada, "dd/MM/yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime dtFin))
+            {
+                TimeSpan tiempo = dtFin - dtInicio;
+                duracionStr = $"{(int)tiempo.TotalHours}h {tiempo.Minutes}m";
+            }
+            Preferences.Default.Set("Duracion_" + _folioActual, duracionStr);
+
+            // 2. Captura de GPS final en segundo plano (Silenciosa)
+            try
+            {
+                var ubicacion = await Geolocation.Default.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(5)));
+                if (ubicacion != null)
+                {
+                    await _sheets.ActualizarUbicacionViajeAsync(_folioActual, ubicacion.Latitude, ubicacion.Longitude);
+                }
+            }
+            catch { /* Se ignora si falla para no trabar el arribo */ }
+
+            // 3. Registrar llegada en Sheets
+            bool exito = await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", horaLlegada);
 
             if (exito)
             {
@@ -129,17 +149,16 @@ public partial class PaginaTerminarViaje : ContentPage
                 {
                     BtnReportar.IsEnabled = false;
                     BtnArribo.IsEnabled = false;
-                    BtnArribo.Text = "LLEGADA REGISTRADA ✅";
+                    BtnArribo.Text = $"LLEGADA ✅ ({duracionStr})"; // Feedback visual discreto
                     SeccionCierre.IsEnabled = true;
                     SeccionCierre.Opacity = 1.0;
                 });
-                await DisplayAlert("Éxito", "Llegada marcada.", "OK");
+                await DisplayAlert("Éxito", $"Llegada marcada. Duración del viaje: {duracionStr}", "OK");
             }
         }
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
         finally { IndicadorCarga.IsVisible = false; }
     }
-
     private async void OnTerminarViajeClicked(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(KmLlegadaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleLlegadaEntry.Text))
@@ -148,46 +167,79 @@ public partial class PaginaTerminarViaje : ContentPage
             return;
         }
 
+        if (string.IsNullOrEmpty(_rutaFotoTemporal) || !File.Exists(_rutaFotoTemporal))
+        {
+            await DisplayAlert("Evidencia Requerida", "Es obligatorio capturar una fotografía como evidencia para finalizar el viaje.", "OK");
+            return;
+        }
+
+        // --- CÁLCULOS MATEMÁTICOS ---
+        double kmSalida = 0, fuelSalida = 0, kmLlegada = 0, fuelLlegada = 0;
+
+        double.TryParse(Preferences.Default.Get("KmSalida_" + _folioActual, "0"), out kmSalida);
+        double.TryParse(Preferences.Default.Get("FuelSalida_" + _folioActual, "0"), out fuelSalida);
+        double.TryParse(KmLlegadaEntry.Text, out kmLlegada);
+        double.TryParse(CombustibleLlegadaEntry.Text, out fuelLlegada);
+
+        // Validación 1: Kilometraje
+        if (kmLlegada < kmSalida)
+        {
+            await DisplayAlert("Error de Captura", $"El KM final no puede ser menor al inicial ({kmSalida}).", "OK");
+            return;
+        }
+
+        // Validación 2: Combustible (Evita consumo negativo)
+        if (fuelLlegada > fuelSalida)
+        {
+            await DisplayAlert("Error de Captura", $"El combustible final ({fuelLlegada} L) no puede ser mayor al inicial ({fuelSalida} L). Si recargaste en ruta, anótalo en Observaciones.", "OK");
+            return;
+        }
+
+        double totalKm = kmLlegada - kmSalida;
+        double totalLitros = fuelSalida - fuelLlegada;
+
+        string recorridoKmStr = totalKm.ToString("0.##");
+        string consumoLitrosStr = totalLitros.ToString("0.##");
+
         BtnFinalizar.IsEnabled = false;
         IndicadorCarga.IsVisible = true;
         IndicadorCarga.IsRunning = true;
 
         try
         {
-            string linkCarpetaEvidencias = "Sin Evidencia";
+            string duracionViaje = Preferences.Default.Get("Duracion_" + _folioActual, "N/A");
+            string idOp = Preferences.Default.Get("UsuarioLogeado", "SinID");
+            string linkCarpetaEvidencias = string.Empty;
 
-            // 1. SUBIR FOTO A DRIVE (Si existe captura)
-            if (!string.IsNullOrEmpty(_rutaFotoTemporal) && File.Exists(_rutaFotoTemporal))
+            using (var stream = new FileStream(_rutaFotoTemporal, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                string idOp = Preferences.Default.Get("UsuarioLogeado", "SinID");
-                // Usamos FileStream seguro para evitar crashes en Windows/Android
-                using (var stream = new FileStream(_rutaFotoTemporal, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    // Este método sube la foto y nos devuelve el link de la carpeta 'evidencias'
-                    linkCarpetaEvidencias = await _drive.SubirEvidenciaViajeRapidoAsync(_rutaFotoTemporal, idOp, _folioActual);
-                }
+                linkCarpetaEvidencias = await _drive.SubirEvidenciaViajeRapidoAsync(_rutaFotoTemporal, idOp, _folioActual);
             }
 
-            // 2. FINALIZAR EN GOOGLE SHEETS (Se envía el link a la columna O)
             bool exito = await _sheets.FinalizarViajeAsync(
                 _folioActual,
                 DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
                 KmLlegadaEntry.Text,
                 CombustibleLlegadaEntry.Text,
                 ObservacionesEditor.Text,
-                linkCarpetaEvidencias
+                linkCarpetaEvidencias,
+                duracionViaje,
+                recorridoKmStr,
+                consumoLitrosStr
             );
 
             if (exito)
             {
-                // Limpiamos persistencia local
                 Preferences.Default.Remove("ViajeEnCurso");
                 Preferences.Default.Remove("FolioPendiente");
                 Preferences.Default.Remove("ArriboConfirmado_" + _folioActual);
+                Preferences.Default.Remove("Inicio_" + _folioActual);
+                Preferences.Default.Remove("Duracion_" + _folioActual);
+                Preferences.Default.Remove("KmSalida_" + _folioActual);
+                Preferences.Default.Remove("FuelSalida_" + _folioActual);
 
-                await DisplayAlert("Viaje Finalizado", "Registro y evidencias guardadas correctamente.", "OK");
+                await DisplayAlert("Viaje Finalizado", $"Cierre exitoso.\nRecorriste: {recorridoKmStr} KM\nConsumiste: {consumoLitrosStr} L", "OK");
 
-                // Navegación forzada para limpiar el stack
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     Application.Current.MainPage = new NavigationPage(new PaginaMenu());
@@ -225,7 +277,6 @@ public partial class PaginaTerminarViaje : ContentPage
 
                 if (photo != null)
                 {
-                    // Guardamos la ruta del archivo para subirlo al finalizar
                     _rutaFotoTemporal = photo.FullPath;
 
                     var stream = await photo.OpenReadAsync();

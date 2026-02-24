@@ -90,7 +90,7 @@
                 <Entry
                     x:Name="CombustibleEntry"
                     Keyboard="Numeric"
-                    Placeholder="Nivel de Combustible (Lts o %)" />
+                    Placeholder="Nivel de Combustible (Litros)" />
 
                 <Button
                     x:Name="BtnGuardarViaje"
