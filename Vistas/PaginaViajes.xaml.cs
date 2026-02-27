@@ -19,7 +19,9 @@ public partial class PaginaViajes : ContentPage
         {
             var (sService, _) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
-            await Task.WhenAll(CargarUnidades(), CargarDestinos());
+
+            // Cargamos las 3 listas simultáneamente
+            await Task.WhenAll(CargarUnidades(), CargarDestinos(), CargarClientes());
         }
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
@@ -54,11 +56,26 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
+    // Nuevo método para poblar el Picker de Clientes
+    private async Task CargarClientes()
+    {
+        try
+        {
+            var clientes = await _sheets.ObtenerListaClientesAsync();
+            ClientePicker.ItemsSource = clientes;
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudieron cargar los clientes: " + ex.Message, "OK");
+        }
+    }
+
     private async void OnGuardarViajeClicked(object sender, EventArgs e)
     {
+        // Agregamos la validación para que el ClientePicker no esté vacío (-1)
         if (OrigenPicker.SelectedIndex == -1 || DestinoPicker.SelectedIndex == -1 ||
-            UnidadPicker.SelectedIndex == -1 || string.IsNullOrWhiteSpace(KmSalidaEntry.Text) ||
-            string.IsNullOrWhiteSpace(CombustibleEntry.Text))
+            UnidadPicker.SelectedIndex == -1 || ClientePicker.SelectedIndex == -1 ||
+            string.IsNullOrWhiteSpace(KmSalidaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleEntry.Text))
         {
             await DisplayAlert("Datos Incompletos", "Por favor, completa todos los campos para continuar.", "Aceptar");
             return;
@@ -80,7 +97,7 @@ public partial class PaginaViajes : ContentPage
                 UnidadPicker.SelectedItem.ToString(),
                 OrigenPicker.SelectedItem.ToString(),
                 DestinoPicker.SelectedItem.ToString(),
-                ClienteEntry.Text,
+                ClientePicker.SelectedItem.ToString(), 
                 KmSalidaEntry.Text,
                 CombustibleEntry.Text,
                 "EN TRANSITO"
@@ -92,7 +109,6 @@ public partial class PaginaViajes : ContentPage
                 Preferences.Default.Set("FolioPendiente", folio);
                 Preferences.Default.Set("Inicio_" + folio, fechaInicio);
 
-                // Guardamos los datos de salida para el cálculo matemático final
                 Preferences.Default.Set("KmSalida_" + folio, KmSalidaEntry.Text);
                 Preferences.Default.Set("FuelSalida_" + folio, CombustibleEntry.Text);
 
@@ -111,7 +127,7 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
-    private async void OnVolverClicked(object sender, EventArgs e)
+    private void OnVolverClicked(object sender, EventArgs e)
     {
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
     }

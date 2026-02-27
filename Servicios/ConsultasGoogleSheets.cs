@@ -255,6 +255,25 @@ public class ConsultasGoogleSheets
         catch { return new List<string>(); }
     }
 
+    public async Task<List<string>> ObtenerListaClientesAsync()
+    {
+        try
+        {
+            string rango = "Clientes!A2:A100"; // Apunta a tu nueva hoja
+            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
+            var lista = new List<string>();
+            if (response.Values != null)
+            {
+                foreach (var fila in response.Values)
+                {
+                    if (fila.Count > 0) lista.Add(fila[0].ToString());
+                }
+            }
+            return lista;
+        }
+        catch { return new List<string>(); }
+    }
+
     public async Task<bool> RegistrarInicioViajeAsync(params string[] datos)
     {
         try
@@ -274,7 +293,8 @@ public class ConsultasGoogleSheets
         return await GenerarFolioSecuencialAsync("Viajes!A:A", "VJ");
     }
 
-    public async Task<bool> ActualizarUbicacionViajeAsync(string folio, double latitud, double longitud)
+    // Le agregamos el parámetro opcional 'horaCaptura'
+    public async Task<bool> ActualizarUbicacionViajeAsync(string folio, double latitud, double longitud, string horaCaptura = null)
     {
         try
         {
@@ -296,9 +316,10 @@ public class ConsultasGoogleSheets
                         ubicacionFinal = lugar.AdminArea;
                 }
             }
-            catch { }
+            catch { /* Si no hay internet, el Geocoding falla pero nos quedamos con las coordenadas */ }
 
-            string horaReporte = DateTime.Now.ToString("HH:mm");
+            // Usamos la hora congelada, o la hora actual si viene vacío
+            string horaReporte = horaCaptura ?? DateTime.Now.ToString("HH:mm");
             string estatusConLugar = $"EN TRANSITO - ({ubicacionFinal}) - {horaReporte}";
 
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object> { estatusConLugar } } };

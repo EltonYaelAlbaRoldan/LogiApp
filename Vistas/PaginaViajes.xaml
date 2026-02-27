@@ -56,7 +56,8 @@
 
                 <Picker x:Name="OrigenPicker" Title="Ciudad de Origen" />
                 <Picker x:Name="DestinoPicker" Title="Ciudad de Destino" />
-                <Entry x:Name="ClienteEntry" Placeholder="Nombre del Cliente" />
+
+                <Picker x:Name="ClientePicker" Title="Selecciona el Cliente" />
 
                 <BoxView
                     Margin="0,10"
