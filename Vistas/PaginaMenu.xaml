@@ -33,6 +33,7 @@
                     Text="Seleccione una opción" />
 
                 <Button
+                    x:Name="BtnModuloViajes"
                     BackgroundColor="#2196F3"
                     Clicked="OnViajesClicked"
                     CornerRadius="15"

@@ -46,7 +46,7 @@ public partial class PaginaPerfil : ContentPage
             // 2. Obtener ID del almacenamiento local y consultar en Sheets
             string id = Preferences.Default.Get("UsuarioLogeado", "");
             _operadorActual = await _sheets.ObtenerDatosOperadorAsync(id);
-
+            
             if (_operadorActual != null)
             {
                 // Actualizamos la UI en el hilo principal
@@ -63,6 +63,9 @@ public partial class PaginaPerfil : ContentPage
                     // Aplicamos la lógica visual de semáforo según las fechas obtenidas
                     PintarSemaforo(_operadorActual.VigenciaLicencia, FrameLicencia);
                     PintarSemaforo(_operadorActual.VigenciaMedico, FrameMedico);
+
+                    Preferences.Default.Set("VigenciaLicencia", _operadorActual.VigenciaLicencia);
+                    Preferences.Default.Set("VigenciaMedico", _operadorActual.VigenciaMedico);
                 });
             }
         }
@@ -130,7 +133,7 @@ public partial class PaginaPerfil : ContentPage
         double dias = (fecha - DateTime.Now).TotalDays;
 
         // Lógica de colores según urgencia
-        if (dias < 30)
+        if (dias <= 0)
             frame.BackgroundColor = Color.FromArgb("#FFCDD2"); // Rojo (Crítico)
         else if (dias <= 90)
             frame.BackgroundColor = Color.FromArgb("#FFF9C4"); // Amarillo (Preventivo)

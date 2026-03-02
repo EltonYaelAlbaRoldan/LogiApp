@@ -1,10 +1,10 @@
-using Microsoft.Maui.Controls;
+Ôªøusing Microsoft.Maui.Controls;
 
 namespace LogiApp.Vistas;
 
 /// <summary>
-/// Panel principal de control despuÈs del acceso. 
-/// Permite navegar a los mÛdulos de Viajes, Mantenimiento y gestionar la sesiÛn del usuario.
+/// Panel principal de control despu√©s del acceso. 
+/// Permite navegar a los m√≥dulos de Viajes, Mantenimiento y gestionar la sesi√≥n del usuario.
 /// </summary>
 public partial class PaginaMenu : ContentPage
 {
@@ -17,19 +17,19 @@ public partial class PaginaMenu : ContentPage
 
     #endregion
 
-    #region GestiÛn de MÛdulos (NavegaciÛn)
+    #region Gesti√≥n de M√≥dulos (Navegaci√≥n)
 
     /// <summary>
-    /// Navega a la p·gina de visualizaciÛn del perfil del usuario.
+    /// Navega a la p√°gina de visualizaci√≥n del perfil del usuario.
     /// </summary>
     private async void OnPerfilClicked(object sender, EventArgs e)
     {
-        // NavegaciÛn a la p·gina de Perfil usando el stack de navegaciÛn actual
+        // Navegaci√≥n a la p√°gina de Perfil usando el stack de navegaci√≥n actual
         await Navigation.PushAsync(new Vistas.PaginaPerfil());
     }
 
     /// <summary>
-    /// Dirige al usuario al mÛdulo de Viajes, redirigiendo si hay uno pendiente.
+    /// Dirige al usuario al m√≥dulo de Viajes, redirigiendo si hay uno pendiente.
     /// </summary>
     private async void OnViajesClicked(object sender, EventArgs e)
     {
@@ -39,7 +39,7 @@ public partial class PaginaMenu : ContentPage
 
         if (tieneViajeActivo && !string.IsNullOrEmpty(folio))
         {
-            // REDIRECCI”N AUTOM¡TICA: Si hay viaje, lo mandamos a terminarlo [cite: 2026-02-17]
+            // REDIRECCI√ìN AUTOM√ÅTICA: Si hay viaje, lo mandamos a terminarlo [cite: 2026-02-17]
             await DisplayAlert("Viaje en Curso", $"Redirigiendo al viaje pendiente: {folio}", "Aceptar");
             await Navigation.PushAsync(new Vistas.PaginaTerminarViaje(folio));
         }
@@ -51,62 +51,63 @@ public partial class PaginaMenu : ContentPage
     }
 
     /// <summary>
-    /// Dirige al usuario al mÛdulo de Mantenimiento de unidades.
+    /// Dirige al usuario al m√≥dulo de Mantenimiento de unidades.
     /// </summary>
     private async void OnMantenimientoClicked(object sender, EventArgs e)
     {
-        // Establece la p·gina de Mantenimiento como nueva raÌz de navegaciÛn
+        // Establece la p√°gina de Mantenimiento como nueva ra√≠z de navegaci√≥n
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMantenimiento());
     }
 
     #endregion
 
-    #region GestiÛn de SesiÛn
+    #region Gesti√≥n de Sesi√≥n
 
     /// <summary>
-    /// Solicita confirmaciÛn al usuario y limpia las credenciales locales para cerrar la sesiÛn.
+    /// Solicita confirmaci√≥n al usuario y limpia las credenciales locales para cerrar la sesi√≥n.
     /// </summary>
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
-        // ConfirmaciÛn de salida
-        bool deseaSalir = await DisplayAlert("Cerrar SesiÛn", "øEst· seguro que desea cerrar la sesiÛn?", "SÌ", "No");
+        // Confirmaci√≥n de salida
+        bool deseaSalir = await DisplayAlert("Cerrar Sesi√≥n", "¬øEst√° seguro que desea cerrar la sesi√≥n?", "S√≠", "No");
 
         if (deseaSalir)
         {
-            // Limpieza de datos de sesiÛn y registros pendientes en preferencias locales
+            // Limpieza de datos de sesi√≥n y registros pendientes en preferencias locales
             Preferences.Default.Remove("UsuarioLogeado");
             Preferences.Default.Remove("IdPendiente");
             Preferences.Default.Remove("CarpetaPendiente");
 
-            // Regreso a la p·gina de acceso principal (Login)
+            // Regreso a la p√°gina de acceso principal (Login)
             Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
         }
     }
 
     #endregion
 
-    #region GestiÛn de Ciclo de Vida (Persistencia)
+    #region Gesti√≥n de Ciclo de Vida (Persistencia)
 
     /// <summary>
-    /// Se ejecuta al entrar al men˙. Verifica si existe un viaje pendiente 
-    /// para bloquear el acceso a nuevos viajes y ofrecer la reanudaciÛn.
+    /// Se ejecuta al entrar al men√∫. Verifica si existe un viaje pendiente 
+    /// para bloquear el acceso a nuevos viajes y ofrecer la reanudaci√≥n.
     /// </summary>
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        await VerificarVigenciasYBloquear();
 
-        // REVISAR SI HAY UN VIAJE QUE NO SE CERR” [cite: 2026-02-17]
+        // REVISAR SI HAY UN VIAJE QUE NO SE CERR√ì [cite: 2026-02-17]
         bool tieneViajeActivo = Preferences.Default.Get("ViajeEnCurso", false);
 
         if (tieneViajeActivo)
         {
-            // BLOQUEO VISUAL: Como no usamos x:Name a˙n, buscamos el botÛn por su texto 
-            // o simplemente deshabilitamos la navegaciÛn lÛgica.
+            // BLOQUEO VISUAL: Como no usamos x:Name a√∫n, buscamos el bot√≥n por su texto 
+            // o simplemente deshabilitamos la navegaci√≥n l√≥gica.
             // Nota: Es altamente recomendable poner x:Name="BtnModuloViajes" en el XAML.
 
             string folio = Preferences.Default.Get("FolioPendiente", "Sin Folio");
 
-            // PequeÒa pausa para que la UI termine de renderizar antes del alert
+            // Peque√±a pausa para que la UI termine de renderizar antes del alert
             await Task.Delay(500);
 
             bool irAViaje = await DisplayAlert("Viaje en Curso",
@@ -115,12 +116,60 @@ public partial class PaginaMenu : ContentPage
 
             if (irAViaje)
             {
-                // NavegaciÛn directa al monitoreo del viaje guardado [cite: 2026-02-17]
+                // Navegaci√≥n directa al monitoreo del viaje guardado [cite: 2026-02-17]
                 await Navigation.PushAsync(new Vistas.PaginaTerminarViaje(folio));
             }
         }
     }
 
+    private async Task VerificarVigenciasYBloquear()
+    {
+        try
+        {
+            // 1. Recuperar fechas (usamos fecha vieja por defecto para obligar a cargar datos)
+            DateTime fechaDefault = new DateTime(2000, 1, 1);
+            DateTime vLicencia = Preferences.Default.Get("VigenciaLicencia", fechaDefault);
+            DateTime vMedico = Preferences.Default.Get("VigenciaMedico", fechaDefault);
+
+            // 2. Calcular d√≠as restantes (L√≥gica de Sem√°foro)
+            int diasLicencia = (vLicencia - DateTime.Now).Days;
+            int diasMedico = (vMedico - DateTime.Now).Days;
+
+            // 3. Determinar el estado m√°s cr√≠tico
+            int diasCriticos = Math.Min(diasLicencia, diasMedico);
+
+            // 4. L√≥gica de Colores y Bloqueo
+            if (diasCriticos <= 0)
+            {
+                // ROJO - BLOQUEADO
+                BtnModuloViajes.IsEnabled = false;
+                BtnModuloViajes.BackgroundColor = Colors.Red;
+                BtnModuloViajes.Text = "BLOQUEADO: VIGENCIA VENCIDA";
+
+                await DisplayAlert("‚ö†Ô∏è ALERTA", "Documentaci√≥n vencida. Actualiza en tu Perfil.", "OK");
+            }
+            else if (diasCriticos <= 90)
+            {
+                // AMARILLO - ADVERTENCIA (Pero permite viajar)
+                BtnModuloViajes.IsEnabled = true;
+                BtnModuloViajes.BackgroundColor = Colors.Orange;
+                BtnModuloViajes.Text = "GESTI√ìN DE VIAJES";
+
+                await DisplayAlert("‚ö†Ô∏è ALERTA", "DOCUMENTOS PROXIMOS A VENCER, REVISAR", "OK");
+            }
+            else
+            {
+                // VERDE - TODO OK
+                BtnModuloViajes.IsEnabled = true;
+                BtnModuloViajes.BackgroundColor = Color.FromArgb("#2196F3"); // Tu azul original
+                BtnModuloViajes.Text = "GESTI√ìN DE VIAJES";
+            }
+        }
+        catch
+        {
+            BtnModuloViajes.IsEnabled = false;
+        }
+    }
     #endregion
 
 }
