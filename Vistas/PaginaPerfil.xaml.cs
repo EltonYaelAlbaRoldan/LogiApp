@@ -193,23 +193,49 @@ public partial class PaginaPerfil : ContentPage
     // ESTE ES EL MÉTODO QUE TE FALTABA (Soluciona el error CS0103)
     private async Task<string> SubirArchivoADrive(FileResult archivo, string tipo, string carpetaId)
     {
-        var metadata = new Google.Apis.Drive.v3.Data.File()
-        {
-            Name = $"ACTUALIZACION_{tipo}_{_operadorActual.Nombre}_{DateTime.Now:yyyyMMdd}",
-            Parents = new List<string> { carpetaId }
-        };
+        string nombreDocumento = (tipo == "Licencia")
+        ? "Licencia Federal Doc"
+        : "CURP";
+
+        var listRequest = _driveService.Files.List();
+        listRequest.Q = $"name = '{nombreDocumento}' and '{carpetaId}' in parents and trashed = false";
+        listRequest.Fields = "files(id)";
+        var resultadoBusqueda = await listRequest.ExecuteAsync();
+        var archivoExistente = resultadoBusqueda.Files.FirstOrDefault();
 
         using (var stream = await archivo.OpenReadAsync())
         {
-            var request = _driveService.Files.Create(metadata, stream, "application/pdf");
-            request.Fields = "id, webViewLink";
+            if (archivoExistente != null)
+            {
+                // --- CASO A: SUSTITUIR (UPDATE) ---
+                var updateMetadata = new Google.Apis.Drive.v3.Data.File(); // No es necesario renombrar
+                var updateRequest = _driveService.Files.Update(updateMetadata, archivoExistente.Id, stream, "application/pdf");
+                updateRequest.Fields = "id, webViewLink";
 
-            var progreso = await request.UploadAsync();
+                var progresoUpdate = await updateRequest.UploadAsync();
+                if (progresoUpdate.Status == Google.Apis.Upload.UploadStatus.Failed)
+                    throw new Exception(progresoUpdate.Exception.Message);
 
-            if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
-                throw new Exception(progreso.Exception.Message);
+                return updateRequest.ResponseBody.WebViewLink;
+            }
+            else
+            {
+                // --- CASO B: CREAR POR PRIMERA VEZ (CREATE) ---
+                var createMetadata = new Google.Apis.Drive.v3.Data.File()
+                {
+                    Name = nombreDocumento,
+                    Parents = new List<string> { carpetaId }
+                };
 
-            return request.ResponseBody.WebViewLink;
+                var createRequest = _driveService.Files.Create(createMetadata, stream, "application/pdf");
+                createRequest.Fields = "id, webViewLink";
+
+                var progresoCreate = await createRequest.UploadAsync();
+                if (progresoCreate.Status == Google.Apis.Upload.UploadStatus.Failed)
+                    throw new Exception(progresoCreate.Exception.Message);
+
+                return createRequest.ResponseBody.WebViewLink;
+            }
         }
     }
 
