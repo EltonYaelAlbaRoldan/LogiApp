@@ -1,24 +1,18 @@
-using LogiApp.Servicios;
+ï»¿using LogiApp.Servicios;
 using LogiApp.Modelos;
 using Google.Apis.Drive.v3;
 
 namespace LogiApp.Vistas;
 
-/// <summary>
-/// Pantalla de perfil del usuario donde se muestran sus datos personales, 
-/// vigencias de documentos y permite el cambio de contraseña.
-/// </summary>
 public partial class PaginaPerfil : ContentPage
 {
-    #region Atributos y Servicios
-
     private ConsultasGoogleSheets _sheets;
     private Operador _operadorActual;
     private DriveService _driveService;
 
-    #endregion
-
-    #region Constructor
+    // Variables temporales para archivos
+    private FileResult _archivoLicenciaTemp;
+    private FileResult _archivoMedicoTemp;
 
     public PaginaPerfil()
     {
@@ -26,30 +20,20 @@ public partial class PaginaPerfil : ContentPage
         CargarDatos();
     }
 
-    #endregion
-
-    #region Carga de Datos
-
-    /// <summary>
-    /// Inicializa los servicios de Google y recupera la información del operador logueado.
-    /// </summary>
     private async void CargarDatos()
     {
         try
         {
-            // 1. Primero creamos el servicio
             var auth = new ConexionGoogleAuth();
             var (sService, dService) = await auth.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
             _driveService = dService;
 
-            // 2. Obtener ID del almacenamiento local y consultar en Sheets
             string id = Preferences.Default.Get("UsuarioLogeado", "");
             _operadorActual = await _sheets.ObtenerDatosOperadorAsync(id);
-            
+
             if (_operadorActual != null)
             {
-                // Actualizamos la UI en el hilo principal
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     LblNombre.Text = _operadorActual.Nombre;
@@ -60,187 +44,147 @@ public partial class PaginaPerfil : ContentPage
                     PickerLicencia.Date = _operadorActual.VigenciaLicencia;
                     PickerMedico.Date = _operadorActual.VigenciaMedico;
 
-                    // Aplicamos la lógica visual de semáforo según las fechas obtenidas
                     PintarSemaforo(_operadorActual.VigenciaLicencia, FrameLicencia);
                     PintarSemaforo(_operadorActual.VigenciaMedico, FrameMedico);
-
-                    Preferences.Default.Set("VigenciaLicencia", _operadorActual.VigenciaLicencia);
-                    Preferences.Default.Set("VigenciaMedico", _operadorActual.VigenciaMedico);
                 });
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
+    }
+
+    #region SelecciÃ³n de Archivos
+    private async void OnSeleccionarLicenciaClicked(object sender, EventArgs e)
+    {
+        _archivoLicenciaTemp = await FilePicker.Default.PickAsync(new PickOptions
         {
-            await DisplayAlert("Error", "Error al cargar: " + ex.Message, "OK");
+            PickerTitle = "PDF de Licencia",
+            FileTypes = FilePickerFileType.Pdf
+        });
+        if (_archivoLicenciaTemp != null)
+        {
+            BtnCargarLicencia.Text = "âœ… ARCHIVO LISTO";
+            BtnGuardarLicencia.IsEnabled = true;
         }
     }
 
+    private async void OnSeleccionarMedicoClicked(object sender, EventArgs e)
+    {
+        _archivoMedicoTemp = await FilePicker.Default.PickAsync(new PickOptions
+        {
+            PickerTitle = "PDF de MÃ©dico",
+            FileTypes = FilePickerFileType.Pdf
+        });
+        if (_archivoMedicoTemp != null)
+        {
+            BtnCargarMedico.Text = "âœ… ARCHIVO LISTO";
+            BtnGuardarMedico.IsEnabled = true;
+        }
+    }
     #endregion
 
-    #region Acciones de Usuario
+    #region Guardado con ValidaciÃ³n de 90 dÃ­as
+    private async void OnGuardarLicenciaClicked(object sender, EventArgs e) => await ProcesarGuardado("Licencia", PickerLicencia.Date, _archivoLicenciaTemp);
+    private async void OnGuardarMedicoClicked(object sender, EventArgs e) => await ProcesarGuardado("Medico", PickerMedico.Date, _archivoMedicoTemp);
 
-    /// <summary>
-    /// Procesa la solicitud de cambio de contraseña del operador.
-    /// </summary>
-    private async void OnCambiarPassClicked(object sender, EventArgs e)
+    private async Task ProcesarGuardado(string tipo, DateTime nuevaFecha, FileResult archivo)
     {
-        // Validación de campo vacío
-        if (string.IsNullOrWhiteSpace(NuevaPassEntry.Text))
+        // REGLA DE NEGOCIO: No permitir si vence en menos de 90 dÃ­as
+        double diasParaVencer = (nuevaFecha - DateTime.Now).TotalDays;
+
+        if (diasParaVencer <= 90)
         {
-            await DisplayAlert("Atención", "Escribe una nueva contraseña primero.", "OK");
+            await DisplayAlert("âš ï¸ FECHA RECHAZADA",
+                $"No puedes registrar un documento que vence en {Math.Max(0, (int)diasParaVencer)} dÃ­as. " +
+                "La vigencia debe ser mayor a 3 meses (90 dÃ­as) para ser aceptada.", "Entendido");
             return;
         }
 
-        bool confirmar = await DisplayAlert("Confirmar", "¿Deseas cambiar tu contraseña actual?", "Sí", "Cancelar");
-
-        if (confirmar)
-        {
-            IsBusy = true; // Bloquea la UI mientras procesa el cambio en Sheets
-            bool exito = await _sheets.ActualizarPasswordAsync(_operadorActual.Id, NuevaPassEntry.Text);
-            IsBusy = false;
-
-            if (exito)
-            {
-                await DisplayAlert("Éxito", "Tu contraseña ha sido actualizada correctamente.", "OK");
-                NuevaPassEntry.Text = string.Empty;
-            }
-            else
-            {
-                await DisplayAlert("Error", "No se pudo actualizar la contraseña. Intenta más tarde.", "OK");
-            }
-        }
-    }
-
-    /// <summary>
-    /// Navega de regreso al menú principal.
-    /// </summary>
-    private async void OnVolverClicked(object sender, EventArgs e)
-    {
-        Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
-    }
-
-    #endregion
-
-    #region Métodos Auxiliares Visuales
-
-    /// <summary>
-    /// Cambia el color de fondo de un contenedor según la proximidad de la fecha de vencimiento.
-    /// </summary>
-    /// <param name="fecha">Fecha de vencimiento a evaluar.</param>
-    /// <param name="frame">Contenedor visual a colorear.</param>
-    private void PintarSemaforo(DateTime fecha, Frame frame)
-    {
-        double dias = (fecha - DateTime.Now).TotalDays;
-
-        // Lógica de colores según urgencia
-        if (dias <= 0)
-            frame.BackgroundColor = Color.FromArgb("#FFCDD2"); // Rojo (Crítico)
-        else if (dias <= 90)
-            frame.BackgroundColor = Color.FromArgb("#FFF9C4"); // Amarillo (Preventivo)
-        else
-            frame.BackgroundColor = Color.FromArgb("#C8E6C9"); // Verde (Vigente)
-    }
-
-    private async Task ProcesarActualizacion(string tipo, DateTime nuevaFecha)
-    {
-        if (IsBusy) return;
+        if (archivo == null) return;
 
         try
         {
-            var archivo = await FilePicker.Default.PickAsync(new PickOptions
-            {
-                PickerTitle = $"Selecciona el PDF de {tipo}",
-                FileTypes = FilePickerFileType.Pdf
-            });
-
-            if (archivo == null) return;
-
             IsBusy = true;
 
-            // PASO 1: Obtener el ID real de la carpeta (sin que afecte a Sheets)
-            // Extraemos el ID del link que ya tenemos guardado en el objeto
             string linkLimpio = _operadorActual.LinkCarpeta.Split('?')[0];
             string carpetaId = linkLimpio.TrimEnd('/').Split('/').Last();
 
-            // PASO 2: Subir el archivo a Drive (esto guarda el respaldo en la nube)
-            // No guardaremos el link de este archivo en Sheets para no perder el link de la carpeta
+            // 1. Subir a Drive y 2. Actualizar Sheets (Ya lo tienes)
             await SubirArchivoADrive(archivo, tipo, carpetaId);
-
-            // PASO 3: Actualizar ÚNICAMENTE la fecha en Sheets
-            // Pasamos el mismo _operadorActual.LinkCarpeta para que NO CAMBIE en el Excel
-            bool exito = await _sheets.ActualizarDocumentoYFechaAsync(
-                _operadorActual.Id,
-                tipo,
-                nuevaFecha,
-                _operadorActual.LinkCarpeta);
+            bool exito = await _sheets.ActualizarDocumentoYFechaAsync(_operadorActual.Id, tipo, nuevaFecha, _operadorActual.LinkCarpeta);
 
             if (exito)
             {
-                await DisplayAlert("Éxito", $"Fecha de {tipo} actualizada. El documento se guardó en tu carpeta de Drive.", "OK");
-                CargarDatos(); // Recarga para actualizar labels y semáforos
+                // Â¡ESTO ES LO QUE FALTABA! Actualizar la memoria local
+                if (tipo == "Licencia")
+                    Preferences.Default.Set("VigenciaLicencia", nuevaFecha);
+                else
+                    Preferences.Default.Set("VigenciaMedico", nuevaFecha);
+
+                await DisplayAlert("Ã‰xito", $"La {tipo} ha sido actualizada. El bloqueo del menÃº se ha revisado.", "OK");
+
+                CargarDatos(); // Esto repinta los semÃ¡foros en el Perfil
+
+                // Limpiar selecciÃ³n
+                if (tipo == "Licencia") { _archivoLicenciaTemp = null; BtnCargarLicencia.Text = "ðŸ“Ž SELECCIONAR PDF"; BtnGuardarLicencia.IsEnabled = false; }
+                else { _archivoMedicoTemp = null; BtnCargarMedico.Text = "ðŸ“Ž SELECCIONAR PDF"; BtnGuardarMedico.IsEnabled = false; }
             }
         }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", "No se completó la carga: " + ex.Message, "OK");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
+        finally { IsBusy = false; }
     }
+    #endregion
 
-    // ESTE ES EL MÉTODO QUE TE FALTABA (Soluciona el error CS0103)
     private async Task<string> SubirArchivoADrive(FileResult archivo, string tipo, string carpetaId)
     {
-        string nombreDocumento = (tipo == "Licencia")
-        ? "Licencia Federal Doc"
-        : "CURP";
+        string nombreDocumento = (tipo == "Licencia") ? "Licencia Federal Doc" : "CURP";
 
         var listRequest = _driveService.Files.List();
         listRequest.Q = $"name = '{nombreDocumento}' and '{carpetaId}' in parents and trashed = false";
         listRequest.Fields = "files(id)";
-        var resultadoBusqueda = await listRequest.ExecuteAsync();
-        var archivoExistente = resultadoBusqueda.Files.FirstOrDefault();
+        var res = await listRequest.ExecuteAsync();
+        var archivoExistente = res.Files.FirstOrDefault();
 
         using (var stream = await archivo.OpenReadAsync())
         {
             if (archivoExistente != null)
             {
-                // --- CASO A: SUSTITUIR (UPDATE) ---
-                var updateMetadata = new Google.Apis.Drive.v3.Data.File(); // No es necesario renombrar
-                var updateRequest = _driveService.Files.Update(updateMetadata, archivoExistente.Id, stream, "application/pdf");
-                updateRequest.Fields = "id, webViewLink";
-
-                var progresoUpdate = await updateRequest.UploadAsync();
-                if (progresoUpdate.Status == Google.Apis.Upload.UploadStatus.Failed)
-                    throw new Exception(progresoUpdate.Exception.Message);
-
-                return updateRequest.ResponseBody.WebViewLink;
+                var updateRequest = _driveService.Files.Update(new Google.Apis.Drive.v3.Data.File(), archivoExistente.Id, stream, "application/pdf");
+                await updateRequest.UploadAsync();
+                return archivoExistente.Id;
             }
             else
             {
-                // --- CASO B: CREAR POR PRIMERA VEZ (CREATE) ---
-                var createMetadata = new Google.Apis.Drive.v3.Data.File()
-                {
-                    Name = nombreDocumento,
-                    Parents = new List<string> { carpetaId }
-                };
-
-                var createRequest = _driveService.Files.Create(createMetadata, stream, "application/pdf");
-                createRequest.Fields = "id, webViewLink";
-
-                var progresoCreate = await createRequest.UploadAsync();
-                if (progresoCreate.Status == Google.Apis.Upload.UploadStatus.Failed)
-                    throw new Exception(progresoCreate.Exception.Message);
-
-                return createRequest.ResponseBody.WebViewLink;
+                var meta = new Google.Apis.Drive.v3.Data.File() { Name = nombreDocumento, Parents = new List<string> { carpetaId } };
+                var createRequest = _driveService.Files.Create(meta, stream, "application/pdf");
+                await createRequest.UploadAsync();
+                return createRequest.ResponseBody.Id;
             }
         }
     }
 
-    private async void OnUpdateLicenciaClicked(object sender, EventArgs e) => await ProcesarActualizacion("Licencia", PickerLicencia.Date);
-    private async void OnUpdateMedicoClicked(object sender, EventArgs e) => await ProcesarActualizacion("Medico", PickerMedico.Date);
+    private void PintarSemaforo(DateTime fecha, Frame frame)
+    {
+        double dias = (fecha - DateTime.Now).TotalDays;
+        if (dias <= 0) frame.BackgroundColor = Color.FromArgb("#FFCDD2");
+        else if (dias <= 90) frame.BackgroundColor = Color.FromArgb("#FFF9C4");
+        else frame.BackgroundColor = Color.FromArgb("#C8E6C9");
+    }
 
-    #endregion
+    private void OnDateSelected(object sender, DateChangedEventArgs e)
+    {
+        // Al mover la fecha, si ya hay un archivo, recordamos que el botÃ³n de guardar debe estar activo
+        if (_archivoLicenciaTemp != null) BtnGuardarLicencia.IsEnabled = true;
+        if (_archivoMedicoTemp != null) BtnGuardarMedico.IsEnabled = true;
+    }
+
+    private async void OnVolverClicked(object sender, EventArgs e) => Application.Current.MainPage = new NavigationPage(new PaginaMenu());
+
+    private async void OnCambiarPassClicked(object sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(NuevaPassEntry.Text)) return;
+        IsBusy = true;
+        bool exito = await _sheets.ActualizarPasswordAsync(_operadorActual.Id, NuevaPassEntry.Text);
+        IsBusy = false;
+        if (exito) await DisplayAlert("Ã‰xito", "ContraseÃ±a actualizada", "OK");
+    }
 }
