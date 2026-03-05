@@ -23,6 +23,9 @@ public partial class PaginaTerminarViaje : ContentPage
         InitializeComponent();
         _folioActual = folio;
         LblFolio.Text = $"Folio: {folio}";
+
+        string destinoGuardado = Preferences.Default.Get("Destino_" + folio, "Destino no especificado");
+        LblDestino.Text = $"Destino: {destinoGuardado}";
     }
 
     private async Task InicializarServicio()
@@ -39,7 +42,6 @@ public partial class PaginaTerminarViaje : ContentPage
     }
 
     #endregion
-
 
     #region Ciclo de Vida y Sincronización en Vivo (El Sensor)
 

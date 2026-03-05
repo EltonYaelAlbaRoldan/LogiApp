@@ -191,6 +191,25 @@ public class ConsultasGoogleSheets
         return listaFormateada;
     }
 
+    public async Task<List<string>> ObtenerListaRemolquesAsync()
+    {
+        string rango = "Remolques!A2:B100";
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
+        var listaFormateada = new List<string>();
+
+        if (response.Values != null)
+        {
+            foreach (var fila in response.Values)
+            {
+                if (fila.Count >= 2)
+                    listaFormateada.Add($"{fila[0]} - {fila[1]}");
+                else if (fila.Count == 1)
+                    listaFormateada.Add(fila[0].ToString());
+            }
+        }
+        return listaFormateada;
+    }
+
     public async Task<string> GenerarFolioMantenimientoAsync()
     {
         return await GenerarFolioSecuencialAsync("Mantenimiento!A:A", "MT");
@@ -278,7 +297,7 @@ public class ConsultasGoogleSheets
     {
         try
         {
-            string rango = "Viajes!A:J";
+            string rango = "Viajes!A:K";
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
             var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
             appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
@@ -323,7 +342,7 @@ public class ConsultasGoogleSheets
             string estatusConLugar = $"EN TRANSITO - ({ubicacionFinal}) - {horaReporte}";
 
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object> { estatusConLugar } } };
-            var updateRequest = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"Viajes!J{fila}");
+            var updateRequest = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"Viajes!K{fila}");
             updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 
             await updateRequest.ExecuteAsync();
@@ -340,12 +359,12 @@ public class ConsultasGoogleSheets
             if (fila == -1) return false;
 
             var bodyJ = new ValueRange { Values = new List<IList<object>> { new List<object> { nuevoEstatus } } };
-            var reqJ = _service.Spreadsheets.Values.Update(bodyJ, _spreadsheetId, $"Viajes!J{fila}");
+            var reqJ = _service.Spreadsheets.Values.Update(bodyJ, _spreadsheetId, $"Viajes!K{fila}");
             reqJ.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await reqJ.ExecuteAsync();
 
             var bodyK = new ValueRange { Values = new List<IList<object>> { new List<object> { horaLlegada } } };
-            var reqK = _service.Spreadsheets.Values.Update(bodyK, _spreadsheetId, $"Viajes!K{fila}");
+            var reqK = _service.Spreadsheets.Values.Update(bodyK, _spreadsheetId, $"Viajes!L{fila}");
             reqK.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await reqK.ExecuteAsync();
 
@@ -367,14 +386,14 @@ public class ConsultasGoogleSheets
             var datosCierre = new List<object> { kmFin, fuelFin, obsFinal, linkCarpeta, duracion, recorridoKm, consumoLitros };
             var bodyCierre = new ValueRange { Values = new List<IList<object>> { datosCierre } };
 
-            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!L{fila}:R{fila}");
+            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!M{fila}:S{fila}");
             req1.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await req1.ExecuteAsync();
 
             await Task.Delay(500);
 
             var statusBody = new ValueRange { Values = new List<IList<object>> { new List<object> { "FINALIZADO" } } };
-            var req2 = _service.Spreadsheets.Values.Update(statusBody, _spreadsheetId, $"Viajes!J{fila}");
+            var req2 = _service.Spreadsheets.Values.Update(statusBody, _spreadsheetId, $"Viajes!K{fila}");
             req2.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await req2.ExecuteAsync();
 

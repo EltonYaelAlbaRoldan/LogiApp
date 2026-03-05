@@ -21,7 +21,7 @@ public partial class PaginaViajes : ContentPage
             _sheets = new ConsultasGoogleSheets(sService);
 
             // Cargamos las 3 listas simultáneamente
-            await Task.WhenAll(CargarUnidades(), CargarDestinos(), CargarClientes());
+            await Task.WhenAll(CargarUnidades(), CargarRemolques(), CargarDestinos(), CargarClientes());
         }
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
@@ -42,6 +42,33 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
+    private void OnRemolqueCheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        // Muestra u oculta la sección dependiendo de si el CheckBox está marcado
+        SeccionRemolque.IsVisible = e.Value;
+
+        // Si se desmarca, limpiamos la selección por seguridad
+        if (!e.Value)
+        {
+            RemolquePicker.SelectedItem = null;
+        }
+    }
+    private async Task CargarRemolques()
+    {
+        CargandoRemolques.IsVisible = true;
+        CargandoRemolques.IsRunning = true;
+
+        try
+        {
+            var lista = await _sheets.ObtenerListaRemolquesAsync();
+            RemolquePicker.ItemsSource = lista;
+        }
+        finally
+        {
+            CargandoRemolques.IsVisible = false;
+            CargandoRemolques.IsRunning = false;
+        }
+    }
     private async Task CargarDestinos()
     {
         try
@@ -72,6 +99,7 @@ public partial class PaginaViajes : ContentPage
 
     private async void OnGuardarViajeClicked(object sender, EventArgs e)
     {
+
         // Agregamos la validación para que el ClientePicker no esté vacío (-1)
         if (OrigenPicker.SelectedIndex == -1 || DestinoPicker.SelectedIndex == -1 ||
             UnidadPicker.SelectedIndex == -1 || ClientePicker.SelectedIndex == -1 ||
@@ -89,12 +117,16 @@ public partial class PaginaViajes : ContentPage
             string folio = await _sheets.GenerarFolioViajeAsync();
             string idOp = Preferences.Default.Get("UsuarioLogeado", "Sin ID");
             string fechaInicio = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            string remolqueSeleccionado = CheckLlevaRemolque.IsChecked
+                ? (RemolquePicker.SelectedItem?.ToString() ?? "N/A")
+                : "SIN REMOLQUE";
 
             bool exito = await _sheets.RegistrarInicioViajeAsync(
                 folio,
                 fechaInicio,
                 idOp,
                 UnidadPicker.SelectedItem.ToString(),
+                remolqueSeleccionado,
                 OrigenPicker.SelectedItem.ToString(),
                 DestinoPicker.SelectedItem.ToString(),
                 ClientePicker.SelectedItem.ToString(), 
@@ -103,12 +135,13 @@ public partial class PaginaViajes : ContentPage
                 "EN TRANSITO"
             );
 
+            Preferences.Default.Set("Destino_" + folio, DestinoPicker.SelectedItem.ToString());
+
             if (exito)
             {
                 Preferences.Default.Set("ViajeEnCurso", true);
                 Preferences.Default.Set("FolioPendiente", folio);
                 Preferences.Default.Set("Inicio_" + folio, fechaInicio);
-
                 Preferences.Default.Set("KmSalida_" + folio, KmSalidaEntry.Text);
                 Preferences.Default.Set("FuelSalida_" + folio, CombustibleEntry.Text);
 

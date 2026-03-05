@@ -83,6 +83,43 @@
                         Color="#2196F3" />
                 </Grid>
 
+                <HorizontalStackLayout Margin="0,5" Spacing="10">
+                    <CheckBox
+                        x:Name="CheckLlevaRemolque"
+                        CheckedChanged="OnRemolqueCheckedChanged"
+                        Color="#2196F3" />
+                    <Label
+                        Text="¿Lleva remolque?"
+                        TextColor="#606060"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <VerticalStackLayout
+                    x:Name="SeccionRemolque"
+                    IsVisible="False"
+                    Spacing="15">
+
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="Datos del Remolque"
+                        TextColor="#606060" />
+
+                    <Grid ColumnDefinitions="*, Auto">
+                        <Picker
+                            x:Name="RemolquePicker"
+                            Title="Selecciona Remolque"
+                            Grid.Column="0" />
+
+                        <ActivityIndicator
+                            x:Name="CargandoRemolques"
+                            Grid.Column="1"
+                            HeightRequest="25"
+                            WidthRequest="25"
+                            Color="#2196F3" />
+                    </Grid>
+                </VerticalStackLayout>
+
                 <Entry
                     x:Name="KmSalidaEntry"
                     Keyboard="Numeric"
