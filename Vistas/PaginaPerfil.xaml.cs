@@ -94,7 +94,7 @@ public partial class PaginaPerfil : ContentPage
         if (diasParaVencer <= 90)
         {
             await DisplayAlert("⚠️ FECHA RECHAZADA",
-                $"No puedes registrar un documento que vence en {Math.Max(0, (int)diasParaVencer)} días. " +
+                $"No puedes registrar un documento que vence en {(int)diasParaVencer} días. " +
                 "La vigencia debe ser mayor a 3 meses (90 días) para ser aceptada.", "Entendido");
             return;
         }
@@ -108,23 +108,20 @@ public partial class PaginaPerfil : ContentPage
             string linkLimpio = _operadorActual.LinkCarpeta.Split('?')[0];
             string carpetaId = linkLimpio.TrimEnd('/').Split('/').Last();
 
-            // 1. Subir a Drive y 2. Actualizar Sheets (Ya lo tienes)
+            // 1. Subir a Drive (Sustituir)
             await SubirArchivoADrive(archivo, tipo, carpetaId);
+
+            // 2. Actualizar Google Sheets
             bool exito = await _sheets.ActualizarDocumentoYFechaAsync(_operadorActual.Id, tipo, nuevaFecha, _operadorActual.LinkCarpeta);
 
             if (exito)
             {
-                // ¡ESTO ES LO QUE FALTABA! Actualizar la memoria local
-                if (tipo == "Licencia")
-                    Preferences.Default.Set("VigenciaLicencia", nuevaFecha);
-                else
-                    Preferences.Default.Set("VigenciaMedico", nuevaFecha);
+                await DisplayAlert("Éxito", $"La {tipo} ha sido actualizada en la base de datos.", "OK");
 
-                await DisplayAlert("Éxito", $"La {tipo} ha sido actualizada. El bloqueo del menú se ha revisado.", "OK");
+                // Recargamos los datos desde la nube para actualizar la interfaz
+                CargarDatos();
 
-                CargarDatos(); // Esto repinta los semáforos en el Perfil
-
-                // Limpiar selección
+                // Limpiar campos de selección
                 if (tipo == "Licencia") { _archivoLicenciaTemp = null; BtnCargarLicencia.Text = "📎 SELECCIONAR PDF"; BtnGuardarLicencia.IsEnabled = false; }
                 else { _archivoMedicoTemp = null; BtnCargarMedico.Text = "📎 SELECCIONAR PDF"; BtnGuardarMedico.IsEnabled = false; }
             }
@@ -172,7 +169,6 @@ public partial class PaginaPerfil : ContentPage
 
     private void OnDateSelected(object sender, DateChangedEventArgs e)
     {
-        // Al mover la fecha, si ya hay un archivo, recordamos que el botón de guardar debe estar activo
         if (_archivoLicenciaTemp != null) BtnGuardarLicencia.IsEnabled = true;
         if (_archivoMedicoTemp != null) BtnGuardarMedico.IsEnabled = true;
     }
@@ -185,6 +181,6 @@ public partial class PaginaPerfil : ContentPage
         IsBusy = true;
         bool exito = await _sheets.ActualizarPasswordAsync(_operadorActual.Id, NuevaPassEntry.Text);
         IsBusy = false;
-        if (exito) await DisplayAlert("Éxito", "Contraseña actualizada", "OK");
+        if (exito) await DisplayAlert("Éxito", "Contraseña actualizada en la base de datos.", "OK");
     }
 }
