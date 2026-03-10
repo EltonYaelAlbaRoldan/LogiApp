@@ -1,4 +1,5 @@
 ﻿using LogiApp.Servicios;
+using Microsoft.Maui.Controls;
 using System.Text.RegularExpressions;
 
 namespace LogiApp.Vistas;
@@ -168,31 +169,40 @@ public partial class PaginaRegistro : ContentPage
     /// </summary>
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
-
+        // 1. VALIDACIÓN DE FECHAS (Regla de 90 días)
+        // Se debe validar antes de cualquier proceso en la nube
         if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia") ||
-        !ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
+            !ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
         {
             return;
         }
 
-        // Validación básica (mantener resto de validaciones manuales aquí)
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text)) return;
+        // 2. VALIDACIÓN DE CAMPOS OBLIGATORIOS
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text) ||
+            string.IsNullOrWhiteSpace(NumLicenciaEntry.Text) ||
+            string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text))
+        {
+            await DisplayAlert("Atención", "Por favor completa el Nombre, Licencia y Contraseña.", "OK");
+            return;
+        }
+
         if (_estaProcesando) return;
 
         try
         {
             _estaProcesando = true;
             IsBusy = true;
-            BloquearFormulario(true);
             OnPropertyChanged(nameof(IsNotBusy));
 
-            // Generación de identidad y almacenamiento en la nube
+            // 3. GENERACIÓN DE IDENTIDAD Y ESTRUCTURA EN DRIVE
             _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
             _folderIdDestino = await _drive.CrearEstructuraOperadorAsync($"{_idOperadorGenerado} - {NombreEntry.Text}");
 
             string linkCarpeta = $"https://drive.google.com/drive/folders/{_folderIdDestino}";
 
-            // Registro en base de datos
+            // 4. REGISTRO EN BASE DE DATOS
+            // Para solucionar el error CS0029, llamamos al método sin asignar el bool 
+            // o asegúrate de que RegistrarOperadorAsync devuelva Task<bool> en tu servicio.
             await _sheets.RegistrarOperadorAsync(
                 _idOperadorGenerado, NombreEntry.Text, EdadEntry.Text, CorreoEntry.Text ?? "",
                 Tel1Entry.Text, Tel2Entry.Text ?? "", ClaveInterbancariaEntry.Text,
@@ -200,21 +210,31 @@ public partial class PaginaRegistro : ContentPage
                 VigenciaMedicoPicker.Date.ToString("d"), linkCarpeta, ContrasenaOperadorEntry.Text
             );
 
-            // PERSISTENCIA: Guardamos datos para evitar pérdida por cierre de App
+            // 5. PERSISTENCIA Y BLOQUEO DE CASCADA (Parte 1 terminada con éxito)
             Preferences.Set("IdPendiente", _idOperadorGenerado);
             Preferences.Set("CarpetaPendiente", _folderIdDestino);
-            Preferences.Set("CorreoPendiente", CorreoEntry.Text);
+            Preferences.Set("CorreoPendiente", CorreoEntry.Text ?? "");
             Preferences.Set("NombrePendiente", NombreEntry.Text);
             Preferences.Set("PassPendiente", ContrasenaOperadorEntry.Text);
 
-            await DisplayAlert("Paso 1 Exitoso", "Datos guardados. Sube tus documentos para finalizar.", "Siguiente");
+            await DisplayAlert("Paso 1 Completado", "Datos registrados. Ahora procede a subir los documentos PDF.", "OK");
 
-            BtnSubirArchivos.IsEnabled = true;
+            // Bloqueo de Parte 1
+            BloquearFormulario(true);
             BtnRegistrarDatos.IsEnabled = false;
+            BtnRegistrarDatos.Opacity = 0.5;
             BtnVolver.IsEnabled = false;
             BtnVolver.Opacity = 0.5;
+
+            // Desbloqueo de Parte 2 (Documentos)
+            SeccionDocumentos.IsEnabled = true;
+            SeccionDocumentos.Opacity = 1.0;
+            BtnSubirArchivos.IsEnabled = true;
         }
-        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error Crítico", ex.Message, "OK");
+        }
         finally
         {
             IsBusy = false;
@@ -222,7 +242,6 @@ public partial class PaginaRegistro : ContentPage
             OnPropertyChanged(nameof(IsNotBusy));
         }
     }
-
     /// <summary>
     /// PASO 2: Sube los archivos seleccionados a la carpeta de Drive y envía credenciales por correo.
     /// </summary>

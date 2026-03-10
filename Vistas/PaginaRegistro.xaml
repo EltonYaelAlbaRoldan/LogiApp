@@ -169,11 +169,15 @@
 
                 <!--  Sección de subida de archivos PDF !  -->
                 <BoxView HeightRequest="1" Color="#EEEEEE" />
-                <Label
-                    Margin="0,10,0,5"
-                    FontAttributes="Bold"
-                    Text="2. Expediente Digital (Subir PDF):" />
-                <VerticalStackLayout Spacing="10">
+                <VerticalStackLayout
+                    x:Name="SeccionDocumentos"
+                    IsEnabled="False"
+                    Opacity="0.5"
+                    Spacing="10">
+                    <Label
+                        Margin="0,10,0,5"
+                        FontAttributes="Bold"
+                        Text="2. Expediente Digital (Subir PDF):" />
                     <Button
                         x:Name="BtnPdfLicencia"
                         BackgroundColor="#F5F5F5"
@@ -228,18 +232,19 @@
                         Clicked="OnSubirCvClicked"
                         Text="CV"
                         TextColor="#0A0A33" />
+                    <!--  Botón para subir todos los archivos PDF !  -->
+                    <Button
+                        x:Name="BtnSubirArchivos"
+                        Margin="0,15,0,0"
+                        BackgroundColor="#0A0A33"
+                        Clicked="OnSubirArchivosClicked"
+                        CornerRadius="10"
+                        HeightRequest="55"
+                        IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
+                        Text="2. SUBIR ARCHIVOS PDF"
+                        TextColor="White" />
                 </VerticalStackLayout>
-                <!--  Botón para subir todos los archivos PDF !  -->
-                <Button
-                    x:Name="BtnSubirArchivos"
-                    Margin="0,15,0,0"
-                    BackgroundColor="#0A0A33"
-                    Clicked="OnSubirArchivosClicked"
-                    CornerRadius="10"
-                    HeightRequest="55"
-                    IsEnabled="{Binding IsNotBusy, Source={x:Reference this}}"
-                    Text="2. SUBIR ARCHIVOS PDF"
-                    TextColor="White" />
+
 
                 <!--  Indicador de actividad mientras se procesan las acciones !  -->
                 <ActivityIndicator
