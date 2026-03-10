@@ -94,34 +94,69 @@ public partial class PaginaRegistro : ContentPage
 
     #region Selección de Archivos PDF
 
-    // Disparadores individuales por documento
-    private async void OnSubirLicenciaClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Licencia Federal");
-    private async void OnSubirIneClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("INE");
-    private async void OnSubirActaClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Acta de Nacimiento");
-    private async void OnSubirNssClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("NSS");
-    private async void OnSubirCvClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("CV");
-    private async void OnSubirDomicilioClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Comprobante de Domicilio");
-    private async void OnSubirRfcClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("RFC / Cédula Fiscal");
-    private async void OnSubirCurpClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("CURP");
-    private async void OnSubirLicenciaFederalClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Licencia Federal Doc");
-    private async void OnSubirMedicoClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Apto Medico Doc");
+    // Métodos para cada botón (Pasamos el botón como parámetro)
+    private async void OnSubirLicenciaClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Licencia Federal Doc", BtnPdfLicencia);
+    private async void OnSubirMedicoClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Apto Medico Doc", BtnPdfMedico);
+    private async void OnSubirIneClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("INE", BtnPdfIne);
+    private async void OnSubirActaClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Acta de Nacimiento", BtnPdfActa);
+    private async void OnSubirNssClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("NSS", BtnPdfNss);
+    private async void OnSubirCurpClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("CURP", BtnPdfCurp);
+    private async void OnSubirRfcClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("RFC / Cédula Fiscal", BtnPdfRfc);
+    private async void OnSubirDomClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Comprobante de Domicilio", BtnPdfDom);
+    private async void OnSubirCvClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("CV", BtnPdfCv);
 
     /// <summary>
-    /// Invoca el selector de archivos del sistema filtrando únicamente documentos PDF.
+    /// Abre el selector de archivos y marca el botón visualmente si se elige un PDF.
     /// </summary>
-    private async Task SeleccionarArchivoPdfAsync(string tipoDocumento)
+    private async Task SeleccionarArchivoPdfAsync(string nombreDoc, Button boton)
     {
         try
         {
-            var opciones = new PickOptions { PickerTitle = $"Selecciona {tipoDocumento}", FileTypes = FilePickerFileType.Pdf };
-            var resultado = await FilePicker.Default.PickAsync(opciones);
-            if (resultado != null)
+            var archivo = await FilePicker.Default.PickAsync(new PickOptions
             {
-                _rutasArchivos[tipoDocumento] = resultado.FullPath;
-                await DisplayAlert("Listo", $"{tipoDocumento} seleccionado.", "OK");
+                PickerTitle = $"Seleccionar {nombreDoc}",
+                FileTypes = FilePickerFileType.Pdf
+            });
+
+            if (archivo != null)
+            {
+                // Guardar ruta
+                _rutasArchivos[nombreDoc] = archivo.FullPath;
+
+                // CAMBIO VISUAL: Botón verde y check ✅
+                boton.BackgroundColor = Color.FromArgb("#C8E6C9"); // Verde claro
+                boton.TextColor = Color.FromArgb("#1B5E20");      // Verde oscuro
+                boton.Text = $"✅ {nombreDoc}";
             }
         }
-        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "Cerrar"); }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudo cargar el archivo: " + ex.Message, "OK");
+        }
+    }
+
+    #endregion
+
+    #region Validaciones de Fecha (90 días)
+
+    private void OnDateSelected(object sender, DateChangedEventArgs e)
+    {
+        ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia");
+        ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico");
+    }
+
+    private bool ValidarFecha90Dias(DateTime fecha, string tipo)
+    {
+        double diasRestantes = (fecha - DateTime.Now).TotalDays;
+
+        if (diasRestantes <= 90)
+        {
+            DisplayAlert("⚠️ FECHA NO PERMITIDA",
+                $"La vigencia de {tipo} debe ser mayor a 90 días (3 meses). " +
+                $"Faltan {(int)diasRestantes} días.", "Entendido");
+            return false;
+        }
+        return true;
     }
 
     #endregion
@@ -133,6 +168,13 @@ public partial class PaginaRegistro : ContentPage
     /// </summary>
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
+
+        if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia") ||
+        !ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
+        {
+            return;
+        }
+
         // Validación básica (mantener resto de validaciones manuales aquí)
         if (string.IsNullOrWhiteSpace(NombreEntry.Text)) return;
         if (_estaProcesando) return;
@@ -187,6 +229,7 @@ public partial class PaginaRegistro : ContentPage
     private async void OnSubirArchivosClicked(object sender, EventArgs e)
     {
         if (_estaProcesando) return;
+
 
         // Validación de carga completa de documentos
         string[] docs = { "Licencia Federal Doc", "Apto Medico Doc", "INE", "Acta de Nacimiento", "NSS", "CV", "Comprobante de Domicilio", "RFC / Cédula Fiscal", "CURP" };

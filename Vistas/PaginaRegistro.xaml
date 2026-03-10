@@ -170,65 +170,65 @@
                 <!--  Sección de subida de archivos PDF !  -->
                 <BoxView HeightRequest="1" Color="#EEEEEE" />
                 <Label
+                    Margin="0,10,0,5"
                     FontAttributes="Bold"
-                    FontSize="18"
-                    Text="Expediente Digital (Subir PDF)"
-                    TextColor="Gray" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    BorderColor="#E0E0E0"
-                    BorderWidth="1"
-                    Clicked="OnSubirDomicilioClicked"
-                    Text="Comprobante de Domicilio"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    BorderColor="#E0E0E0"
-                    BorderWidth="1"
-                    Clicked="OnSubirRfcClicked"
-                    Text="RFC"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    BorderColor="#E0E0E0"
-                    BorderWidth="1"
-                    Clicked="OnSubirCurpClicked"
-                    Text="CURP"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    BorderColor="#E0E0E0"
-                    BorderWidth="1"
-                    Clicked="OnSubirLicenciaFederalClicked"
-                    Text="Licencia Federal (PDF)"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    Clicked="OnSubirIneClicked"
-                    Text="INE"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    Clicked="OnSubirActaClicked"
-                    Text="Acta de Nacimiento"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    Clicked="OnSubirNssClicked"
-                    Text="NSS"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    Clicked="OnSubirCvClicked"
-                    Text="CV"
-                    TextColor="#0A0A33" />
-                <Button
-                    BackgroundColor="#F5F5F5"
-                    BorderColor="#E0E0E0"
-                    BorderWidth="1"
-                    Clicked="OnSubirMedicoClicked"
-                    Text="Apto Médico (PDF)"
-                    TextColor="#0A0A33" />
+                    Text="2. Expediente Digital (Subir PDF):" />
+                <VerticalStackLayout Spacing="10">
+                    <Button
+                        x:Name="BtnPdfLicencia"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirLicenciaClicked"
+                        Text="Licencia Federal (PDF)"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfMedico"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirMedicoClicked"
+                        Text="Apto Médico (PDF)"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfIne"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirIneClicked"
+                        Text="INE"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfActa"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirActaClicked"
+                        Text="Acta de Nacimiento"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfNss"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirNssClicked"
+                        Text="NSS"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfCurp"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirCurpClicked"
+                        Text="CURP"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfRfc"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirRfcClicked"
+                        Text="RFC / Cédula Fiscal"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfDom"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirDomClicked"
+                        Text="Comprobante Domicilio"
+                        TextColor="#0A0A33" />
+                    <Button
+                        x:Name="BtnPdfCv"
+                        BackgroundColor="#F5F5F5"
+                        Clicked="OnSubirCvClicked"
+                        Text="CV"
+                        TextColor="#0A0A33" />
+                </VerticalStackLayout>
                 <!--  Botón para subir todos los archivos PDF !  -->
                 <Button
                     x:Name="BtnSubirArchivos"
