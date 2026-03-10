@@ -104,6 +104,7 @@ public partial class PaginaRegistro : ContentPage
     private async void OnSubirRfcClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("RFC / Cédula Fiscal");
     private async void OnSubirCurpClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("CURP");
     private async void OnSubirLicenciaFederalClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Licencia Federal Doc");
+    private async void OnSubirMedicoClicked(object sender, EventArgs e) => await SeleccionarArchivoPdfAsync("Apto Medico Doc");
 
     /// <summary>
     /// Invoca el selector de archivos del sistema filtrando únicamente documentos PDF.
@@ -188,7 +189,7 @@ public partial class PaginaRegistro : ContentPage
         if (_estaProcesando) return;
 
         // Validación de carga completa de documentos
-        string[] docs = { "Licencia Federal Doc", "INE", "Acta de Nacimiento", "NSS", "CV", "Comprobante de Domicilio", "RFC / Cédula Fiscal", "CURP" };
+        string[] docs = { "Licencia Federal Doc", "Apto Medico Doc", "INE", "Acta de Nacimiento", "NSS", "CV", "Comprobante de Domicilio", "RFC / Cédula Fiscal", "CURP" };
         foreach (var doc in docs) { if (!_rutasArchivos.ContainsKey(doc)) { await DisplayAlert("Faltante", $"Selecciona: {doc}", "OK"); return; } }
 
         try

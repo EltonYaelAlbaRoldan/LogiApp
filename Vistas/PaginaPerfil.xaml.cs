@@ -133,7 +133,7 @@ public partial class PaginaPerfil : ContentPage
 
     private async Task<string> SubirArchivoADrive(FileResult archivo, string tipo, string carpetaId)
     {
-        string nombreDocumento = (tipo == "Licencia") ? "Licencia Federal Doc" : "CURP";
+        string nombreDocumento = (tipo == "Licencia") ? "Licencia Federal Doc" : "Apto Medico Doc";
 
         var listRequest = _driveService.Files.List();
         listRequest.Q = $"name = '{nombreDocumento}' and '{carpetaId}' in parents and trashed = false";
