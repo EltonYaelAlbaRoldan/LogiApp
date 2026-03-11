@@ -95,7 +95,7 @@ public partial class PaginaRegistro : ContentPage
     private void OnTogglePasswordClicked(object sender, EventArgs e)
     {
         ContrasenaOperadorEntry.IsPassword = !ContrasenaOperadorEntry.IsPassword;
-        TogglePasswordLabel.Text = ContrasenaOperadorEntry.IsPassword ? "VER" : "OCULTAR";
+        BtnTogglePass.Text = ContrasenaOperadorEntry.IsPassword ? "Ver" : "Ocultar";
     }
 
     #endregion
@@ -176,15 +176,7 @@ public partial class PaginaRegistro : ContentPage
     /// </summary>
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
-        // 1. VALIDACIÓN DE FECHAS (Regla de 90 días)
-        // Se debe validar antes de cualquier proceso en la nube
-        if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia") ||
-            !ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
-        {
-            return;
-        }
-
-        // 2. VALIDACIÓN DE CAMPOS OBLIGATORIOS
+        // 1. VALIDACIÓN DE CAMPOS OBLIGATORIOS
         if (string.IsNullOrWhiteSpace(NombreEntry.Text) ||
             string.IsNullOrWhiteSpace(NumLicenciaEntry.Text) ||
             string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text) ||
@@ -194,6 +186,38 @@ public partial class PaginaRegistro : ContentPage
             await DisplayAlert("Campos Obligatorios",
             "Por favor, rellena todos los campos marcados con (*) antes de continuar.",
             "Entendido");
+            return;
+        }
+
+        // 2. VALIDACIÓN DE MAYORÍA DE EDAD (18+)
+        if (int.TryParse(EdadEntry.Text, out int edadActual))
+        {
+            if (edadActual < 18)
+            {
+                await DisplayAlert("Registro Denegado", "El operador debe ser mayor de 18 años.", "OK");
+                return;
+            }
+        }
+
+        // 3. Validar Correo (Regex)
+        string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        if (!string.IsNullOrWhiteSpace(CorreoEntry.Text) && !Regex.IsMatch(CorreoEntry.Text, emailPattern))
+        {
+            await DisplayAlert("Correo Inválido", "Por favor ingresa un correo electrónico real.", "OK");
+            return;
+        }
+
+        if (!ValidarLongitudExacta(Tel1Entry.Text, "Teléfono", 10) ||
+        !ValidarLongitudExacta(ClaveInterbancariaEntry.Text, "Clave Interbancaria", 18))
+        {
+            return; // Detiene el proceso si alguno falla
+        }
+
+        // 4. VALIDACIÓN DE FECHAS (Regla de 90 días)
+        // Se debe validar antes de cualquier proceso en la nube
+        if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia") ||
+            !ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
+        {
             return;
         }
 
@@ -250,6 +274,16 @@ public partial class PaginaRegistro : ContentPage
             _estaProcesando = false;
             OnPropertyChanged(nameof(IsNotBusy));
         }
+    }
+
+    private bool ValidarLongitudExacta(string texto, string nombreCampo, int largoRequerido)
+    {
+        if (string.IsNullOrEmpty(texto) || texto.Length != largoRequerido)
+        {
+            DisplayAlert("Formato Incorrecto", $"El campo {nombreCampo} debe tener exactamente {largoRequerido} dígitos.", "Reintentar");
+            return false;
+        }
+        return true;
     }
     /// <summary>
     /// PASO 2: Sube los archivos seleccionados a la carpeta de Drive y envía credenciales por correo.
