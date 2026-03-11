@@ -36,20 +36,27 @@ public partial class PaginaRegistro : ContentPage
         InitializeComponent();
         InicializarConexion();
 
-        // RECUPERACIÓN DE SESIÓN: Si se cerró la app durante el proceso, retomamos datos guardados
+        // RECUPERACIÓN DE SESIÓN:
         if (Preferences.ContainsKey("IdPendiente"))
         {
             _idOperadorGenerado = Preferences.Get("IdPendiente", "");
             _folderIdDestino = Preferences.Get("CarpetaPendiente", "");
 
-            // Configuración de UI para estado pendiente (Subida de archivos)
-            BtnRegistrarDatos.IsEnabled = false;
-            BtnSubirArchivos.IsEnabled = true;
-            BtnVolver.IsEnabled = false;
-            BloquearFormulario(true);
-            BtnVolver.Opacity = 0.5;
+            // --- AQUÍ ESTÁ LA SOLUCIÓN ---
+            // Si hay un ID pendiente, significa que la Fase 1 ya se hizo.
+            // Debemos habilitar la Fase 2 inmediatamente al entrar.
 
-            DisplayAlert("Registro Pendiente", "Se detectó un registro sin finalizar. Por favor, sube los archivos correspondientes.", "Continuar");
+            SeccionDocumentos.IsEnabled = true;
+            SeccionDocumentos.Opacity = 1.0;
+            BtnSubirArchivos.IsEnabled = true;
+
+            // También bloqueamos la Fase 1 para que no intenten registrarse de nuevo
+            BloquearFormulario(true);
+            BtnRegistrarDatos.IsEnabled = false;
+            BtnRegistrarDatos.Opacity = 0.5;
+
+            // Opcional: Llenar el nombre para que el usuario sepa de quién es el registro
+            NombreEntry.Text = Preferences.Get("NombrePendiente", "");
         }
     }
 
@@ -180,9 +187,13 @@ public partial class PaginaRegistro : ContentPage
         // 2. VALIDACIÓN DE CAMPOS OBLIGATORIOS
         if (string.IsNullOrWhiteSpace(NombreEntry.Text) ||
             string.IsNullOrWhiteSpace(NumLicenciaEntry.Text) ||
-            string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text))
+            string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text) ||
+            string.IsNullOrWhiteSpace(CorreoEntry.Text) ||
+            string.IsNullOrWhiteSpace(ClaveInterbancariaEntry.Text))
         {
-            await DisplayAlert("Atención", "Por favor completa el Nombre, Licencia y Contraseña.", "OK");
+            await DisplayAlert("Campos Obligatorios",
+            "Por favor, rellena todos los campos marcados con (*) antes de continuar.",
+            "Entendido");
             return;
         }
 
@@ -216,8 +227,6 @@ public partial class PaginaRegistro : ContentPage
             Preferences.Set("CorreoPendiente", CorreoEntry.Text ?? "");
             Preferences.Set("NombrePendiente", NombreEntry.Text);
             Preferences.Set("PassPendiente", ContrasenaOperadorEntry.Text);
-
-            await DisplayAlert("Paso 1 Completado", "Datos registrados. Ahora procede a subir los documentos PDF.", "OK");
 
             // Bloqueo de Parte 1
             BloquearFormulario(true);

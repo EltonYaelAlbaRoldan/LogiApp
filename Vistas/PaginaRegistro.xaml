@@ -72,20 +72,42 @@
                     Text="Información Personal"
                     TextColor="Gray" />
 
+                <Label
+                    Margin="0,0,0,10"
+                    FontSize="12"
+                    HorizontalOptions="End"
+                    Text="Los campos marcados con (*) son obligatorios"
+                    TextColor="Red" />
+
                 <!--  Entradas de texto para los datos del operador !  -->
+                <Label
+                    FontAttributes="Bold"
+                    Text="* "
+                    TextColor="Red" />
                 <Entry
                     x:Name="NombreEntry"
                     Placeholder="Nombre Completo"
                     Visual="Material" />
+
                 <Entry
                     x:Name="EdadEntry"
                     Keyboard="Numeric"
                     MaxLength="2"
                     Placeholder="Edad" />
+
+                <Label
+                    FontAttributes="Bold"
+                    Text="*"
+                    TextColor="Red" />
                 <Entry
                     x:Name="CorreoEntry"
                     Keyboard="Email"
                     Placeholder="Correo Electrónico" />
+
+                <Label
+                    FontAttributes="Bold"
+                    Text="*"
+                    TextColor="Red" />
                 <Entry
                     x:Name="Tel1Entry"
                     Keyboard="Numeric"
@@ -96,17 +118,32 @@
                     Keyboard="Numeric"
                     MaxLength="10"
                     Placeholder="No. de teléfono 2" />
+
+                <Label
+                    FontAttributes="Bold"
+                    Text="*"
+                    TextColor="Red" />
                 <Entry
                     x:Name="ClaveInterbancariaEntry"
                     Keyboard="Numeric"
                     MaxLength="18"
                     Placeholder="Clave Interbancaria" />
+
+                <Label
+                    FontAttributes="Bold"
+                    Text="*"
+                    TextColor="Red" />
                 <Entry
                     x:Name="NumLicenciaEntry"
                     MaxLength="15"
                     Placeholder="Número de Licencia Federal"
                     Visual="Material" />
+
                 <!--  Entrada de contraseña con opción para mostrar/ocultar !  -->
+                <Label
+                    FontAttributes="Bold"
+                    Text="*"
+                    TextColor="Red" />
                 <Frame
                     Padding="10,0"
                     BorderColor="#E0E0E0"
