@@ -4,6 +4,7 @@ using Microsoft.Maui.Networking;
 
 namespace LogiApp.Vistas;
 
+// Gestiona el cierre de viajes, reportes de ubicación GPS y sincronización de datos offline.
 public partial class PaginaTerminarViaje : ContentPage
 {
     #region Atributos y Servicios
@@ -16,7 +17,7 @@ public partial class PaginaTerminarViaje : ContentPage
 
     #endregion
 
-    #region Constructor e Inicialización
+    #region Constructor
 
     public PaginaTerminarViaje(string folio)
     {
@@ -28,28 +29,17 @@ public partial class PaginaTerminarViaje : ContentPage
         LblDestino.Text = $"Destino: {destinoGuardado}";
     }
 
-    private async Task InicializarServicio()
-    {
-        if (_sheets != null) return; // Si ya se inicializó, no hace nada
-
-        try
-        {
-            var (sService, dService) = await _authService.ObtenerServiciosAsync();
-            _sheets = new ConsultasGoogleSheets(sService);
-            _drive = new ConsultasGoogleDrive(dService);
-        }
-        catch { }
-    }
-
     #endregion
 
-    #region Ciclo de Vida y Sincronización en Vivo (El Sensor)
+    #region Ciclo de Vida y Sincronización
 
+    // Inicializa servicios y verifica si existen procesos pendientes de sincronización al entrar.
     protected override async void OnAppearing()
     {
         base.OnAppearing();
         await InicializarServicio();
 
+        // Restaurar estado visual si el arribo ya fue confirmado localmente
         if (Preferences.Default.Get("ArriboConfirmado_" + _folioActual, false))
         {
             MainThread.BeginInvokeOnMainThread(() =>
@@ -64,7 +54,7 @@ public partial class PaginaTerminarViaje : ContentPage
 
         Connectivity.Current.ConnectivityChanged += OnConnectivityChanged;
 
-        // Ejecutamos el sensor general
+        // Dispara el sensor de sincronización en segundo plano
         _ = IntentarSincronizarDatosEnVivoAsync();
     }
 
@@ -74,6 +64,7 @@ public partial class PaginaTerminarViaje : ContentPage
         Connectivity.Current.ConnectivityChanged -= OnConnectivityChanged;
     }
 
+    // Detecta cambios en la red para intentar subir datos pendientes automáticamente.
     private async void OnConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
     {
         if (e.NetworkAccess == NetworkAccess.Internet)
@@ -82,12 +73,30 @@ public partial class PaginaTerminarViaje : ContentPage
         }
     }
 
-    // RENOMBRADO Y AMPLIADO: Ahora sincroniza GPS y Arribos
+    #endregion
+
+    #region Lógica de Negocio (GPS y Sincronización Offline)
+
+    // Configura la conexión a las APIs de Google solo si no han sido instanciadas.
+    private async Task InicializarServicio()
+    {
+        if (_sheets != null) return;
+
+        try
+        {
+            var (sService, dService) = await _authService.ObtenerServiciosAsync();
+            _sheets = new ConsultasGoogleSheets(sService);
+            _drive = new ConsultasGoogleDrive(dService);
+        }
+        catch { }
+    }
+
+    // "El Sensor": Revisa la bóveda de Preferences y sube GPS o Arribos que quedaron pendientes por falta de red.
     private async Task IntentarSincronizarDatosEnVivoAsync()
     {
         if (_sheets == null || Connectivity.Current.NetworkAccess != NetworkAccess.Internet) return;
 
-        // 1. REVISAR SI HAY GPS PENDIENTE
+        // 1. Sincronización de GPS pendiente
         bool ubiPendiente = Preferences.Default.Get($"Offline_UbiPendiente_{_folioActual}", false);
         if (ubiPendiente)
         {
@@ -109,7 +118,7 @@ public partial class PaginaTerminarViaje : ContentPage
             catch { }
         }
 
-        // 2. REVISAR SI HAY ARRIBO PENDIENTE
+        // 2. Sincronización de Arribo pendiente
         bool arriboPendiente = Preferences.Default.Get($"Offline_ArriboPendiente_{_folioActual}", false);
         if (arriboPendiente)
         {
@@ -125,15 +134,15 @@ public partial class PaginaTerminarViaje : ContentPage
 
     #endregion
 
-    #region Lógica de Monitoreo (GPS)
+    #region Eventos de Monitoreo y GPS
 
+    // Obtiene las coordenadas actuales y decide si enviarlas a la nube o guardarlas localmente.
     private async void OnReportarUbicacionClicked(object sender, EventArgs e)
     {
         try
         {
             BtnReportar.IsEnabled = false;
 
-            // Obtenemos el GPS sin importar si hay internet (El chip GPS es independiente)
             var ubicacion = await Geolocation.Default.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(5)));
 
             if (ubicacion != null)
@@ -141,38 +150,37 @@ public partial class PaginaTerminarViaje : ContentPage
                 string horaExacta = DateTime.Now.ToString("HH:mm");
                 string coordsBreves = $"{ubicacion.Latitude:F4}, {ubicacion.Longitude:F4}";
 
-                // Guardamos en pantalla inmediatamente
                 LblUltimaActualizacion.Text = $"Último reporte: {coordsBreves} ({horaExacta})";
 
                 if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
                 {
-                    // Si hay red, lo subimos de una vez
                     await _sheets.ActualizarUbicacionViajeAsync(_folioActual, ubicacion.Latitude, ubicacion.Longitude, horaExacta);
                     await DisplayAlert("GPS", "Ubicación enviada exitosamente.", "OK");
                 }
                 else
                 {
-                    // MODO OFFLINE: Guardamos en la bóveda
+                    // PERSISTENCIA OFFLINE
                     Preferences.Default.Set($"Offline_UbiPendiente_{_folioActual}", true);
                     Preferences.Default.Set($"Offline_UbiLat_{_folioActual}", ubicacion.Latitude);
                     Preferences.Default.Set($"Offline_UbiLon_{_folioActual}", ubicacion.Longitude);
                     Preferences.Default.Set($"Offline_UbiHora_{_folioActual}", horaExacta);
 
-                    await DisplayAlert("Modo Offline", "Coordenadas guardadas. Se enviarán al recuperar la señal.", "OK");
+                    await DisplayAlert("Modo Offline", "Coordenadas guardadas localmente.", "OK");
                 }
             }
         }
         catch
         {
-            await DisplayAlert("Error GPS", "No se pudo obtener la ubicación. Verifica que tu GPS esté encendido.", "OK");
+            await DisplayAlert("Error GPS", "No se pudo obtener la ubicación. Verifica tu GPS.", "OK");
         }
         finally { BtnReportar.IsEnabled = true; }
     }
 
     #endregion
 
-    #region Gestión de Arribo y Cierre
+    #region Gestión de Arribo y Finalización
 
+    // Registra la llegada al destino y calcula la duración total del trayecto.
     private async void OnMarcarLlegadaClicked(object sender, EventArgs e)
     {
         var confirmar = await DisplayAlert("Confirmar", "¿Has llegado a tu destino?", "Sí", "No");
@@ -194,22 +202,14 @@ public partial class PaginaTerminarViaje : ContentPage
         Preferences.Default.Set("ArriboConfirmado_" + _folioActual, true);
         Preferences.Default.Set("HoraLlegadaReal_" + _folioActual, horaLlegadaReal);
 
-        // EVALUACIÓN DE RED AL INSTANTE
+        // Intento de actualización inmediata o marcado para sincronización posterior
         if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
         {
-            try
-            {
-                await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", horaLlegadaReal);
-            }
-            catch
-            {
-                // Si la red es intermitente y falla, activamos la banderita
-                Preferences.Default.Set($"Offline_ArriboPendiente_{_folioActual}", true);
-            }
+            try { await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", horaLlegadaReal); }
+            catch { Preferences.Default.Set($"Offline_ArriboPendiente_{_folioActual}", true); }
         }
         else
         {
-            // Si no hay internet de entrada, activamos la banderita directamente
             Preferences.Default.Set($"Offline_ArriboPendiente_{_folioActual}", true);
         }
 
@@ -225,6 +225,7 @@ public partial class PaginaTerminarViaje : ContentPage
         IndicadorCarga.IsVisible = false;
     }
 
+    // Valida datos finales, guarda evidencia fotográfica y cierra el folio en la base de datos.
     private async void OnTerminarViajeClicked(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(KmLlegadaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleLlegadaEntry.Text) || string.IsNullOrEmpty(_rutaFotoTemporal))
@@ -241,7 +242,7 @@ public partial class PaginaTerminarViaje : ContentPage
 
         if (kmLlegada < kmSalida || fuelLlegada > fuelSalida)
         {
-            await DisplayAlert("Error", "Los datos de KM o Combustible no son lógicos respecto a la salida.", "OK");
+            await DisplayAlert("Error", "Los datos de KM o Combustible no son lógicos.", "OK");
             return;
         }
 
@@ -257,6 +258,7 @@ public partial class PaginaTerminarViaje : ContentPage
         string rutaSeguraFoto = Path.Combine(FileSystem.AppDataDirectory, $"evidencia_{_folioActual}.jpg");
         File.Copy(_rutaFotoTemporal, rutaSeguraFoto, true);
 
+        // Guardado preventivo en Preferences (Bóveda de emergencia)
         Preferences.Default.Set($"Offline_Pendiente_{_folioActual}", true);
         Preferences.Default.Set($"Offline_HoraLlegada_{_folioActual}", horaLlegadaReal);
         Preferences.Default.Set($"Offline_FechaFin_{_folioActual}", fechaFinReal);
@@ -290,7 +292,6 @@ public partial class PaginaTerminarViaje : ContentPage
                 if (exito)
                 {
                     Preferences.Default.Remove($"Offline_Pendiente_{_folioActual}");
-
                     foliosAtorados = Preferences.Default.Get("ListaFoliosOffline", "");
                     foliosAtorados = foliosAtorados.Replace(_folioActual + ",", "");
                     Preferences.Default.Set("ListaFoliosOffline", foliosAtorados);
@@ -300,7 +301,7 @@ public partial class PaginaTerminarViaje : ContentPage
         }
 
         IndicadorCarga.IsVisible = false;
-        await DisplayAlert("Viaje Terminado", "Datos capturados con éxito. Puedes continuar con tu siguiente viaje.", "OK");
+        await DisplayAlert("Viaje Terminado", "Datos capturados con éxito.", "OK");
         Application.Current.MainPage = new NavigationPage(new PaginaMenu());
     }
 
@@ -308,6 +309,7 @@ public partial class PaginaTerminarViaje : ContentPage
 
     #region Manejo de Evidencias
 
+    // Captura una fotografía utilizando la cámara del dispositivo para evidencia de llegada.
     private async void OnTomarFotoClicked(object sender, EventArgs e)
     {
         if (MediaPicker.Default.IsCaptureSupported)

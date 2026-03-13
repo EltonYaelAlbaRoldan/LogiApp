@@ -2,10 +2,17 @@ using LogiApp.Servicios;
 
 namespace LogiApp.Vistas;
 
+// Gestiona el despacho de nuevos viajes, validando recursos (unidad, remolque) y registrando el inicio en Sheets.
 public partial class PaginaViajes : ContentPage
 {
+    #region Atributos y Servicios
+
     private ConsultasGoogleSheets _sheets;
     private readonly ConexionGoogleAuth _authService = new();
+
+    #endregion
+
+    #region Constructor
 
     public PaginaViajes()
     {
@@ -13,6 +20,11 @@ public partial class PaginaViajes : ContentPage
         InicializarDatos();
     }
 
+    #endregion
+
+    #region Inicialización y Carga de Datos
+
+    // Establece la conexión con Google y dispara la carga simultánea de catálogos.
     private async void InicializarDatos()
     {
         try
@@ -20,12 +32,21 @@ public partial class PaginaViajes : ContentPage
             var (sService, _) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
 
-            // Cargamos las 3 listas simultáneamente
-            await Task.WhenAll(CargarUnidades(), CargarRemolques(), CargarDestinos(), CargarClientes());
+            // Optimización: Carga de 4 listas en paralelo para reducir tiempo de espera
+            await Task.WhenAll(
+                CargarUnidades(),
+                CargarRemolques(),
+                CargarDestinos(),
+                CargarClientes()
+            );
         }
-        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", ex.Message, "OK");
+        }
     }
 
+    // Consulta y puebla la lista de unidades disponibles desde Sheets.
     private async Task CargarUnidades()
     {
         CargandoUnidades.IsVisible = true;
@@ -42,22 +63,11 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
-    private void OnRemolqueCheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        // Muestra u oculta la sección dependiendo de si el CheckBox está marcado
-        SeccionRemolque.IsVisible = e.Value;
-
-        // Si se desmarca, limpiamos la selección por seguridad
-        if (!e.Value)
-        {
-            RemolquePicker.SelectedItem = null;
-        }
-    }
+    // Consulta y puebla la lista de remolques/cajas disponibles.
     private async Task CargarRemolques()
     {
         CargandoRemolques.IsVisible = true;
         CargandoRemolques.IsRunning = true;
-
         try
         {
             var lista = await _sheets.ObtenerListaRemolquesAsync();
@@ -69,6 +79,8 @@ public partial class PaginaViajes : ContentPage
             CargandoRemolques.IsRunning = false;
         }
     }
+
+    // Consulta y puebla los catálogos de Origen y Destino.
     private async Task CargarDestinos()
     {
         try
@@ -83,7 +95,7 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
-    // Nuevo método para poblar el Picker de Clientes
+    // Consulta y puebla la lista de clientes activos.
     private async Task CargarClientes()
     {
         try
@@ -97,10 +109,14 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
+    #endregion
+
+    #region Lógica de Negocio y Guardado
+
+    // Valida la integridad de los datos, genera un folio y registra el inicio del viaje en la nube.
     private async void OnGuardarViajeClicked(object sender, EventArgs e)
     {
-
-        // Agregamos la validación para que el ClientePicker no esté vacío (-1)
+        // Validación de campos obligatorios
         if (OrigenPicker.SelectedIndex == -1 || DestinoPicker.SelectedIndex == -1 ||
             UnidadPicker.SelectedIndex == -1 || ClientePicker.SelectedIndex == -1 ||
             string.IsNullOrWhiteSpace(KmSalidaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleEntry.Text))
@@ -114,6 +130,7 @@ public partial class PaginaViajes : ContentPage
 
         try
         {
+            // Preparación de datos para el registro
             string folio = await _sheets.GenerarFolioViajeAsync();
             string idOp = Preferences.Default.Get("UsuarioLogeado", "Sin ID");
             string fechaInicio = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
@@ -121,6 +138,7 @@ public partial class PaginaViajes : ContentPage
                 ? (RemolquePicker.SelectedItem?.ToString() ?? "N/A")
                 : "SIN REMOLQUE";
 
+            // Escritura en Google Sheets
             bool exito = await _sheets.RegistrarInicioViajeAsync(
                 folio,
                 fechaInicio,
@@ -129,16 +147,16 @@ public partial class PaginaViajes : ContentPage
                 remolqueSeleccionado,
                 OrigenPicker.SelectedItem.ToString(),
                 DestinoPicker.SelectedItem.ToString(),
-                ClientePicker.SelectedItem.ToString(), 
+                ClientePicker.SelectedItem.ToString(),
                 KmSalidaEntry.Text,
                 CombustibleEntry.Text,
                 "EN TRANSITO"
             );
 
-            Preferences.Default.Set("Destino_" + folio, DestinoPicker.SelectedItem.ToString());
-
             if (exito)
             {
+                // Persistencia local para el seguimiento del viaje activo
+                Preferences.Default.Set("Destino_" + folio, DestinoPicker.SelectedItem.ToString());
                 Preferences.Default.Set("ViajeEnCurso", true);
                 Preferences.Default.Set("FolioPendiente", folio);
                 Preferences.Default.Set("Inicio_" + folio, fechaInicio);
@@ -146,6 +164,8 @@ public partial class PaginaViajes : ContentPage
                 Preferences.Default.Set("FuelSalida_" + folio, CombustibleEntry.Text);
 
                 await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
+
+                // Navegación automática a la pantalla de monitoreo/cierre
                 Application.Current.MainPage = new NavigationPage(new Vistas.PaginaTerminarViaje(folio));
             }
         }
@@ -160,8 +180,25 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
+    #endregion
+
+    #region Eventos de UI
+
+    // Gestiona la visibilidad condicional del selector de remolque.
+    private void OnRemolqueCheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        SeccionRemolque.IsVisible = e.Value;
+
+        if (!e.Value)
+        {
+            RemolquePicker.SelectedItem = null;
+        }
+    }
+
     private void OnVolverClicked(object sender, EventArgs e)
     {
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
     }
+
+    #endregion
 }

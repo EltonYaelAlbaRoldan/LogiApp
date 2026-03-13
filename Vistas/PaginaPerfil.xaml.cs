@@ -4,8 +4,11 @@ using Google.Apis.Drive.v3;
 
 namespace LogiApp.Vistas;
 
+// Gestiona el perfil del operador, la visualización de vigencias y la actualización de documentos en Drive y Sheets.
 public partial class PaginaPerfil : ContentPage
 {
+    #region Atributos y Servicios
+
     private ConsultasGoogleSheets _sheets;
     private Operador _operadorActual;
     private DriveService _driveService;
@@ -14,12 +17,21 @@ public partial class PaginaPerfil : ContentPage
     private FileResult _archivoLicenciaTemp;
     private FileResult _archivoMedicoTemp;
 
+    #endregion
+
+    #region Constructor
+
     public PaginaPerfil()
     {
         InitializeComponent();
         CargarDatos();
     }
 
+    #endregion
+
+    #region Métodos de Carga y Lógica
+
+    // Consulta los datos del operador y configura los servicios de Google.
     private async void CargarDatos()
     {
         try
@@ -52,40 +64,7 @@ public partial class PaginaPerfil : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
-    #region Selección de Archivos
-    private async void OnSeleccionarLicenciaClicked(object sender, EventArgs e)
-    {
-        _archivoLicenciaTemp = await FilePicker.Default.PickAsync(new PickOptions
-        {
-            PickerTitle = "PDF de Licencia",
-            FileTypes = FilePickerFileType.Pdf
-        });
-        if (_archivoLicenciaTemp != null)
-        {
-            BtnCargarLicencia.Text = "✅ ARCHIVO LISTO";
-            BtnGuardarLicencia.IsEnabled = true;
-        }
-    }
-
-    private async void OnSeleccionarMedicoClicked(object sender, EventArgs e)
-    {
-        _archivoMedicoTemp = await FilePicker.Default.PickAsync(new PickOptions
-        {
-            PickerTitle = "PDF de Médico",
-            FileTypes = FilePickerFileType.Pdf
-        });
-        if (_archivoMedicoTemp != null)
-        {
-            BtnCargarMedico.Text = "✅ ARCHIVO LISTO";
-            BtnGuardarMedico.IsEnabled = true;
-        }
-    }
-    #endregion
-
-    #region Guardado con Validación de 90 días
-    private async void OnGuardarLicenciaClicked(object sender, EventArgs e) => await ProcesarGuardado("Licencia", PickerLicencia.Date, _archivoLicenciaTemp);
-    private async void OnGuardarMedicoClicked(object sender, EventArgs e) => await ProcesarGuardado("Medico", PickerMedico.Date, _archivoMedicoTemp);
-
+    // Procesa el guardado de documentos con validación de regla de negocio (90 días).
     private async Task ProcesarGuardado(string tipo, DateTime nuevaFecha, FileResult archivo)
     {
         // REGLA DE NEGOCIO: No permitir si vence en menos de 90 días
@@ -129,8 +108,8 @@ public partial class PaginaPerfil : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
         finally { IsBusy = false; }
     }
-    #endregion
 
+    // Gestiona la subida física del archivo PDF a la carpeta correspondiente en Google Drive.
     private async Task<string> SubirArchivoADrive(FileResult archivo, string tipo, string carpetaId)
     {
         string nombreDocumento = (tipo == "Licencia") ? "Licencia Federal Doc" : "Apto Medico Doc";
@@ -159,6 +138,7 @@ public partial class PaginaPerfil : ContentPage
         }
     }
 
+    // Actualiza el color de los contenedores según los días de vigencia restantes.
     private void PintarSemaforo(DateTime fecha, Frame frame)
     {
         double dias = (fecha - DateTime.Now).TotalDays;
@@ -167,13 +147,47 @@ public partial class PaginaPerfil : ContentPage
         else frame.BackgroundColor = Color.FromArgb("#C8E6C9");
     }
 
+    #endregion
+
+    #region Eventos de UI
+
+    private async void OnSeleccionarLicenciaClicked(object sender, EventArgs e)
+    {
+        _archivoLicenciaTemp = await FilePicker.Default.PickAsync(new PickOptions
+        {
+            PickerTitle = "PDF de Licencia",
+            FileTypes = FilePickerFileType.Pdf
+        });
+        if (_archivoLicenciaTemp != null)
+        {
+            BtnCargarLicencia.Text = "✅ ARCHIVO LISTO";
+            BtnGuardarLicencia.IsEnabled = true;
+        }
+    }
+
+    private async void OnSeleccionarMedicoClicked(object sender, EventArgs e)
+    {
+        _archivoMedicoTemp = await FilePicker.Default.PickAsync(new PickOptions
+        {
+            PickerTitle = "PDF de Médico",
+            FileTypes = FilePickerFileType.Pdf
+        });
+        if (_archivoMedicoTemp != null)
+        {
+            BtnCargarMedico.Text = "✅ ARCHIVO LISTO";
+            BtnGuardarMedico.IsEnabled = true;
+        }
+    }
+
+    private async void OnGuardarLicenciaClicked(object sender, EventArgs e) => await ProcesarGuardado("Licencia", PickerLicencia.Date, _archivoLicenciaTemp);
+
+    private async void OnGuardarMedicoClicked(object sender, EventArgs e) => await ProcesarGuardado("Medico", PickerMedico.Date, _archivoMedicoTemp);
+
     private void OnDateSelected(object sender, DateChangedEventArgs e)
     {
         if (_archivoLicenciaTemp != null) BtnGuardarLicencia.IsEnabled = true;
         if (_archivoMedicoTemp != null) BtnGuardarMedico.IsEnabled = true;
     }
-
-    private async void OnVolverClicked(object sender, EventArgs e) => Application.Current.MainPage = new NavigationPage(new PaginaMenu());
 
     private async void OnCambiarPassClicked(object sender, EventArgs e)
     {
@@ -183,4 +197,8 @@ public partial class PaginaPerfil : ContentPage
         IsBusy = false;
         if (exito) await DisplayAlert("Éxito", "Contraseña actualizada en la base de datos.", "OK");
     }
+
+    private async void OnVolverClicked(object sender, EventArgs e) => Application.Current.MainPage = new NavigationPage(new PaginaMenu());
+
+    #endregion
 }

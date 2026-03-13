@@ -1,9 +1,9 @@
 using LogiApp.Servicios;
 using Google.Apis.Sheets.v4.Data;
 
-// Controla el registro de mantenimiento, subida de evidencias a Drive y guardado en Google Sheets.
 namespace LogiApp.Vistas;
 
+// Controla el registro de mantenimiento, subida de evidencias a Drive y guardado en Google Sheets.
 public partial class PaginaMantenimiento : ContentPage
 {
     #region Atributos y Servicios
@@ -27,6 +27,7 @@ public partial class PaginaMantenimiento : ContentPage
 
     #region Inicialización de Datos
 
+    // Configura los servicios de Google y carga la información inicial.
     private async void InicializarDatos()
     {
         try
@@ -45,6 +46,7 @@ public partial class PaginaMantenimiento : ContentPage
         }
     }
 
+    // Obtiene la lista de unidades desde la base de datos de Sheets.
     private async Task CargarUnidades()
     {
         CargandoUnidades.IsVisible = true;
@@ -78,6 +80,7 @@ public partial class PaginaMantenimiento : ContentPage
 
     #region Eventos de Formulario
 
+    // Procesa el guardado del reporte, sube la foto a Drive y registra los datos en Sheets.
     private async void OnGuardarMantenimientoClicked(object sender, EventArgs e)
     {
         if (UnidadPicker.SelectedIndex == -1)
@@ -109,7 +112,6 @@ public partial class PaginaMantenimiento : ContentPage
             string unidadTexto = UnidadPicker.SelectedItem.ToString();
             string linkCarpeta = "Sin evidencia";
 
-            // Subida a Drive (solo si se seleccionó una foto)
             if (!string.IsNullOrEmpty(_rutaFotoLocal))
             {
                 string idOperador = Preferences.Get("IdOperadorLogeado", "");
@@ -117,7 +119,6 @@ public partial class PaginaMantenimiento : ContentPage
                 linkCarpeta = resultadoDrive.folderLink;
             }
 
-            // Registro en Sheets
             await _sheets.RegistrarMantenimientoAsync(
                 nuevoFolio,
                 DateTime.Now.ToString("g"),
@@ -149,6 +150,7 @@ public partial class PaginaMantenimiento : ContentPage
         }
     }
 
+    // Abre el selector de archivos para adjuntar una imagen de evidencia.
     private async void OnAdjuntarEvidenciaClicked(object sender, EventArgs e)
     {
         try
@@ -158,7 +160,6 @@ public partial class PaginaMantenimiento : ContentPage
             if (photo != null)
             {
                 _rutaFotoLocal = photo.FullPath;
-
                 BtnAdjuntar.Text = "Imagen Cargada";
                 BtnAdjuntar.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#4CAF50");
                 BtnAdjuntar.TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#FFFFFF");
@@ -170,6 +171,7 @@ public partial class PaginaMantenimiento : ContentPage
         }
     }
 
+    // Regresa al menú principal de la aplicación.
     private async void OnVolverClicked(object sender, EventArgs e)
     {
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());

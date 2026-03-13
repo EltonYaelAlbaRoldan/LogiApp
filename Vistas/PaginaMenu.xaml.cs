@@ -3,54 +3,63 @@ using LogiApp.Modelos;
 
 namespace LogiApp.Vistas;
 
+// Pantalla principal de navegación que gestiona el acceso a módulos y valida vigencias de documentos.
 public partial class PaginaMenu : ContentPage
 {
+    #region Atributos y Servicios
+
     private ConsultasGoogleSheets _sheetsService;
+
+    #endregion
+
+    #region Constructor
 
     public PaginaMenu()
     {
         InitializeComponent();
     }
 
-    /// <summary>
-    /// Cada vez que el usuario regresa al menú, se consultan los datos reales en la nube.
-    /// </summary>
+    #endregion
+
+    #region Ciclo de Vida
+
+    // Cada vez que el usuario regresa al menú, se consultan los datos reales en la nube.
     protected override async void OnAppearing()
     {
         base.OnAppearing();
         await ActualizarEstadoDesdeNube();
     }
 
+    #endregion
+
+    #region Lógica de Sincronización y Validación
+
+    // Inicializa servicios y consulta datos del operador para validar vigencias.
     private async Task ActualizarEstadoDesdeNube()
     {
         try
         {
             IsBusy = true;
 
-            // 1. Inicializar servicios de autenticación y Sheets
             var auth = new ConexionGoogleAuth();
             var (sService, _) = await auth.ObtenerServiciosAsync();
             _sheetsService = new ConsultasGoogleSheets(sService);
 
-            // 2. Obtener el ID del operador logueado
             string id = Preferences.Default.Get("UsuarioLogeado", "");
-
-            // 3. Consultar datos DIRECTO desde Google Sheets
             var operador = await _sheetsService.ObtenerDatosOperadorAsync(id);
 
             if (operador != null)
             {
-                // 4. Validar bloqueos basados en la respuesta de la nube
                 ValidarBloqueoDeViajes(operador.VigenciaLicencia, operador.VigenciaMedico);
             }
         }
         catch (Exception ex)
         {
-            // Si no hay internet o falla el servicio, bloqueamos por seguridad
+            // Bloqueo de seguridad por falta de conexión o falla de servicio
             BtnModuloViajes.IsEnabled = false;
             BtnModuloViajes.BackgroundColor = Colors.Gray;
             BtnModuloViajes.Text = "SIN CONEXIÓN - BLOQUEADO";
-            await DisplayAlert("Error de Sincronización", "No se pudieron validar tus vigencias. Verifica tu conexión.", "OK");
+            await DisplayAlert("Error de Sincronización", "Verifica tu conexión para validar vigencias.", "OK");
         }
         finally
         {
@@ -59,6 +68,7 @@ public partial class PaginaMenu : ContentPage
         }
     }
 
+    // Gestiona el estado del botón de viajes según la vigencia de documentos (Semáforo).
     private void ValidarBloqueoDeViajes(DateTime vLicencia, DateTime vMedico)
     {
         int diasLicencia = (vLicencia - DateTime.Now).Days;
@@ -67,36 +77,36 @@ public partial class PaginaMenu : ContentPage
 
         if (diasCriticos <= 0)
         {
-            // ROJO - VENCIDO
+            // ESTADO ROJO: Vencido y Bloqueado
             BtnModuloViajes.IsEnabled = false;
             BtnModuloViajes.BackgroundColor = Colors.Red;
-            BtnModuloViajes.Text = "BLOQUEADO: VIGENCIA VENCIDA";
+            BtnModuloViajes.Text = "BLOQUEADO: VENCIDO";
 
-               MainThread.BeginInvokeOnMainThread(async () => {
-                    await DisplayAlert("🚫 BLOQUEADO", $"Tus documentos han vencido. No puedes iniciar viajes hasta renovarlos.", "Entendido");
-                });
+            MainThread.BeginInvokeOnMainThread(async () => {
+                await DisplayAlert("🚫 BLOQUEADO", "Tus documentos han vencido. No puedes iniciar viajes.", "Entendido");
+            });
         }
         else if (diasCriticos <= 90)
         {
-            // AMARILLO - ADVERTENCIA (Permite viajar, pero avisa)
+            // ESTADO AMARILLO: Próximo a vencer (Permite operar con aviso)
             BtnModuloViajes.IsEnabled = true;
             BtnModuloViajes.BackgroundColor = Colors.Orange;
             BtnModuloViajes.Text = "GESTIÓN DE VIAJES";
 
-            // Alertamos al usuario solo si está en zona de riesgo (90 días)
             MainThread.BeginInvokeOnMainThread(async () => {
-                await DisplayAlert("⚠️ ADVERTENCIA", $"Tus documentos vencen en {diasCriticos} días. Favor de renovar.", "Entendido");
+                await DisplayAlert("⚠️ ADVERTENCIA", $"Tus documentos vencen en {diasCriticos} días.", "Entendido");
             });
         }
         else
         {
-            // VERDE - TODO EN REGLA
+            // ESTADO VERDE: Documentación en regla
             BtnModuloViajes.IsEnabled = true;
             BtnModuloViajes.BackgroundColor = Color.FromArgb("#2196F3");
             BtnModuloViajes.Text = "GESTIÓN DE VIAJES";
         }
     }
 
+    // Verifica si hay un viaje guardado localmente que no se ha finalizado.
     private async void VerificarViajePendienteLocal()
     {
         bool tieneViajeActivo = Preferences.Default.Get("ViajeEnCurso", false);
@@ -114,7 +124,9 @@ public partial class PaginaMenu : ContentPage
         }
     }
 
-    #region Navegación y Sesión
+    #endregion
+
+    #region Eventos de UI y Navegación
 
     private async void OnPerfilClicked(object sender, EventArgs e)
     {
