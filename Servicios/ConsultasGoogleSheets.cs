@@ -8,7 +8,7 @@ public class ConsultasGoogleSheets
 {
     #region CONFIGURACIÓN
     private readonly SheetsService _service;
-    private readonly string _spreadsheetId = "1wx2DSjhjzUeTxtxby0akYFTFul84DwSI1OMe5IYezb8";
+    private readonly string _spreadsheetId = "1Gl41wM-3OPepAxE6K6TjRGbCJsfjjYOSlubkIaCTjs0";
 
     public ConsultasGoogleSheets(SheetsService service) => _service = service;
     #endregion
