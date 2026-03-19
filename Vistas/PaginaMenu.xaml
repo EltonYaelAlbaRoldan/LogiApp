@@ -52,6 +52,15 @@
                     TextColor="White" />
 
                 <Button
+                    BackgroundColor="#2196F3"
+                    Clicked="OnHistorialClicked"
+                    CornerRadius="15"
+                    FontSize="18"
+                    HeightRequest="80"
+                    Text="HISTORIAL DE VIAJES"
+                    TextColor="White" />
+
+                <Button
                     Margin="0,20,0,0"
                     Padding="20,0"
                     BackgroundColor="Transparent"

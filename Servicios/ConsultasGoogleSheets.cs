@@ -423,4 +423,33 @@ public class ConsultasGoogleSheets
 
     #endregion
 
+    public async Task<List<ViajeHistorial>> ObtenerHistorialPorOperadorAsync(string idOperador)
+    {
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:K").ExecuteAsync();
+        var values = response.Values;
+        var lista = new List<ViajeHistorial>();
+
+        if (values != null)
+        {
+            // Recorremos de abajo hacia arriba para ver los más recientes primero
+            for (int i = values.Count - 1; i >= 1; i--)
+            {
+                var fila = values[i];
+                // Suponiendo que el ID del operador está en la columna B (índice 1)
+                if (fila.Count > 1 && fila[2].ToString() == idOperador)
+                {
+                    lista.Add(new ViajeHistorial
+                    {
+                        Folio = fila[0].ToString(),          // Columna A
+                        Unidad = fila[3].ToString(),        // Columna D
+                        Fecha = fila[1].ToString(),          // Columna E
+                        Estado = fila[10].ToString()         // Columna K
+                    });
+                }
+                if (lista.Count >= 10) break; // Solo mostrar los últimos 10 para no saturar
+            }
+        }
+        return lista;
+    }
+
 }

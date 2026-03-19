@@ -153,6 +153,12 @@ public partial class PaginaMenu : ContentPage
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMantenimiento());
     }
 
+    private async void OnHistorialClicked(object sender, EventArgs e)
+    {
+        // Navega a la página donde implementaste el historial
+        await Navigation.PushAsync(new Vistas.PaginaHistorial());
+    }
+
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
         bool deseaSalir = await DisplayAlert("Cerrar Sesión", "¿Está seguro?", "Sí", "No");

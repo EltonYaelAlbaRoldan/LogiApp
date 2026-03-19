@@ -85,6 +85,9 @@
 	  <MauiXaml Update="Vistas\InicioSesion.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Vistas\PaginaHistorial.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Vistas\PaginaMantenimiento.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
