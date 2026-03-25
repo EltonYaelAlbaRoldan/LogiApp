@@ -69,7 +69,8 @@
                     <Label FontAttributes="Bold">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="Edad" TextColor="Black" />
+                                <Span Text="Edad " TextColor="Black" />
+                                <Span Text="*" TextColor="Red" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
@@ -95,7 +96,8 @@
                     <Label FontAttributes="Bold">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="Telefono" TextColor="Black" />
+                                <Span Text="Telefono " TextColor="Black" />
+                                <Span Text="*" TextColor="Red" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
@@ -148,7 +150,8 @@
                     <Label FontAttributes="Bold">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="Vigencia licencia" TextColor="Black" />
+                                <Span Text="Vigencia licencia " TextColor="Black" />
+                                <Span Text="*" TextColor="Red" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
@@ -160,7 +163,8 @@
                     <Label FontAttributes="Bold">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="Vigencia apto medico" TextColor="Black" />
+                                <Span Text="Vigencia apto medico " TextColor="Black" />
+                                <Span Text="*" TextColor="Red" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>

@@ -111,10 +111,14 @@ public partial class PaginaRegistro : ContentPage
     {
         // 1. Validación de campos obligatorios
         if (string.IsNullOrWhiteSpace(NombreEntry.Text) ||
-            string.IsNullOrWhiteSpace(NumLicenciaEntry.Text) ||
-            string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text) ||
+            string.IsNullOrWhiteSpace(EdadEntry.Text) ||
             string.IsNullOrWhiteSpace(CorreoEntry.Text) ||
-            string.IsNullOrWhiteSpace(ClaveInterbancariaEntry.Text))
+            string.IsNullOrWhiteSpace(Tel1Entry.Text) ||
+            string.IsNullOrWhiteSpace(ClaveInterbancariaEntry.Text) ||
+            string.IsNullOrWhiteSpace(NumLicenciaEntry.Text) ||
+            string.IsNullOrWhiteSpace(VigenciaLicenciaPicker.Date.ToString()) ||
+            string.IsNullOrWhiteSpace(VigenciaMedicoPicker.Date.ToString()) ||
+            string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text))
         {
             await DisplayAlert("Campos Obligatorios", "Rellena todos los campos marcados con (*) antes de continuar.", "Entendido");
             return;
