@@ -139,13 +139,16 @@ public partial class PaginaRegistro : ContentPage
             return;
         }
 
+        // 4. Validación de longitud exacta para teléfono y clave interbancaria
         if (!ValidarLongitudExacta(Tel1Entry.Text, "Teléfono", 10) ||
-            !ValidarLongitudExacta(ClaveInterbancariaEntry.Text, "Clave Interbancaria", 18))
+            !ValidarLongitudExacta(ClaveInterbancariaEntry.Text, "Clave Interbancaria", 18) ||
+            !ValidarLongitudExacta(NumLicenciaEntry.Text, "Número de Licencia", 14)
+            )
         {
             return;
         }
 
-        // 4. Validación de fechas (Regla de 90 días)
+        // 5. Validación de fechas (Regla de 90 días)
         if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia"))
         {
             return;
