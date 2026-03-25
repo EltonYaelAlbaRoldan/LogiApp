@@ -142,8 +142,11 @@ public partial class PaginaRegistro : ContentPage
         }
 
         // 4. Validación de fechas (Regla de 90 días)
-        if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia") ||
-            !ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
+        if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia"))
+        {
+            return;
+        }
+        if (!ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
         {
             return;
         }
@@ -283,8 +286,6 @@ public partial class PaginaRegistro : ContentPage
 
     private void OnDateSelected(object sender, DateChangedEventArgs e)
     {
-        ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia");
-        ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico");
     }
 
     private void OnTogglePasswordClicked(object sender, EventArgs e)
