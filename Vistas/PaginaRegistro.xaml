@@ -16,11 +16,9 @@
             ColumnDefinitions="60,*"
             VerticalOptions="Center">
             <Border
-                x:Name="BtnVolver"
                 Grid.Column="0"
                 BackgroundColor="White"
                 HeightRequest="40"
-                HorizontalOptions="Start"
                 Stroke="#E0E0E0"
                 StrokeThickness="1"
                 WidthRequest="40">
@@ -31,9 +29,11 @@
                     <TapGestureRecognizer Tapped="OnVolverClicked" />
                 </Border.GestureRecognizers>
                 <Label
-                    FontSize="18"
+                    Margin="0,0,4,8"
+                    FontAttributes="Bold"
+                    FontSize="26"
                     HorizontalOptions="Center"
-                    Text="←"
+                    Text="‹"
                     TextColor="#0A0A33"
                     VerticalOptions="Center" />
             </Border>
@@ -48,12 +48,6 @@
 
         <ScrollView Grid.Row="1" Padding="20">
             <VerticalStackLayout Spacing="15">
-
-                <Label
-                    FontSize="12"
-                    HorizontalOptions="End"
-                    Text="Los campos marcados con (*) son obligatorios"
-                    TextColor="Red" />
 
                 <Label
                     FontAttributes="Bold"
@@ -146,9 +140,10 @@
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
-                    <Entry x:Name="NumLicenciaEntry"
-                           MaxLength="12"
-                           Placeholder="Dígitos de licencia" />
+                    <Entry
+                        x:Name="NumLicenciaEntry"
+                        MaxLength="12"
+                        Placeholder="Dígitos de licencia" />
 
                     <Label FontAttributes="Bold">
                         <Label.FormattedText>

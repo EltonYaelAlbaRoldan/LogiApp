@@ -45,45 +45,46 @@ public partial class InicioSesion : ContentPage
     // Procesa la lógica de autenticación cuando el usuario presiona el botón de entrar.
     private async void OnLoginClicked(object sender, EventArgs e)
     {
-        // Validación de entradas
-        if (string.IsNullOrWhiteSpace(UsuarioEntry.Text) || string.IsNullOrWhiteSpace(ContrasenaEntry.Text))
+        string usuario = UsuarioEntry.Text?.Trim();
+        string pass = ContrasenaEntry.Text?.Trim();
+
+        if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(pass))
         {
-            await DisplayAlert("Campos Vacíos", "Ingresa tus credenciales.", "OK");
+            await DisplayAlert("Campos Vacíos", "Ingresa tu ID y contraseña.", "OK");
             return;
         }
-
-        // Si hay un registro pendiente en este teléfono, no dejar entrar
-        if (Preferences.ContainsKey("IdPendiente"))
-        {
-            await DisplayAlert("Registro Incompleto", "Tienes un proceso de registro pendiente.", "Ir a Registro");
-            Application.Current.MainPage = new NavigationPage(new Vistas.PaginaRegistro());
-            return;
-        }
-
-        SetLoadingState(true);
 
         try
         {
-            bool esValido = await _sheets.ValidarUsuarioAsync(UsuarioEntry.Text, ContrasenaEntry.Text);
+            IsBusy = true; // Aquí sí existe IsBusy porque es una ContentPage
 
-            if (esValido)
+            // Usamos el método que ya tienes en ConsultasGoogleSheets
+            string resultado = await _sheets.ValidarUsuarioAsync(usuario, pass);
+
+            switch (resultado)
             {
-                // Guardamos el ID del usuario para el auto-login
-                Preferences.Set("UsuarioLogeado", UsuarioEntry.Text);
-                Application.Current.MainPage = new NavigationPage(new PaginaMenu());
-            }
-            else
-            {
-                await DisplayAlert("Acceso Denegado", "Usuario o contraseña incorrectos.", "Reintentar");
+                case "EXITO":
+                    Preferences.Set("UsuarioLogeado", usuario);
+                    Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
+                    break;
+
+                case "CONTRASEÑA_INCORRECTA":
+                    await DisplayAlert("Contraseña Incorrecta", "La contraseña no es correcta.", "Reintentar");
+                    ContrasenaEntry.Text = string.Empty;
+                    break;
+
+                case "USUARIO_NO_EXISTE":
+                    await DisplayAlert("Usuario Inexistente", "El ID de operador ingresado no está registrado.", "OK");
+                    break;
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", ex.Message, "OK");
+            await DisplayAlert("Error", "Problema de conexión: " + ex.Message, "OK");
         }
         finally
         {
-            SetLoadingState(false);
+            IsBusy = false;
         }
     }
 

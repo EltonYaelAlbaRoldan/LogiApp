@@ -86,20 +86,31 @@ public class ConsultasGoogleSheets
     #endregion
 
     #region SECCIÓN 2: SEGURIDAD Y ACCESO
-    public async Task<bool> ValidarUsuarioAsync(string usuario, string contrasena)
+    public async Task<string> ValidarUsuarioAsync(string usuario, string contrasena)
     {
-        try
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:L").ExecuteAsync();
+        var values = response.Values;
+
+        if (values == null || values.Count <= 1) return "USUARIO_NO_EXISTE";
+
+        foreach (var fila in values.Skip(1)) // Saltamos el encabezado
         {
-            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:L").ExecuteAsync();
-            var valores = response.Values;
-
-            if (valores == null) return false;
-
-            return valores.Skip(1).Any(fila => fila.Count >= 2 &&
-                                              fila[0]?.ToString() == usuario &&
-                                              fila[11]?.ToString() == contrasena);
+            // Columna A (índice 0) es el ID de Operador
+            // Columna L (índice 11) es la Contraseña
+            if (fila.Count > 0 && fila[0].ToString() == usuario)
+            {
+                if (fila.Count > 11 && fila[11].ToString() == contrasena)
+                {
+                    return "EXITO";
+                }
+                else
+                {
+                    return "CONTRASEÑA_INCORRECTA";
+                }
+            }
         }
-        catch { return false; }
+
+        return "USUARIO_NO_EXISTE";
     }
 
     public async Task<bool> ActualizarPasswordAsync(string idOperador, string nuevaPass)
