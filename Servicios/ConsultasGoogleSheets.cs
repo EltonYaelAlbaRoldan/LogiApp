@@ -56,6 +56,7 @@ public class ConsultasGoogleSheets
                         Nombre = row[1].ToString(),
                         VigenciaLicencia = ParsearFechaSegura(row[8]?.ToString()),
                         VigenciaMedico = ParsearFechaSegura(row[9]?.ToString()),
+                        Correo = row.Count > 3 ? row[3].ToString() : "",
                         LinkCarpeta = row.Count > 10 ? row[10].ToString() : ""
                     };
                 }
@@ -91,7 +92,7 @@ public class ConsultasGoogleSheets
         var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:L").ExecuteAsync();
         var values = response.Values;
 
-        if (values == null || values.Count <= 1) return "USUARIO_NO_EXISTE";
+        if (values == null || values.Count <= 0) return "USUARIO_NO_EXISTE";
 
         foreach (var fila in values.Skip(1)) // Saltamos el encabezado
         {

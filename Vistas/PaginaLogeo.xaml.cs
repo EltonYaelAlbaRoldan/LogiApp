@@ -28,5 +28,6 @@ public partial class PaginaLogeo : ContentPage
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaRegistro());
     }
 
+    
     #endregion
 }

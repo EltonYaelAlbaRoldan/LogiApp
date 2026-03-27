@@ -1,49 +1,53 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="LogiApp.Vistas.PaginaLogeo"
-             Title="LogiApp - Logeo"
-             NavigationPage.HasNavigationBar="False">
+<ContentPage
+    x:Class="LogiApp.Vistas.PaginaLogeo"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="LogiApp - Logeo"
+    NavigationPage.HasNavigationBar="False">
 
-    <!-- Diseño de la página de logeo -->
+    <!--  Diseño de la página de logeo  -->
     <Grid>
-        <!-- Imagen de fondo -->
-        <Image Source="principal.png" 
-               Aspect="AspectFill" />
+        <!--  Imagen de fondo  -->
+        <Image Aspect="AspectFill" Source="principal.png" />
 
-        <!-- Contenedor de botones -->
-        <VerticalStackLayout Spacing="25" 
-                             Padding="30" 
-                             VerticalOptions="End">
+        <!--  Contenedor de botones  -->
+        <VerticalStackLayout
+            Padding="30"
+            Spacing="25"
+            VerticalOptions="End">
 
-            <!-- Espaciador -->
-            <Label FontAttributes="Bold" 
-                   FontSize="32" 
-                   HorizontalOptions="Center" 
-                   Text=" " 
-                   TextColor="#0A0A33" />
+            <!--  Espaciador  -->
+            <Label
+                FontAttributes="Bold"
+                FontSize="32"
+                HorizontalOptions="Center"
+                Text=" "
+                TextColor="#0A0A33" />
 
-            <!-- Botón de inicio de sesión -->
-            <Button x:Name="BtnLogin"
-                    BackgroundColor="#0A0A33"
-                    Clicked="OnLoginClicked"
-                    FontAttributes="Bold"
-                    FontFamily="sans-serif-black" 
-                    FontSize="25" 
-                    HeightRequest="60"
-                    Text="INICIAR SESIÓN"
-                    TextColor="White" />
+            <!--  Botón de inicio de sesión  -->
+            <Button
+                x:Name="BtnLogin"
+                BackgroundColor="#0A0A33"
+                Clicked="OnLoginClicked"
+                FontAttributes="Bold"
+                FontFamily="sans-serif-black"
+                FontSize="25"
+                HeightRequest="60"
+                Text="INICIAR SESIÓN"
+                TextColor="White" />
 
-            <!-- Botón de registro -->
-            <Button x:Name="BtnRegistro"
-                    BackgroundColor="#0A0A33"
-                    Clicked="OnRegisterClicked"
-                    FontAttributes="Bold"
-                    FontFamily="sans-serif-black" 
-                    FontSize="25" 
-                    HeightRequest="60"
-                    Text="REGISTRO"
-                    TextColor="White" />
+            <!--  Botón de registro  -->
+            <Button
+                x:Name="BtnRegistro"
+                BackgroundColor="#0A0A33"
+                Clicked="OnRegisterClicked"
+                FontAttributes="Bold"
+                FontFamily="sans-serif-black"
+                FontSize="25"
+                HeightRequest="60"
+                Text="REGISTRO"
+                TextColor="White" />
 
         </VerticalStackLayout>
     </Grid>

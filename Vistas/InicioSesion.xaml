@@ -151,6 +151,13 @@
                     Text="INICIAR SESIÓN"
                     TextColor="White" />
 
+                <Button
+                    BackgroundColor="Transparent"
+                    Clicked="OnOlvideContrasenaClicked"
+                    FontSize="12"
+                    Text="¿Olvidaste tu contraseña?"
+                    TextColor="Gray" />
+
                 <!--  Indicador de carga  -->
                 <ActivityIndicator
                     x:Name="CargandoIndicator"
