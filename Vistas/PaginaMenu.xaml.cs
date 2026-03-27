@@ -18,16 +18,28 @@ public partial class PaginaMenu : ContentPage
     {
         InitializeComponent();
     }
-
-    #endregion
-
-    #region Ciclo de Vida
-
-    // Cada vez que el usuario regresa al menú, se consultan los datos reales en la nube.
-    protected override async void OnAppearing()
+    // Se ejecuta CADA VEZ que la página aparece en pantalla
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await ActualizarEstadoDesdeNube();
+        ActualizarEstadoBotones();
+    }
+
+    // Evento para el gesto de deslizar hacia abajo
+    private async void OnRefreshMenuRequested(object sender, EventArgs e)
+    {
+        ActualizarEstadoBotones();
+
+        // Simulamos un pequeño tiempo de carga para que la animación se vea bien
+        await Task.Delay(500);
+        RefreshMenu.IsRefreshing = false;
+    }
+
+    private void ActualizarEstadoBotones()
+    {
+        // Revisamos si hay un viaje activo en las preferencias
+        bool hayViajeActivo = Preferences.Default.Get("ViajeEnCurso", false);
+
     }
 
     #endregion

@@ -7,82 +7,87 @@
     Padding="0"
     NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="*">
+    <RefreshView
+        x:Name="RefreshMenu"
+        RefreshColor="#2196F3"
+        Refreshing="OnRefreshMenuRequested">
+        <Grid RowDefinitions="*">
 
-        <ScrollView Grid.Row="0">
-            <VerticalStackLayout
-                Padding="30"
-                Spacing="25"
-                VerticalOptions="Center">
+            <ScrollView Grid.Row="0">
+                <VerticalStackLayout
+                    Padding="30"
+                    Spacing="25"
+                    VerticalOptions="Center">
 
-                <Image
-                    Margin="0,140,0,20"
-                    HeightRequest="150"
-                    HorizontalOptions="Center"
-                    Source="bienvenido.png" />
+                    <Image
+                        Margin="0,140,0,20"
+                        HeightRequest="150"
+                        HorizontalOptions="Center"
+                        Source="bienvenido.png" />
 
-                <BoxView
-                    Margin="0,5"
-                    HeightRequest="1"
-                    Color="#E0E0E0" />
+                    <BoxView
+                        Margin="0,5"
+                        HeightRequest="1"
+                        Color="#E0E0E0" />
 
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="20"
-                    HorizontalOptions="Center"
-                    Text="Seleccione una opción" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        HorizontalOptions="Center"
+                        Text="Seleccione una opción" />
 
-                <Button
-                    x:Name="BtnModuloViajes"
-                    BackgroundColor="#2196F3"
-                    Clicked="OnViajesClicked"
-                    CornerRadius="15"
-                    FontSize="18"
-                    HeightRequest="80"
-                    Text="GESTIÓN DE VIAJES"
-                    TextColor="White" />
+                    <Button
+                        x:Name="BtnModuloViajes"
+                        BackgroundColor="#2196F3"
+                        Clicked="OnViajesClicked"
+                        CornerRadius="15"
+                        FontSize="18"
+                        HeightRequest="80"
+                        Text="GESTIÓN DE VIAJES"
+                        TextColor="White" />
 
-                <Button
-                    BackgroundColor="#2196F3"
-                    Clicked="OnMantenimientoClicked"
-                    CornerRadius="15"
-                    FontSize="18"
-                    HeightRequest="80"
-                    Text="MANTENIMIENTO"
-                    TextColor="White" />
+                    <Button
+                        BackgroundColor="#2196F3"
+                        Clicked="OnMantenimientoClicked"
+                        CornerRadius="15"
+                        FontSize="18"
+                        HeightRequest="80"
+                        Text="MANTENIMIENTO"
+                        TextColor="White" />
 
-                <Button
-                    BackgroundColor="#2196F3"
-                    Clicked="OnHistorialClicked"
-                    CornerRadius="15"
-                    FontSize="18"
-                    HeightRequest="80"
-                    Text="HISTORIAL DE VIAJES"
-                    TextColor="White" />
+                    <Button
+                        BackgroundColor="#2196F3"
+                        Clicked="OnHistorialClicked"
+                        CornerRadius="15"
+                        FontSize="18"
+                        HeightRequest="80"
+                        Text="HISTORIAL DE VIAJES"
+                        TextColor="White" />
 
-                <Button
-                    Margin="0,20,0,0"
-                    Padding="20,0"
-                    BackgroundColor="Transparent"
-                    BorderColor="Grey"
-                    BorderWidth="1"
-                    Clicked="OnLogoutClicked"
-                    CornerRadius="20"
-                    HorizontalOptions="Center"
-                    Text="Cerrar Sesión"
-                    TextColor="Grey" />
-            </VerticalStackLayout>
-        </ScrollView>
+                    <Button
+                        Margin="0,20,0,0"
+                        Padding="20,0"
+                        BackgroundColor="Transparent"
+                        BorderColor="Grey"
+                        BorderWidth="1"
+                        Clicked="OnLogoutClicked"
+                        CornerRadius="20"
+                        HorizontalOptions="Center"
+                        Text="Cerrar Sesión"
+                        TextColor="Grey" />
+                </VerticalStackLayout>
+            </ScrollView>
 
-        <ImageButton
-            Margin="0,20,20,0"
-            Aspect="AspectFit"
-            BackgroundColor="Transparent"
-            Clicked="OnPerfilClicked"
-            HeightRequest="70"
-            HorizontalOptions="End"
-            Source="perfil.png"
-            VerticalOptions="Start"
-            WidthRequest="70" />
-    </Grid>
+            <ImageButton
+                Margin="0,20,20,0"
+                Aspect="AspectFit"
+                BackgroundColor="Transparent"
+                Clicked="OnPerfilClicked"
+                HeightRequest="70"
+                HorizontalOptions="End"
+                Source="perfil.png"
+                VerticalOptions="Start"
+                WidthRequest="70" />
+        </Grid>
+    </RefreshView>
 </ContentPage>

@@ -10,19 +10,28 @@ namespace LogiApp
         {
             InitializeComponent();
 
-            // 1. ENCENDEMOS EL SENSOR GLOBAL (Escucha en segundo plano)
-            Connectivity.Current.ConnectivityChanged += OnGlobalConnectivityChanged;
+            // Revisamos si el usuario ya estaba logeado
+            string usuario = Preferences.Default.Get("UsuarioLogeado", "");
+            // Revisamos si dejó un viaje a medias
+            bool hayViaje = Preferences.Default.Get("ViajeEnCurso", false);
+            string folio = Preferences.Default.Get("FolioPendiente", "");
 
-            // 2. LÓGICA DE NAVEGACIÓN (Persistencia de sesión)
-            // Verificamos si hay una sesión activa guardada localmente
-            if (Preferences.Default.ContainsKey("UsuarioLogeado"))
+            if (!string.IsNullOrEmpty(usuario))
             {
-                // Si ya hay usuario, saltamos directo al Menú
-                MainPage = new NavigationPage(new Vistas.PaginaMenu());
+                if (hayViaje && !string.IsNullOrEmpty(folio))
+                {
+                    // RESCATE: Si hay viaje activo, lo mandamos directo a finalizar
+                    MainPage = new NavigationPage(new Vistas.PaginaTerminarViaje(folio));
+                }
+                else
+                {
+                    // Caso normal: al Menú
+                    MainPage = new NavigationPage(new Vistas.PaginaMenu());
+                }
             }
             else
             {
-                // Si es la primera vez o cerró sesión, va al inicio
+                // No hay sesión: al Logeo
                 MainPage = new NavigationPage(new Vistas.PaginaLogeo());
             }
         }

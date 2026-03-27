@@ -228,12 +228,16 @@ public partial class PaginaTerminarViaje : ContentPage
     // Valida datos finales, guarda evidencia fotográfica y cierra el folio en la base de datos.
     private async void OnTerminarViajeClicked(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(KmLlegadaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleLlegadaEntry.Text) || string.IsNullOrEmpty(_rutaFotoTemporal))
+        // 1. Validaciones iniciales de entrada
+        if (string.IsNullOrWhiteSpace(KmLlegadaEntry.Text) ||
+            string.IsNullOrWhiteSpace(CombustibleLlegadaEntry.Text) ||
+            string.IsNullOrEmpty(_rutaFotoTemporal))
         {
             await DisplayAlert("Atención", "Captura kilometraje, combustible y foto obligatoria.", "OK");
             return;
         }
 
+        // 2. Cálculos de lógica de negocio (KM y Combustible)
         double kmSalida = 0, fuelSalida = 0, kmLlegada = 0, fuelLlegada = 0;
         double.TryParse(Preferences.Default.Get("KmSalida_" + _folioActual, "0"), out kmSalida);
         double.TryParse(Preferences.Default.Get("FuelSalida_" + _folioActual, "0"), out fuelSalida);
@@ -246,19 +250,23 @@ public partial class PaginaTerminarViaje : ContentPage
             return;
         }
 
+        // Interfaz en modo carga
         BtnFinalizar.IsEnabled = false;
         IndicadorCarga.IsVisible = true;
 
+        // 3. Preparación de datos para guardado
         string recorridoKmStr = (kmLlegada - kmSalida).ToString("0.##");
         string consumoLitrosStr = (fuelSalida - fuelLlegada).ToString("0.##");
         string duracionViaje = Preferences.Default.Get("Duracion_" + _folioActual, "N/A");
         string fechaFinReal = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         string horaLlegadaReal = Preferences.Default.Get("HoraLlegadaReal_" + _folioActual, fechaFinReal);
 
+        // Mover foto a directorio seguro de la App
         string rutaSeguraFoto = Path.Combine(FileSystem.AppDataDirectory, $"evidencia_{_folioActual}.jpg");
         File.Copy(_rutaFotoTemporal, rutaSeguraFoto, true);
 
-        // Guardado preventivo en Preferences (Bóveda de emergencia)
+        // 4. PERSISTENCIA DE EMERGENCIA (Bóveda Offline)
+        // Guardamos todo localmente PRIMERO por si falla el internet
         Preferences.Default.Set($"Offline_Pendiente_{_folioActual}", true);
         Preferences.Default.Set($"Offline_HoraLlegada_{_folioActual}", horaLlegadaReal);
         Preferences.Default.Set($"Offline_FechaFin_{_folioActual}", fechaFinReal);
@@ -270,38 +278,53 @@ public partial class PaginaTerminarViaje : ContentPage
         Preferences.Default.Set($"Offline_Recorrido_{_folioActual}", recorridoKmStr);
         Preferences.Default.Set($"Offline_Consumo_{_folioActual}", consumoLitrosStr);
 
+        // Agregar a la cola de pendientes
         string foliosAtorados = Preferences.Default.Get("ListaFoliosOffline", "");
         if (!foliosAtorados.Contains(_folioActual))
         {
             Preferences.Default.Set("ListaFoliosOffline", foliosAtorados + _folioActual + ",");
         }
 
-        Preferences.Default.Remove("ViajeEnCurso");
+        // --- PASO CRÍTICO PARA EL MENÚ ---
+        // Liberamos los candados inmediatamente para que el menú principal sepa que YA NO hay viaje activo
+        Preferences.Default.Set("ViajeEnCurso", false);
         Preferences.Default.Remove("FolioPendiente");
+        // ---------------------------------
 
+        // 5. INTENTO DE SINCRONIZACIÓN EN TIEMPO REAL
         if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
         {
             try
             {
                 string idOp = Preferences.Default.Get("UsuarioLogeado", "SinID");
+
+                // Subir a Drive y obtener Link
                 string linkCarpeta = await _drive.SubirEvidenciaViajeRapidoAsync(rutaSeguraFoto, idOp, _folioActual);
 
+                // Actualizar Sheets
                 await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", horaLlegadaReal);
                 bool exito = await _sheets.FinalizarViajeAsync(_folioActual, fechaFinReal, KmLlegadaEntry.Text, CombustibleLlegadaEntry.Text, ObservacionesEditor.Text, linkCarpeta, duracionViaje, recorridoKmStr, consumoLitrosStr);
 
                 if (exito)
                 {
+                    // Si se subió, limpiamos la bóveda offline
                     Preferences.Default.Remove($"Offline_Pendiente_{_folioActual}");
-                    foliosAtorados = Preferences.Default.Get("ListaFoliosOffline", "");
-                    foliosAtorados = foliosAtorados.Replace(_folioActual + ",", "");
-                    Preferences.Default.Set("ListaFoliosOffline", foliosAtorados);
+                    string listaActualizada = Preferences.Default.Get("ListaFoliosOffline", "");
+                    listaActualizada = listaActualizada.Replace(_folioActual + ",", "");
+                    Preferences.Default.Set("ListaFoliosOffline", listaActualizada);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Sincronización fallida (se queda en offline): " + ex.Message);
+            }
         }
 
+        // 6. FINALIZACIÓN Y RETORNO
         IndicadorCarga.IsVisible = false;
-        await DisplayAlert("Viaje Terminado", "Datos capturados con éxito.", "OK");
+        await DisplayAlert("Viaje Terminado", "Datos capturados con éxito. El viaje se sincronizará automáticamente.", "OK");
+
+        // Cambiamos a la raíz del menú para refrescar todo el estado
         Application.Current.MainPage = new NavigationPage(new PaginaMenu());
     }
 
