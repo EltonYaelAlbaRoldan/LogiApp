@@ -54,64 +54,64 @@
             Grid.Row="1"
             RefreshColor="#2196F3"
             Refreshing="OnRefreshRequested">
-            <CollectionView x:Name="ListaViajes" >
+            <CollectionView x:Name="ListaViajes">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Border
-                            Margin="0,0,0,18"
+                            Margin="0,0,0,20"
                             Padding="15"
                             BackgroundColor="White"
                             Stroke="#E8E8E8"
                             StrokeShape="RoundRectangle 12">
-
                             <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
 
                                 <VerticalStackLayout
                                     Grid.Row="0"
                                     Grid.Column="0"
-                                    Spacing="6">
+                                    Spacing="2">
                                     <Label
                                         FontAttributes="Bold"
-                                        FontSize="17"
+                                        FontSize="16"
                                         Text="{Binding Folio}"
                                         TextColor="#0A0A33" />
-
                                     <Label
                                         FontSize="13"
                                         Text="{Binding Unidad, StringFormat='Unidad: {0}'}"
-                                        TextColor="#666666" />
+                                        TextColor="Gray" />
+                                    <Label
+                                        FontSize="12"
+                                        Text="{Binding Fecha, StringFormat='Fecha: {0}'}"
+                                        TextColor="Gray" />
                                 </VerticalStackLayout>
 
                                 <Border
                                     Grid.Row="0"
                                     Grid.Column="1"
-                                    Padding="12,5"
+                                    Padding="8,4"
                                     BackgroundColor="{Binding ColorEstado}"
-                                    StrokeShape="RoundRectangle 8"
+                                    StrokeShape="RoundRectangle 6"
                                     VerticalOptions="Start">
                                     <Label
                                         FontAttributes="Bold"
-                                        FontSize="11"
+                                        FontSize="10"
                                         Text="{Binding Estado}"
                                         TextColor="White" />
                                 </Border>
 
-                                <VerticalStackLayout
+                                <Button
                                     Grid.Row="1"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="2"
-                                    Margin="0,12,0,0">
-                                    <BoxView
-                                        Margin="0,0,0,8"
-                                        HeightRequest="0.5"
-                                        Color="#F0F0F0" />
-
-                                    <Label
-                                        FontSize="12"
-                                        Text="{Binding Fecha, StringFormat='Fecha de Registro: {0}'}"
-                                        TextColor="Gray" />
-                                </VerticalStackLayout>
-
+                                    Margin="0,10,0,0"
+                                    BackgroundColor="#F5F5F7"
+                                    BorderColor="#2196F3"
+                                    BorderWidth="1"
+                                    Clicked="OnVerDetallesClicked"
+                                    CommandParameter="{Binding .}"
+                                    FontSize="12"
+                                    HeightRequest="40"
+                                    Text="VER DETALLES DEL VIAJE"
+                                    TextColor="#2196F3" />
                             </Grid>
                         </Border>
                     </DataTemplate>

@@ -1,4 +1,4 @@
-using LogiApp.Servicios;
+﻿using LogiApp.Servicios;
 using LogiApp.Modelos;
 
 namespace LogiApp.Vistas;
@@ -26,7 +26,7 @@ public partial class PaginaHistorial : ContentPage
 
             string idOperador = Preferences.Default.Get("UsuarioLogeado", "");
 
-            // Este m�todo lo agregaremos a tu clase ConsultasGoogleSheets
+            // Este método lo agregaremos a tu clase ConsultasGoogleSheets
             var viajes = await _sheets.ObtenerHistorialPorOperadorAsync(idOperador);
 
             ListaViajes.ItemsSource = viajes;
@@ -39,6 +39,26 @@ public partial class PaginaHistorial : ContentPage
         {
             RefreshHistorial.IsRefreshing = false;
         }
+    }
+    private async void OnVerDetallesClicked(object sender, EventArgs e)
+    {
+        var boton = (Button)sender;
+        var viaje = (ViajeHistorial)boton.CommandParameter;
+
+        if (viaje == null) return;
+
+        // Construimos el mensaje con los nuevos datos que ya extrae tu ConsultasGoogleSheets
+        string detalle = $"📍 RUTA: {viaje.Origen} ➔ {viaje.Destino}\n\n" +
+                     $"🚛 UNIDAD: {viaje.Unidad}\n" +
+                     $"📅 REGISTRO: {viaje.Fecha}" +
+                     $"⏱️ DURACIÓN: {viaje.Duracion}\n" +
+                     $"⛽ RENDIMIENTO: {viaje.Rendimiento}\n\n" +
+                     $"--- DATOS DE LLEGADA ---\n" +
+                     $"🏁 FECHA LLEGADA: {viaje.FechaLlegada}\n" +
+                     $"🛣️ KM RECORRIDO: {viaje.KmRecorrido}\n" +
+                     $"📉 CONS. COMBUSTIBLE: {viaje.CombConsumido}\n\n";
+
+        await DisplayAlert($"Detalles: {viaje.Folio}", detalle, "CERRAR");
     }
     private async void OnVolverClicked(object sender, EventArgs e)
     {

@@ -436,28 +436,44 @@ public class ConsultasGoogleSheets
 
     public async Task<List<ViajeHistorial>> ObtenerHistorialPorOperadorAsync(string idOperador)
     {
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:K").ExecuteAsync();
+        // Pedimos hasta la columna S para tener todos los datos de cierre
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:S").ExecuteAsync();
         var values = response.Values;
         var lista = new List<ViajeHistorial>();
 
         if (values != null)
         {
-            // Recorremos de abajo hacia arriba para ver los más recientes primero
             for (int i = values.Count - 1; i >= 1; i--)
             {
                 var fila = values[i];
-                // Suponiendo que el ID del operador está en la columna B (índice 1)
-                if (fila.Count > 1 && fila[2].ToString() == idOperador)
+                // El ID del operador está en la columna C (índice 2)
+                if (fila.Count > 2 && fila[2].ToString() == idOperador)
                 {
+                    // Cálculo de rendimiento (Km / L)
+                    string rendimientoCalculado = "N/A";
+                    if (fila.Count > 17) // Si tiene datos de cierre (Q y R)
+                    {
+                        double.TryParse(fila[17]?.ToString(), out double kms);
+                        double.TryParse(fila[18]?.ToString(), out double lts);
+                        if (lts > 0) rendimientoCalculado = (kms / lts).ToString("0.##") + " Km/L";
+                    }
+
                     lista.Add(new ViajeHistorial
                     {
-                        Folio = fila[0].ToString(),          // Columna A
-                        Unidad = fila[3].ToString(),        // Columna D
-                        Fecha = fila[1].ToString(),          // Columna E
-                        Estado = fila[10].ToString()         // Columna K
+                        Folio = fila[0]?.ToString(),
+                        Fecha = fila[1]?.ToString(),
+                        Unidad = fila[3]?.ToString(),
+                        Origen = fila[5]?.ToString(),
+                        Destino = fila[6]?.ToString(),
+                        Estado = fila[10]?.ToString(),
+                        FechaLlegada = fila[11]?.ToString(),
+                        Duracion = fila[16]?.ToString(),
+                        KmRecorrido = fila.Count > 17 ? fila[17]?.ToString() + " Km" : "0 Km",
+                        CombConsumido = fila.Count > 18 ? fila[18]?.ToString() + " L" : "0 L",
+                        Rendimiento = rendimientoCalculado
                     });
                 }
-                if (lista.Count >= 10) break; // Solo mostrar los últimos 10 para no saturar
+                if (lista.Count >= 10) break;
             }
         }
         return lista;

@@ -10,10 +10,16 @@ namespace LogiApp.Modelos
     {
         public string Folio { get; set; }
         public string Fecha { get; set; }
-        public string Unidad { get; set; } 
+        public string Unidad { get; set; }
         public string Estado { get; set; }
+        public string Origen { get; set; }
+        public string Destino { get; set; }
+        public string Rendimiento { get; set; }
+        public string Duracion { get; set; }
+        public string FechaLlegada { get; set; }    
+        public string KmRecorrido { get; set; }      
+        public string CombConsumido { get; set; } 
 
-        // Lógica para que el color del "Badge" cambie solo
         public Color ColorEstado => Estado == "FINALIZADO" ? Color.FromArgb("#4CAF50") : Color.FromArgb("#FF9800");
     }
 }
