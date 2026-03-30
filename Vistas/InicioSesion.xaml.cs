@@ -108,43 +108,110 @@ public partial class InicioSesion : ContentPage
 
     private async void OnOlvideContrasenaClicked(object sender, EventArgs e)
     {
-        // 1. Pedir el ID del operador
-        string idOp = await DisplayPromptAsync("Recuperación", "Ingresa tu ID de Operador (Ej: OP-001):", "Continuar", "Cancelar");
-        if (string.IsNullOrEmpty(idOp)) return;
-
-        // 2. Buscar al operador y su correo en Sheets
-        var operador = await _sheets.ObtenerDatosOperadorAsync(idOp); // Ya tienes este método o similar
-        if (operador == null || string.IsNullOrEmpty(operador.Correo))
+        // 1. Verificar si el usuario está bloqueado por exceso de reenvíos
+        DateTime tiempoBloqueo = Preferences.Default.Get("BloqueoRecuperacion", DateTime.MinValue);
+        if (DateTime.Now < tiempoBloqueo)
         {
-            await DisplayAlert("Error", "ID no encontrado o no tiene correo registrado.", "OK");
+            var restante = tiempoBloqueo - DateTime.Now;
+            await DisplayAlert("Acceso Restringido", $"Demasiados reenvíos. Intenta de nuevo en {restante.Minutes}m {restante.Seconds}s.", "OK");
             return;
         }
 
-        // 3. Generar código de 6 dígitos
-        string codigoGenerado = new Random().Next(100000, 999999).ToString();
+        // 2. Pedir ID y buscar operador
+        string idOp = await DisplayPromptAsync("Recuperación", "Ingresa tu ID de Operador:", "Continuar", "Cancelar");
+        if (string.IsNullOrWhiteSpace(idOp)) return;
 
-        // 4. Enviar correo (Usando tu ServicioEmail existente)
-        bool enviado = await _emailService.EnviarCodigoRecuperacionAsync(operador.Correo, codigoGenerado);
-
-        if (enviado)
+        var operador = await _sheets.ObtenerDatosOperadorAsync(idOp);
+        if (operador == null || string.IsNullOrEmpty(operador.Correo))
         {
-            // 5. Pedir el código al usuario
-            string codigoIngresado = await DisplayPromptAsync("Verificación", $"Enviamos un código a {operador.Correo}", "Validar", "Cancelar");
+            await DisplayAlert("Error", "ID no encontrado o sin correo registrado.", "OK");
+            return;
+        }
 
-            if (codigoIngresado == codigoGenerado)
+        int intentosCodigo = 0;
+        int conteoReenvios = 0;
+        const int maxIntentosCodigo = 3;
+        const int maxReenvios = 3;
+        bool verificado = false;
+
+        // Ciclo principal de reenvíos
+        while (conteoReenvios < maxReenvios && !verificado)
+        {
+            string codigoGenerado = new Random().Next(100000, 999999).ToString();
+            bool enviado = await _emailService.EnviarCodigoRecuperacionAsync(operador.Correo, codigoGenerado);
+
+            if (!enviado)
             {
-                // 6. Pedir nueva contraseña
-                string nuevaPass = await DisplayPromptAsync("Nueva Contraseña", "Ingresa tu nueva clave de acceso:", "Actualizar", "Cancelar", keyboard: Keyboard.Text);
+                await DisplayAlert("Error", "No se pudo enviar el correo.", "OK");
+                return;
+            }
 
-                if (!string.IsNullOrEmpty(nuevaPass))
+            conteoReenvios++;
+            bool solicitarNuevoReenvio = false;
+
+            // Ciclo de validación del código actual
+            while (intentosCodigo < maxIntentosCodigo)
+            {
+                string msg = $"Intento {intentosCodigo + 1} de {maxIntentosCodigo}\nCódigo enviado a {operador.Correo}";
+                string btnCancel = (conteoReenvios < maxReenvios) ? "Reenviar Código" : "Cancelar";
+
+                string input = await DisplayPromptAsync("Verificación", msg, "Validar", btnCancel);
+
+                // Si presiona "Reenviar Código" o "Cancelar"
+                if (string.IsNullOrEmpty(input))
                 {
-                    bool exito = await _sheets.ActualizarPasswordAsync(idOp, nuevaPass);
-                    if (exito) await DisplayAlert("Éxito", "Contraseña actualizada correctamente.", "OK");
+                    if (conteoReenvios < maxReenvios)
+                    {
+                        solicitarNuevoReenvio = true;
+                        break;
+                    }
+                    return; // Cancelado definitivamente
+                }
+
+                if (input == codigoGenerado)
+                {
+                    verificado = true;
+                    break;
+                }
+                else
+                {
+                    intentosCodigo++;
+                    if (intentosCodigo < maxIntentosCodigo)
+                        await DisplayAlert("Incorrecto", $"Te quedan {maxIntentosCodigo - intentosCodigo} intentos.", "OK");
                 }
             }
-            else
+
+            if (verificado) break;
+            if (solicitarNuevoReenvio) continue;
+
+            // Si sale de los ciclos sin verificar y sin pedir reenvío, o agotó intentos
+            if (intentosCodigo >= maxIntentosCodigo) break;
+        }
+
+        // 3. Manejo de bloqueos y éxito
+        if (verificado)
+        {
+            // Resetear bloqueos al tener éxito
+            Preferences.Default.Remove("BloqueoRecuperacion");
+
+            string nuevaPass = await DisplayPromptAsync("Nueva Contraseña", "Ingresa tu nueva clave:", "Actualizar", "Cancelar");
+            if (!string.IsNullOrWhiteSpace(nuevaPass))
             {
-                await DisplayAlert("Error", "Código incorrecto.", "OK");
+                bool exito = await _sheets.ActualizarPasswordAsync(idOp, nuevaPass);
+                if (exito) await DisplayAlert("Éxito", "Contraseña actualizada.", "OK");
+            }
+        }
+        else
+        {
+            if (conteoReenvios >= maxReenvios)
+            {
+                // BLOQUEO DE 10 MINUTOS
+                Preferences.Default.Set("BloqueoRecuperacion", DateTime.Now.AddMinutes(2));
+                await DisplayAlert("Bloqueo Temporal", "Has solicitado el código demasiadas veces. Espera 10 minutos.", "OK");
+            }
+            else if (intentosCodigo >= maxIntentosCodigo)
+            {
+                await DisplayAlert("Agotado", "Has fallado el código 3 veces. El proceso se ha cancelado.", "OK");
             }
         }
     }

@@ -155,6 +155,8 @@
                     BackgroundColor="Transparent"
                     Clicked="OnOlvideContrasenaClicked"
                     FontSize="12"
+                    HorizontalOptions="Center"
+                    Padding="2,0,2,0"
                     Text="¿Olvidaste tu contraseña?"
                     TextColor="Gray" />
 
