@@ -230,7 +230,7 @@ public partial class PaginaRegistro : ContentPage
             string nombre = Preferences.Get("NombrePendiente", NombreEntry.Text);
             string pass = Preferences.Get("PassPendiente", ContrasenaOperadorEntry.Text);
 
-            try { await _emailService.EnviarCredencialesAsync(correo, nombre, _idOperadorGenerado, pass); }
+            try { await _emailService.EnviarCredencialesAsync(correo, nombre, _idOperadorGenerado); }
             catch { /* Silenciado para no bloquear finalización */ }
 
             await DisplayAlert("Éxito", "Expediente completo y credenciales enviadas.", "Finalizar");

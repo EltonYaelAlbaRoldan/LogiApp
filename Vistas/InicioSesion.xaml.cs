@@ -57,9 +57,7 @@ public partial class InicioSesion : ContentPage
 
         try
         {
-            IsBusy = true; // Aquí sí existe IsBusy porque es una ContentPage
-
-            // Usamos el método que ya tienes en ConsultasGoogleSheets
+            IsBusy = true;
             string resultado = await _sheets.ValidarUsuarioAsync(usuario, pass);
 
             switch (resultado)
@@ -69,13 +67,20 @@ public partial class InicioSesion : ContentPage
                     Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
                     break;
 
+                case "EN_VALIDACION":
+                    await DisplayAlert("Cuenta en Revisión", "Tus documentos están siendo validados. Intenta más tarde.", "Entendido");
+                    break;
+
+                case "CUENTA_DESACTIVADA":
+                    await DisplayAlert("Acceso Denegado", "Tu cuenta ha sido desactivada por el administrador.", "OK");
+                    break;
+
                 case "CONTRASEÑA_INCORRECTA":
-                    await DisplayAlert("Contraseña Incorrecta", "La contraseña no es correcta.", "Reintentar");
-                    ContrasenaEntry.Text = string.Empty;
+                    await DisplayAlert("Error", "La contraseña es incorrecta.", "Reintentar");
                     break;
 
                 case "USUARIO_NO_EXISTE":
-                    await DisplayAlert("Usuario Inexistente", "El ID de operador ingresado no está registrado.", "OK");
+                    await DisplayAlert("No Encontrado", "El ID de operador no existe.", "OK");
                     break;
             }
         }
@@ -83,10 +88,7 @@ public partial class InicioSesion : ContentPage
         {
             await DisplayAlert("Error", "Problema de conexión: " + ex.Message, "OK");
         }
-        finally
-        {
-            IsBusy = false;
-        }
+        finally { IsBusy = false; }
     }
 
     // Alterna la visibilidad del campo de contraseña.

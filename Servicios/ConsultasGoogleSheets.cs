@@ -18,18 +18,93 @@ public class ConsultasGoogleSheets
     {
         try
         {
-            string rango = "Operadores!A:L";
-            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
+            // 1. Obtener metadatos de la hoja para conocer el ID interno y las filas actuales
+            var spreadsheet = await _service.Spreadsheets.Get(_spreadsheetId).ExecuteAsync();
+            var sheet = spreadsheet.Sheets.FirstOrDefault(s => s.Properties.Title == "Operadores");
+            int sheetId = (int)sheet.Properties.SheetId;
 
-            var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
-            appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+            // Obtenemos la última fila con datos para saber dónde insertar
+            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:A").ExecuteAsync();
+            int filaDondeInsertar = (response.Values?.Count ?? 0);
 
-            await appendRequest.ExecuteAsync();
+            // 2. Preparar los datos (Aseguramos 13 columnas para llegar a la M)
+            var listaDatos = new List<object>(datos);
+
+            // CORRECCIÓN DEL ERROR CS0019: Relleno simple hasta la columna L (índice 11)
+            while (listaDatos.Count < 12)
+            {
+                listaDatos.Add("");
+            }
+            listaDatos.Add("VALIDACION"); // Estado inicial en la M (índice 12)
+
+            // 3. Crear la petición BatchUpdate
+            var batchRequest = new BatchUpdateSpreadsheetRequest
+            {
+                Requests = new List<Request>()
+            };
+
+            // A) Insertar los valores
+            batchRequest.Requests.Add(new Request
+            {
+                UpdateCells = new UpdateCellsRequest
+                {
+                    Range = new GridRange
+                    {
+                        SheetId = sheetId,
+                        StartRowIndex = filaDondeInsertar,
+                        EndRowIndex = filaDondeInsertar + 1,
+                        StartColumnIndex = 0,
+                        EndColumnIndex = 13
+                    },
+                    Rows = new List<RowData>
+                {
+                    new RowData {
+                        Values = listaDatos.Select(d => new CellData {
+                            UserEnteredValue = new ExtendedValue { StringValue = d?.ToString() ?? "" }
+                        }).ToList()
+                    }
+                },
+                    Fields = "userEnteredValue"
+                }
+            });
+
+            // B) Aplicar el Menú Desplegable (Data Validation)
+            batchRequest.Requests.Add(new Request
+            {
+                SetDataValidation = new SetDataValidationRequest
+                {
+                    Range = new GridRange
+                    {
+                        SheetId = sheetId,
+                        StartRowIndex = filaDondeInsertar,
+                        EndRowIndex = filaDondeInsertar + 1,
+                        StartColumnIndex = 12, // Columna M
+                        EndColumnIndex = 13
+                    },
+                    Rule = new DataValidationRule
+                    {
+                        Condition = new BooleanCondition
+                        {
+                            Type = "ONE_OF_LIST",
+                            Values = new List<ConditionValue>
+                        {
+                            new ConditionValue { UserEnteredValue = "VALIDACION" },
+                            new ConditionValue { UserEnteredValue = "ACTIVO" },
+                            new ConditionValue { UserEnteredValue = "INACTIVO" }
+                        }
+                        },
+                        ShowCustomUi = true,
+                        Strict = true
+                    }
+                }
+            });
+
+            // Ejecutar todo de un solo golpe
+            await _service.Spreadsheets.BatchUpdate(batchRequest, _spreadsheetId).ExecuteAsync();
         }
-        catch (Google.GoogleApiException gEx)
+        catch (Exception ex)
         {
-            Console.WriteLine($"--- ERROR SHEETS API --- \nCódigo: {gEx.Error.Code} \nMensaje: {gEx.Error.Message}");
-            throw;
+            throw new Exception("Error al registrar operador: " + ex.Message);
         }
     }
 
@@ -40,7 +115,7 @@ public class ConsultasGoogleSheets
 
     public async Task<Operador> ObtenerDatosOperadorAsync(string idOperador)
     {
-        var range = "Operadores!A:L";
+        var range = "Operadores!A:M";
         var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, range).ExecuteAsync();
         var values = response.Values;
 
@@ -57,7 +132,8 @@ public class ConsultasGoogleSheets
                         VigenciaLicencia = ParsearFechaSegura(row[8]?.ToString()),
                         VigenciaMedico = ParsearFechaSegura(row[9]?.ToString()),
                         Correo = row.Count > 3 ? row[3].ToString() : "",
-                        LinkCarpeta = row.Count > 10 ? row[10].ToString() : ""
+                        LinkCarpeta = row.Count > 10 ? row[10].ToString() : "",
+                        Estado = row.Count > 12 ? row[12].ToString().ToUpper() : "VALIDACION"
                     };
                 }
             }
@@ -89,31 +165,30 @@ public class ConsultasGoogleSheets
     #region SECCIÓN 2: SEGURIDAD Y ACCESO
     public async Task<string> ValidarUsuarioAsync(string usuario, string contrasena)
     {
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:L").ExecuteAsync();
+        // Leemos hasta la columna M (índice 12)
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:M").ExecuteAsync();
         var values = response.Values;
 
         if (values == null || values.Count <= 0) return "USUARIO_NO_EXISTE";
 
-        foreach (var fila in values.Skip(1)) // Saltamos el encabezado
+        foreach (var fila in values.Skip(1))
         {
-            // Columna A (índice 0) es el ID de Operador
-            // Columna L (índice 11) es la Contraseña
-            if (fila.Count > 0 && fila[0].ToString() == usuario)
+            // Columna A (0): ID | Columna L (11): Password | Columna M (12): Estado
+            if (fila.Count > 0 && fila[0].ToString().Trim().ToUpper() == usuario.Trim().ToUpper())
             {
                 if (fila.Count > 11 && fila[11].ToString() == contrasena)
                 {
-                    return "EXITO";
+                    string estado = fila.Count > 12 ? fila[12].ToString().ToUpper() : "VALIDACION";
+
+                    if (estado == "ACTIVO") return "EXITO";
+                    if (estado == "INACTIVO") return "CUENTA_DESACTIVADA";
+                    return "EN_VALIDACION"; // Para el estado "VALIDACION"
                 }
-                else
-                {
-                    return "CONTRASEÑA_INCORRECTA";
-                }
+                return "CONTRASEÑA_INCORRECTA";
             }
         }
-
         return "USUARIO_NO_EXISTE";
     }
-
     public async Task<bool> ActualizarPasswordAsync(string idOperador, string nuevaPass)
     {
         try

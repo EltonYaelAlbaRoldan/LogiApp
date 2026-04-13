@@ -144,7 +144,7 @@
                     </Label>
                     <Entry
                         x:Name="NumLicenciaEntry"
-                        MaxLength="12"
+                        MaxLength="14"
                         Placeholder="Dígitos de licencia" />
 
                     <Label FontAttributes="Bold">

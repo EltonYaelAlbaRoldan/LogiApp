@@ -13,21 +13,35 @@ public class ServicioEmail
     #region MÉTODOS PÚBLICOS
 
     // Método para enviar las credenciales al registrarse
-    public async Task EnviarCredencialesAsync(string correoDestino, string nombre, string idOperador, string password)
+    public async Task EnviarCredencialesAsync(string correoDestino, string nombre, string idOperador)
     {
         string cuerpo = $@"
-            <div style='font-family: sans-serif;'>
-                <h2 style='color: #0A0A33;'>¡Bienvenido a LogiApp, {nombre}!</h2>
-                <p>Se ha creado tu expediente digital exitosamente.</p>
-                <p>Tus credenciales de acceso son:</p>
-                <div style='background-color: #F5F5F7; padding: 15px; border-radius: 10px;'>
-                    <p><b>Usuario:</b> <span style='color:#2196F3;'>{idOperador}</span></p>
-                    <p><b>Contraseña:</b> <span style='color:#2196F3;'>{password}</span></p>
-                </div>
-                <p>Por favor, inicia sesión y verifica tu información.</p>
-            </div>";
+        <div style='font-family: sans-serif; max-width: 600px; border: 1px solid #eee; padding: 20px;'>
+            <h2 style='color: #0A0A33;'>¡Bienvenido a LogiApp, {nombre}!</h2>
+            <p>Hemos recibido tu registro y se ha creado tu expediente digital exitosamente.</p>
+            
+            <div style='background-color: #FFF3CD; border-left: 5px solid #FFC107; padding: 15px; margin: 20px 0;'>
+                <p style='margin: 0; color: #856404;'>
+                    <strong>Estado actual: En proceso de validación.</strong>
+                </p>
+                <p style='margin: 10px 0 0 0;'>
+                    Tus documentos están siendo revisados por el administrador. 
+                    Por seguridad, tu acceso se encuentra temporalmente restringido.
+                </p>
+            </div>
 
-        await EnviarCorreoGenericoAsync(correoDestino, "Tus Credenciales de Acceso - LogiApp", cuerpo);
+            <p>Tu ID de usuario asignado es: <b style='color:#2196F3;'>{idOperador}</b></p>
+            
+            <p>Una vez que tu información sea validada, recibirás un <b>segundo correo electrónico</b> con tu contraseña y la confirmación de activación para que puedas iniciar sesión.</p>
+            
+            <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>
+            <p style='font-size: 12px; color: #777;'>
+                Si tienes alguna duda sobre tu proceso, contacta al departamento de recursos humanos.
+            </p>
+        </div>";
+
+        // Nota: Eliminamos el parámetro 'password' de la llamada porque ya no se enviará aquí
+        await EnviarCorreoGenericoAsync(correoDestino, "Expediente Recibido - LogiApp", cuerpo);
     }
 
     // Método para enviar el código de recuperación

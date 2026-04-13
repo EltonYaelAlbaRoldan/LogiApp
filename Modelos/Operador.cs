@@ -16,5 +16,6 @@ namespace LogiApp.Modelos
         public DateTime VigenciaLicencia { get; set; }
         public DateTime VigenciaMedico { get; set; }
         public string LinkCarpeta { get; set; }
+        public string Estado { get; set; }
     }
 }
