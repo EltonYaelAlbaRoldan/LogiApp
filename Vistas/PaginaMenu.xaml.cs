@@ -9,6 +9,7 @@ public partial class PaginaMenu : ContentPage
     #region Atributos y Servicios
 
     private ConsultasGoogleSheets _sheetsService;
+    private readonly ConexionGoogleAuth _authService = new();
 
     #endregion
 
@@ -19,9 +20,51 @@ public partial class PaginaMenu : ContentPage
         InitializeComponent();
     }
     // Se ejecuta CADA VEZ que la página aparece en pantalla
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        try
+        {
+            // 1. PRIMERO inicializamos el servicio si es nulo
+            if (_sheetsService == null)
+            {
+                var (sService, _) = await _authService.ObtenerServiciosAsync();
+                _sheetsService = new ConsultasGoogleSheets(sService);
+            }
+
+            // 2. Ahora sí, obtenemos el ID y validamos
+            string usuarioId = Preferences.Get("UsuarioLogeado", string.Empty);
+
+            if (!string.IsNullOrEmpty(usuarioId))
+            {
+                // 3. Consultar el estado actual en Sheets
+                // Usamos el nombre del método correcto: ObtenerDatosOperadorAsync
+                var operador = await _sheetsService.ObtenerDatosOperadorAsync(usuarioId);
+
+                if (operador == null || operador.Estado != "ACTIVO")
+                {
+                    Preferences.Remove("UsuarioLogeado");
+
+                    string mensaje = operador?.Estado == "INACTIVO"
+                        ? "Tu cuenta ha sido desactivada por el administrador."
+                        : "Sesión expirada o cuenta no válida.";
+
+                    await DisplayAlert("Sesión Cerrada", mensaje, "OK");
+                    Application.Current.MainPage = new NavigationPage(new InicioSesion());
+                    return; // Salimos para no ejecutar lo que sigue
+                }
+
+                // Si el operador es válido, actualizamos el semáforo de vigencias
+                ValidarBloqueoDeViajes(operador.VigenciaLicencia, operador.VigenciaMedico);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Si algo falla en la conexión, evitamos que la app truene
+            Console.WriteLine($"Error en OnAppearing: {ex.Message}");
+        }
+
         ActualizarEstadoBotones();
     }
 
