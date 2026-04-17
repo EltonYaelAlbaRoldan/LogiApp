@@ -555,4 +555,37 @@ public class ConsultasGoogleSheets
         return lista;
     }
 
+    // Envía un registro de error a la pestaña Logs_App en Google Sheets
+    public async Task<bool> GuardarLogEnSheetsAsync(LogRecord log)
+    {
+        try
+        {
+            var rango = "Logs_App!A:E"; 
+            var valores = new List<IList<object>>
+            {
+                new List<object>
+                {
+                    log.FechaHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                    log.TipoError,
+                    log.Mensaje,
+                    log.StackTrace,
+                    log.IdOperador 
+                }
+            };
+
+            var request = _service.Spreadsheets.Values.Append(
+                new Google.Apis.Sheets.v4.Data.ValueRange { Values = valores },
+                _spreadsheetId,
+                rango
+            );
+
+            request.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+            await request.ExecuteAsync();
+            return true;
+        }
+        catch
+        {
+            return false; // Si no hay internet, devuelve false para reintentar luego
+        }
+    }
 }
