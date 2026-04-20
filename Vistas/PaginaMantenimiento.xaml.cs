@@ -95,6 +95,7 @@ public partial class PaginaMantenimiento : ContentPage
             return;
         }
 
+        // 1. Primero validamos que no estén vacíos
         bool faltanDatos =
             string.IsNullOrWhiteSpace(LugarEntry.Text) ||
             string.IsNullOrWhiteSpace(EstablecimientoEntry.Text) ||
@@ -105,7 +106,18 @@ public partial class PaginaMantenimiento : ContentPage
 
         if (faltanDatos)
         {
-            await DisplayAlert("Campos Vacíos", "Por favor completa todos los detalles del trabajo.", "OK");
+            await DisplayAlert("Campos Vacíos", "Por favor completa todos los detalles.", "OK");
+            return;
+        }
+
+        // 2. Aseguramos que kilometraje y costo sean números
+        if (!double.TryParse(KilometrajeEntry.Text, out _) || !double.TryParse(CostoEntry.Text, out _))
+        {
+            // Lanzamos un error controlado para que el Gestor de Errores lo capture
+            Exception exFormato = new Exception("Format: El kilometraje o costo contienen letras.");
+            await GestorErrores.GuardarErrorAsync(exFormato, "ValidaciónMantenimiento", idOperador);
+
+            await DisplayAlert("Error de Formato", "El Kilometraje y el Costo deben ser números.", "OK");
             return;
         }
 
