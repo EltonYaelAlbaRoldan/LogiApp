@@ -44,5 +44,12 @@ namespace LogiApp.Servicios
             // Borra el error específico para que no se duplique
             await _database.Table<LogRecord>().Where(x => x.Id == id).DeleteAsync();
         }
+
+        // ACTUALIZA un registro (necesario cuando cambias Sincronizado a true)
+        public async Task<int> ActualizarLogAsync(LogRecord log)
+        {
+            await InicializarAsync();
+            return await _database.UpdateAsync(log);
+        }
     }
 }

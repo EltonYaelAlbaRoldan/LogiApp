@@ -31,6 +31,14 @@ namespace LogiApp.Servicios
                 {
                     mensajeLimpio = "🚫 SERVICIO: Sheets no estaba listo al presionar botón";
                 }
+                else if (ex.Message.Contains("Format") || ex.Message.Contains("convert"))
+                {
+                    mensajeLimpio = "🔢 ERROR DE FORMATO: Datos mal escritos (ej. letras en campos numéricos)";
+                }
+                else if (ex.Message.Contains("Drive") || ex.Message.Contains("Upload"))
+                {
+                    mensajeLimpio = "☁️ ERROR DE DRIVE: Problema con la foto";
+                }
 
                 var nuevoLog = new LogRecord
                 {

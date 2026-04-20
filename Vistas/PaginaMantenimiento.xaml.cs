@@ -42,7 +42,9 @@ public partial class PaginaMantenimiento : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", ex.Message, "OK");
+            // Blindaje: Registra error de inicialización
+            await GestorErrores.GuardarErrorAsync(ex, "InicializarDatos - Mantenimiento", Preferences.Get("UsuarioLogeado", "Desconocido"));
+            await DisplayAlert("Error", "No se pudo conectar con el servidor.", "OK");
         }
     }
 
@@ -67,7 +69,9 @@ public partial class PaginaMantenimiento : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudieron cargar las unidades: " + ex.Message, "OK");
+            // Blindaje: Registra error de carga de unidades
+            await GestorErrores.GuardarErrorAsync(ex, "CargarUnidades - Mantenimiento", Preferences.Get("UsuarioLogeado", "Desconocido"));
+            await DisplayAlert("Error", "No se pudieron cargar las unidades.", "OK");
         }
         finally
         {
@@ -83,6 +87,8 @@ public partial class PaginaMantenimiento : ContentPage
     // Procesa el guardado del reporte, sube la foto a Drive y registra los datos en Sheets.
     private async void OnGuardarMantenimientoClicked(object sender, EventArgs e)
     {
+        string idOperador = Preferences.Get("UsuarioLogeado", "Desconocido");
+
         if (UnidadPicker.SelectedIndex == -1)
         {
             await DisplayAlert("Atención", "Selecciona una unidad de la lista.", "OK");
@@ -114,7 +120,6 @@ public partial class PaginaMantenimiento : ContentPage
 
             if (!string.IsNullOrEmpty(_rutaFotoLocal))
             {
-                string idOperador = Preferences.Get("IdOperadorLogeado", "");
                 var resultadoDrive = await _driveService.SubirEvidenciaMantenimientoAsync(_rutaFotoLocal, idOperador, nuevoFolio);
                 linkCarpeta = resultadoDrive.folderLink;
             }
@@ -136,12 +141,17 @@ public partial class PaginaMantenimiento : ContentPage
                 linkCarpeta
             );
 
+            // Blindaje: Aprovechamos el éxito para sincronizar errores previos pendientes
+            _ = GestorErrores.SincronizarLogsPendientesAsync(_sheets);
+
             await DisplayAlert("Éxito", "Reporte guardado con link a evidencia.", "OK");
             Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", ex.Message, "OK");
+            // Blindaje: Registra error de guardado en base de datos local
+            await GestorErrores.GuardarErrorAsync(ex, "GuardarMantenimiento", idOperador);
+            await DisplayAlert("Error", "No se pudo guardar el reporte. El error ha sido registrado.", "OK");
         }
         finally
         {
@@ -167,7 +177,9 @@ public partial class PaginaMantenimiento : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudo cargar la imagen: " + ex.Message, "OK");
+            // Blindaje: Registra error de acceso a galería
+            await GestorErrores.GuardarErrorAsync(ex, "AdjuntarEvidencia", Preferences.Get("UsuarioLogeado", "Desconocido"));
+            await DisplayAlert("Error", "No se pudo cargar la imagen.", "OK");
         }
     }
 
