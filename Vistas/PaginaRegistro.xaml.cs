@@ -33,23 +33,31 @@ public partial class PaginaRegistro : ContentPage
         InitializeComponent();
         InicializarConexion();
 
-        // Recuperación de sesión pendiente si el proceso se interrumpió
-        if (Preferences.ContainsKey("IdPendiente"))
+        try
         {
-            _idOperadorGenerado = Preferences.Get("IdPendiente", "");
-            _folderIdDestino = Preferences.Get("CarpetaPendiente", "");
+            // Recuperación de sesión pendiente si el proceso se interrumpió
+            if (Preferences.ContainsKey("IdPendiente"))
+            {
+                _idOperadorGenerado = Preferences.Get("IdPendiente", "");
+                _folderIdDestino = Preferences.Get("CarpetaPendiente", "");
 
-            // Habilitar Fase 2 (Documentos) inmediatamente
-            SeccionDocumentos.IsEnabled = true;
-            SeccionDocumentos.Opacity = 1.0;
-            BtnSubirArchivos.IsEnabled = true;
+                // Habilitar Fase 2 (Documentos) inmediatamente
+                SeccionDocumentos.IsEnabled = true;
+                SeccionDocumentos.Opacity = 1.0;
+                BtnSubirArchivos.IsEnabled = true;
 
-            // Bloquear Fase 1 (Datos textuales)
-            BloquearFormulario(true);
-            BtnRegistrarDatos.IsEnabled = false;
-            BtnRegistrarDatos.Opacity = 0.5;
+                // Bloquear Fase 1 (Datos textuales)
+                BloquearFormulario(true);
+                BtnRegistrarDatos.IsEnabled = false;
+                BtnRegistrarDatos.Opacity = 0.5;
 
-            NombreEntry.Text = Preferences.Get("NombrePendiente", "");
+                NombreEntry.Text = Preferences.Get("NombrePendiente", "");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Registra si falla la lectura de datos previos en la memoria local
+            _ = GestorErrores.GuardarErrorAsync(ex, "RecuperacionSesionPendiente", "Desconocido");
         }
     }
 
@@ -68,7 +76,8 @@ public partial class PaginaRegistro : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error de Auth", ex.Message, "OK");
+            await GestorErrores.GuardarErrorAsync(ex, "InicializarRegistro", "Desconocido");
+            await DisplayAlert("Error de Auth", "No se pudieron cargar los servicios.", "OK");
         }
     }
 
@@ -109,51 +118,51 @@ public partial class PaginaRegistro : ContentPage
     // PASO 1: Registro de datos en Sheets y creación de estructura de carpetas en Drive.
     private async void OnProbarRegistroClicked(object sender, EventArgs e)
     {
-        // 1. Validación de campos obligatorios
-        if (string.IsNullOrWhiteSpace(NombreEntry.Text) ||
-            string.IsNullOrWhiteSpace(EdadEntry.Text) ||
-            string.IsNullOrWhiteSpace(CorreoEntry.Text) ||
-            string.IsNullOrWhiteSpace(Tel1Entry.Text) ||
-            string.IsNullOrWhiteSpace(ClaveInterbancariaEntry.Text) ||
-            string.IsNullOrWhiteSpace(NumLicenciaEntry.Text) ||
-            string.IsNullOrWhiteSpace(VigenciaLicenciaPicker.Date.ToString()) ||
-            string.IsNullOrWhiteSpace(VigenciaMedicoPicker.Date.ToString()) ||
+        // 1. Validación de campos vacíos
+        if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(EdadEntry.Text) ||
+            string.IsNullOrWhiteSpace(CorreoEntry.Text) || string.IsNullOrWhiteSpace(Tel1Entry.Text) ||
+            string.IsNullOrWhiteSpace(ClaveInterbancariaEntry.Text) || string.IsNullOrWhiteSpace(NumLicenciaEntry.Text) ||
             string.IsNullOrWhiteSpace(ContrasenaOperadorEntry.Text))
         {
             await DisplayAlert("Campos Obligatorios", "Rellena todos los campos marcados con (*) antes de continuar.", "Entendido");
             return;
         }
 
-        // 2. Validación de mayoría de edad
-        if (int.TryParse(EdadEntry.Text, out int edadActual) && edadActual < 18)
+        // 2. Validación estricta de formatos numéricos
+        if (!int.TryParse(EdadEntry.Text, out int edad) || edad < 18)
         {
-            await DisplayAlert("Registro Denegado", "El operador debe ser mayor de 18 años.", "OK");
+            await DisplayAlert("Error de Formato", "La edad debe ser un número mayor a 17.", "OK");
             return;
         }
 
-        // 3. Validación de formato de correo y longitudes
+        if (!long.TryParse(Tel1Entry.Text, out _) || Tel1Entry.Text.Length != 10)
+        {
+            await DisplayAlert("Error de Formato", "El teléfono debe ser un número de 10 dígitos.", "OK");
+            return;
+        }
+
+        if (!long.TryParse(ClaveInterbancariaEntry.Text, out _) || ClaveInterbancariaEntry.Text.Length != 18)
+        {
+            await DisplayAlert("Error de Formato", "La clave interbancaria debe ser de 18 dígitos numéricos.", "OK");
+            return;
+        }
+
+        if (NumLicenciaEntry.Text.Length != 14)
+        {
+            await DisplayAlert("Error de Formato", "El número de licencia debe tener exactamente 14 caracteres.", "OK");
+            return;
+        }
+
+        // 3. Validación de correo y fechas
         string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        if (!string.IsNullOrWhiteSpace(CorreoEntry.Text) && !Regex.IsMatch(CorreoEntry.Text, emailPattern))
+        if (!Regex.IsMatch(CorreoEntry.Text, emailPattern))
         {
-            await DisplayAlert("Correo Inválido", "Por favor ingresa un correo electrónico real.", "OK");
+            await DisplayAlert("Correo Inválido", "Por favor ingresa un correo electrónico válido.", "OK");
             return;
         }
 
-        // 4. Validación de longitud exacta para teléfono y clave interbancaria
-        if (!ValidarLongitudExacta(Tel1Entry.Text, "Teléfono", 10) ||
-            !ValidarLongitudExacta(ClaveInterbancariaEntry.Text, "Clave Interbancaria", 18) ||
-            !ValidarLongitudExacta(NumLicenciaEntry.Text, "Número de Licencia", 14)
-            )
-        {
-            return;
-        }
-
-        // 5. Validación de fechas (Regla de 90 días)
-        if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia"))
-        {
-            return;
-        }
-        if (!ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
+        if (!ValidarFecha90Dias(VigenciaLicenciaPicker.Date, "Licencia") ||
+            !ValidarFecha90Dias(VigenciaMedicoPicker.Date, "Apto Médico"))
         {
             return;
         }
@@ -179,7 +188,7 @@ public partial class PaginaRegistro : ContentPage
                 VigenciaMedicoPicker.Date.ToString("d"), linkCarpeta, ContrasenaOperadorEntry.Text
             );
 
-            // Persistencia de seguridad y cambio de fase en UI
+            // Persistencia local para recuperación en Fase 2
             Preferences.Set("IdPendiente", _idOperadorGenerado);
             Preferences.Set("CarpetaPendiente", _folderIdDestino);
             Preferences.Set("CorreoPendiente", CorreoEntry.Text ?? "");
@@ -189,12 +198,16 @@ public partial class PaginaRegistro : ContentPage
             BloquearFormulario(true);
             BtnRegistrarDatos.IsEnabled = false;
             BtnRegistrarDatos.Opacity = 0.5;
-
             SeccionDocumentos.IsEnabled = true;
             SeccionDocumentos.Opacity = 1.0;
             BtnSubirArchivos.IsEnabled = true;
         }
-        catch (Exception ex) { await DisplayAlert("Error Crítico", ex.Message, "OK"); }
+        catch (Exception ex)
+        {
+            // Registra el error técnico sin importar la sesión
+            await GestorErrores.GuardarErrorAsync(ex, "ProcesoRegistro-Fase1", NombreEntry.Text);
+            await DisplayAlert("Error Crítico", "Fallo al crear el registro. El error ha sido registrado.", "OK");
+        }
         finally
         {
             IsBusy = false;
@@ -208,9 +221,15 @@ public partial class PaginaRegistro : ContentPage
     {
         if (_estaProcesando) return;
 
-        // Validación de carga completa de documentos
         string[] docs = { "Licencia Federal Doc", "Apto Medico Doc", "INE", "Acta de Nacimiento", "NSS", "CV", "Comprobante de Domicilio", "RFC / Cédula Fiscal", "CURP" };
-        foreach (var doc in docs) { if (!_rutasArchivos.ContainsKey(doc)) { await DisplayAlert("Faltante", $"Selecciona: {doc}", "OK"); return; } }
+        foreach (var doc in docs)
+        {
+            if (!_rutasArchivos.ContainsKey(doc))
+            {
+                await DisplayAlert("Faltante", $"Selecciona: {doc}", "OK");
+                return;
+            }
+        }
 
         try
         {
@@ -218,20 +237,34 @@ public partial class PaginaRegistro : ContentPage
             IsBusy = true;
             BtnSubirArchivos.IsEnabled = false;
 
-            await DisplayAlert("Subida", "Enviando archivos a Drive...", "OK");
-
+            // Subida individual con trazabilidad de errores
             foreach (var item in _rutasArchivos)
             {
-                await _drive.SubirArchivoAsync(item.Value, item.Key, _folderIdDestino);
+                try
+                {
+                    await _drive.SubirArchivoAsync(item.Value, item.Key, _folderIdDestino);
+                }
+                catch (Exception ex)
+                {
+                    // Registramos qué archivo específico falló
+                    await GestorErrores.GuardarErrorAsync(ex, $"FalloSubida-{item.Key}", _idOperadorGenerado);
+                    throw; // Lanzamos la excepción para detener el proceso y capturarla en el catch principal
+                }
             }
 
-            // Envío de credenciales finales
+            // Envío de credenciales con registro de error si falla
             string correo = Preferences.Get("CorreoPendiente", CorreoEntry.Text);
             string nombre = Preferences.Get("NombrePendiente", NombreEntry.Text);
-            string pass = Preferences.Get("PassPendiente", ContrasenaOperadorEntry.Text);
 
-            try { await _emailService.EnviarCredencialesAsync(correo, nombre, _idOperadorGenerado); }
-            catch { /* Silenciado para no bloquear finalización */ }
+            try
+            {
+                await _emailService.EnviarCredencialesAsync(correo, nombre, _idOperadorGenerado);
+            }
+            catch (Exception ex)
+            {
+                // Registramos fallo en email pero no bloqueamos el flujo al usuario, ya que la parte crítica (Drive) ya se completó.
+                await GestorErrores.GuardarErrorAsync(ex, "EnvioEmailCredenciales", _idOperadorGenerado);
+            }
 
             await DisplayAlert("Éxito", "Expediente completo y credenciales enviadas.", "Finalizar");
 
@@ -241,7 +274,9 @@ public partial class PaginaRegistro : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", ex.Message, "OK");
+            // El catch principal gestiona errores de conexión graves durante la subida
+            await GestorErrores.GuardarErrorAsync(ex, "ProcesoRegistro-Fase2", _idOperadorGenerado);
+            await DisplayAlert("Error", "Fallo durante la subida de documentos. El error ha sido registrado.", "OK");
             BtnSubirArchivos.IsEnabled = true;
         }
         finally
@@ -284,7 +319,12 @@ public partial class PaginaRegistro : ContentPage
                 boton.Text = $"✅ {nombreDoc}";
             }
         }
-        catch (Exception ex) { await DisplayAlert("Error", "No se pudo cargar: " + ex.Message, "OK"); }
+        catch (Exception ex)
+        {
+            // El nombre del documento (nombreDoc) queda registrado
+            await GestorErrores.GuardarErrorAsync(ex, $"SeleccionarArchivo-{nombreDoc}", "Registro-Manual");
+            await DisplayAlert("Error", $"No se pudo cargar {nombreDoc}: {ex.Message}", "OK");
+        }
     }
 
     #endregion
