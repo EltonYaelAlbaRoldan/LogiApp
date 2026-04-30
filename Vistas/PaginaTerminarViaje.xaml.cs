@@ -1,4 +1,5 @@
 using LogiApp.Servicios;
+using LogiApp.Modelos;
 using Microsoft.Maui.Devices.Sensors;
 using Microsoft.Maui.Networking;
 
@@ -14,7 +15,8 @@ public partial class PaginaTerminarViaje : ContentPage
     private readonly ConexionGoogleAuth _authService = new();
     private string _folioActual;
     private string _rutaFotoTemporal = string.Empty;
-
+    private CancellationTokenSource _ctsTracking;
+    private bool _isTrackingRunning = false;
     #endregion
 
     #region Constructor
@@ -38,7 +40,10 @@ public partial class PaginaTerminarViaje : ContentPage
     {
         base.OnAppearing();
         await InicializarServicio();
-
+        if (!_isTrackingRunning)
+        {
+            _ = IniciarTimerTracking(); // El '_' es para que corra en paralelo sin trabar la pantalla
+        }
         // Restaurar estado visual si el arribo ya fue confirmado localmente
         if (Preferences.Default.Get("ArriboConfirmado_" + _folioActual, false))
         {
@@ -142,42 +147,136 @@ public partial class PaginaTerminarViaje : ContentPage
         try
         {
             BtnReportar.IsEnabled = false;
+            BtnReportar.Text = "Enviando...";
 
-            var ubicacion = await Geolocation.Default.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(5)));
+            // 1. Obtener ubicación (Lógica original)
+            var request = new GeolocationRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
+            var location = await Geolocation.Default.GetLocationAsync(request);
 
-            if (ubicacion != null)
+            if (location == null)
             {
-                string horaExacta = DateTime.Now.ToString("HH:mm");
-                string coordsBreves = $"{ubicacion.Latitude:F4}, {ubicacion.Longitude:F4}";
-
-                LblUltimaActualizacion.Text = $"Último reporte: {coordsBreves} ({horaExacta})";
-
-                if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
-                {
-                    await _sheets.ActualizarUbicacionViajeAsync(_folioActual, ubicacion.Latitude, ubicacion.Longitude, horaExacta);
-                    await DisplayAlert("GPS", "Ubicación enviada exitosamente.", "OK");
-                }
-                else
-                {
-                    // PERSISTENCIA OFFLINE
-                    Preferences.Default.Set($"Offline_UbiPendiente_{_folioActual}", true);
-                    Preferences.Default.Set($"Offline_UbiLat_{_folioActual}", ubicacion.Latitude);
-                    Preferences.Default.Set($"Offline_UbiLon_{_folioActual}", ubicacion.Longitude);
-                    Preferences.Default.Set($"Offline_UbiHora_{_folioActual}", horaExacta);
-
-                    await DisplayAlert("Modo Offline", "Coordenadas guardadas localmente.", "OK");
-                }
+                await DisplayAlert("Error", "No se pudo obtener la ubicación GPS.", "OK");
+                return;
             }
+
+            // 2. Crear el objeto con la nueva estructura
+            var punto = new UbicacionViaje
+            {
+                FolioViaje = _folioActual,
+                Latitud = location.Latitude,
+                Longitud = location.Longitude,
+                FechaHora = DateTime.Now,
+                Sincronizado = false
+            };
+
+            // 3. Recuperar las columnas reservadas y nombre de hoja
+            string colA = Preferences.Default.Get("ColTracking_A", "A");
+            string colB = Preferences.Default.Get("ColTracking_B", "B");
+            int filaActual = Preferences.Default.Get("FilaActual_Tracking", 2);
+            string hoja = $"Historial_{DateTime.Now.ToString("MMMM")}_{DateTime.Now.Year}";
+
+            bool subioExitosamente = false;
+
+            // 4. Lógica de envío con respaldo (La nueva inteligencia)
+            if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+            {
+                // Intentar subir a Google Sheets
+                subioExitosamente = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, colA, colB, filaActual, punto);
+            }
+
+            if (subioExitosamente)
+            {
+                // Éxito total: Feedback visual original
+                Preferences.Default.Set("FilaActual_Tracking", filaActual + 1);
+                BtnReportar.BackgroundColor = Colors.Green;
+                BtnReportar.Text = "UBICACIÓN ENVIADA ✅";
+            }
+            else
+            {
+                // Respaldo: Guardar en SQLite si no hay red o falló el envío
+                punto.Id = filaActual;
+                var dbLocal = new BaseDeDatosLocal();
+                await dbLocal.GuardarUbicacionLocalAsync(punto);
+
+                Preferences.Default.Set("FilaActual_Tracking", filaActual + 1);
+
+                BtnReportar.BackgroundColor = Colors.Orange;
+                BtnReportar.Text = "GUARDADO LOCAL (SIN RED) ⚠️";
+
+                // Opcional: Avisar al usuario que se sincronizará después
+                await DisplayAlert("Modo Offline", "Ubicación guardada en el dispositivo. Se sincronizará al recuperar señal.", "OK");
+            }
+
+            // 5. Resetear botón después de 3 segundos (Lógica original)
+            await Task.Delay(3000);
+            BtnReportar.BackgroundColor = Color.FromArgb("#4CAF50");
+            BtnReportar.Text = "REPORTAR UBICACIÓN ACTUAL";
         }
-        catch
+        catch (Exception ex)
         {
-            await DisplayAlert("Error GPS", "No se pudo obtener la ubicación. Verifica tu GPS.", "OK");
+            await GestorErrores.GuardarErrorAsync(ex, "ReportarUbicacion", Preferences.Get("UsuarioLogeado", "Desconocido"));
+            await DisplayAlert("Error", "Fallo al reportar: " + ex.Message, "OK");
         }
-        finally { BtnReportar.IsEnabled = true; }
+        finally
+        {
+            BtnReportar.IsEnabled = true;
+        }
     }
 
     #endregion
 
+    #region Temporizador de Sincronización
+    private async Task IniciarTimerTracking()
+    {
+        _isTrackingRunning = true;
+        _ctsTracking = new CancellationTokenSource();
+
+        // El ciclo se repite mientras el viaje no termine
+        while (_isTrackingRunning && !_ctsTracking.Token.IsCancellationRequested)
+        {
+            try
+            {
+                // Esperar 10 minutos (600 segundos)
+                // Para pruebas puedes ponerlo en 1 minuto: TimeSpan.FromMinutes(1)
+                await Task.Delay(TimeSpan.FromMinutes(10), _ctsTracking.Token);
+
+                // EJECUTAR EL REPORTE AUTOMÁTICO
+                await RealizarReporteAutomatico();
+            }
+            catch (TaskCanceledException) { break; }
+        }
+    }
+
+    private async Task RealizarReporteAutomatico()
+    {
+        // Esta es la misma lógica que ya tienes en el botón, 
+        // pero sin alertas para no molestar al operador
+        var location = await Geolocation.Default.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
+
+        if (location != null)
+        {
+            var punto = new UbicacionViaje
+            {
+                FolioViaje = _folioActual,
+                Latitud = location.Latitude,
+                Longitud = location.Longitude,
+                FechaHora = DateTime.Now
+            };
+
+            string colA = Preferences.Default.Get("ColTracking_A", "A");
+            string colB = Preferences.Default.Get("ColTracking_B", "B");
+            int fila = Preferences.Default.Get("FilaActual_Tracking", 2);
+            string hoja = $"Historial_{DateTime.Now.ToString("MMMM")}_{DateTime.Now.Year}";
+
+            bool ok = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, colA, colB, fila, punto);
+
+            if (ok) Preferences.Default.Set("FilaActual_Tracking", fila + 1);
+            else await new BaseDeDatosLocal().GuardarUbicacionLocalAsync(punto);
+        }
+    }
+    #endregion
+
+    
     #region Gestión de Arribo y Finalización
 
     // Registra la llegada al destino y calcula la duración total del trayecto.
@@ -320,6 +419,8 @@ public partial class PaginaTerminarViaje : ContentPage
             }
         }
 
+        _isTrackingRunning = false;
+        _ctsTracking?.Cancel();
         // 6. FINALIZACIÓN Y RETORNO
         IndicadorCarga.IsVisible = false;
         await DisplayAlert("Viaje Terminado", "Datos capturados con éxito. El viaje se sincronizará automáticamente.", "OK");

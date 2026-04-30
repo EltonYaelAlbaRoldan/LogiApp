@@ -6,7 +6,7 @@ namespace LogiApp.Servicios
 {
     public class BaseDeDatosLocal
     {
-        private SQLiteAsyncConnection _database;
+        private SQLiteAsyncConnection? _database;
 
         public async Task InicializarAsync()
         {
@@ -50,6 +50,26 @@ namespace LogiApp.Servicios
         {
             await InicializarAsync();
             return await _database.UpdateAsync(log);
+        }
+
+
+
+        public async Task GuardarUbicacionLocalAsync(UbicacionViaje ubi)
+        {
+            await InicializarAsync();
+            await _database.InsertAsync(ubi);
+        }
+
+        public async Task<List<UbicacionViaje>> ObtenerUbicacionesPendientesAsync()
+        {
+            await InicializarAsync();
+            return await _database.Table<UbicacionViaje>().ToListAsync();
+        }
+
+        public async Task BorrarUbicacionAsync(int id)
+        {
+            await InicializarAsync();
+            await _database.DeleteAsync<UbicacionViaje>(id);
         }
     }
 }

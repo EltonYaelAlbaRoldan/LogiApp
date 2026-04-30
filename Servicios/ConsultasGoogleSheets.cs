@@ -510,6 +510,129 @@ public class ConsultasGoogleSheets
 
     #endregion
 
+    #region SECCIÓN 7: TRACKING HORIZONTAL (A-B, D-E...)
+
+    // 1. Algoritmo para letras de columnas (Maneja A, B, AA, ZZZ...)
+    private string ObtenerLetraColumna(int columna)
+    {
+        string nombreColumna = string.Empty;
+        while (columna > 0)
+        {
+            int residuo = (columna - 1) % 26;
+            nombreColumna = (char)('A' + residuo) + nombreColumna;
+            columna = (columna - residuo) / 26;
+        }
+        return nombreColumna;
+    }
+
+    // 2. Busca o crea la hoja y devuelve las columnas gemelas (A-B, D-E, etc.)
+    public async Task<(string colA, string colB, string sheetId)> ObtenerColumnasLibresAsync(string nombreHoja)
+    {
+        // Verificar si la hoja existe
+        var spreadsheet = await _service.Spreadsheets.Get(_spreadsheetId).ExecuteAsync();
+        var hoja = spreadsheet.Sheets.FirstOrDefault(s => s.Properties.Title == nombreHoja);
+
+        string sId;
+
+        if (hoja == null)
+        {
+            // Si no existe, la creamos
+            var addSheetRequest = new Request { AddSheet = new AddSheetRequest { Properties = new SheetProperties { Title = nombreHoja } } };
+            var batchUpdate = new BatchUpdateSpreadsheetRequest { Requests = new List<Request> { addSheetRequest } };
+            var nuevaHojaRes = await _service.Spreadsheets.BatchUpdate(batchUpdate, _spreadsheetId).ExecuteAsync();
+            sId = nuevaHojaRes.Replies[0].AddSheet.Properties.SheetId.ToString();
+            return (ObtenerLetraColumna(1), ObtenerLetraColumna(2), sId);
+        }
+
+        sId = hoja.Properties.SheetId.ToString();
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, $"{nombreHoja}!1:1").ExecuteAsync();
+        int numCols = (response.Values != null && response.Values.Count > 0) ? response.Values[0].Count : 0;
+
+        // Calculamos el inicio: si hay datos, saltamos 2 columnas + 1 de espacio
+        int indiceInicio = (numCols == 0) ? 1 : numCols + 2;
+
+        return (ObtenerLetraColumna(indiceInicio), ObtenerLetraColumna(indiceInicio + 1), sId);
+    }
+
+    // 3. Escribe un punto GPS en una FILA y COLUMNA específica (Solución a image_70ab21)
+    public async Task<bool> SubirPuntoGPSTiempoRealAsync(string hoja, string colA, string colB, int fila, UbicacionViaje p)
+    {
+        try
+        {
+            var valores = new List<IList<object>> {
+            new List<object> { p.FechaHora.ToString("dd/MM HH:mm:ss"), $"{p.Latitud}, {p.Longitud}" }
+        };
+
+            var valueRange = new ValueRange { Values = valores };
+            string rangoExacto = $"{hoja}!{colA}{fila}:{colB}{fila}";
+
+            var request = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, rangoExacto);
+            request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+
+            await request.ExecuteAsync();
+            return true;
+        }
+        catch { return false; }
+    }
+
+    // 4. Inserta el encabezado del Folio en la fila 1
+    public async Task InsertarFolioEncabezadoAsync(string hoja, string colA, string folio)
+    {
+        var body = new ValueRange { Values = new List<IList<object>> { new List<object> { $"FOLIO: {folio}" } } };
+        var req = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"{hoja}!{colA}1");
+        req.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+        await req.ExecuteAsync();
+    }
+    #endregion
+
+    #region SECCIÓN 8: VÍNCULOS DINÁMICOS AL HISTORIAL
+
+    public async Task<bool> CrearVinculoHistorialAsync(string folio, string nombreHojaMes, string sheetId, string colLetra)
+    {
+        try
+        {
+            // 1. Buscamos la fila donde está el folio en la pestaña "Viajes" (Columna A)
+            var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:A").ExecuteAsync();
+            int filaDestino = -1;
+
+            if (response.Values != null)
+            {
+                for (int i = 0; i < response.Values.Count; i++)
+                {
+                    if (response.Values[i].Count > 0 && response.Values[i][0].ToString().Trim().ToUpper() == folio.Trim().ToUpper())
+                    {
+                        filaDestino = i + 1; // Sheets usa índice basado en 1
+                        break;
+                    }
+                }
+            }
+
+            if (filaDestino == -1) return false;
+
+            // 2. Construimos la URL interna de Google Sheets
+            // gid: ID único de la pestaña | range: Celda donde inicia el folio (ej: D1)
+            string urlInterna = $"https://docs.google.com/spreadsheets/d/{_spreadsheetId}/edit#gid={sheetId}&range={colLetra}1";
+
+            // 3. Creamos la fórmula de Hipervínculo (Usamos sintaxis estándar de la API)
+            string formula = $"=HYPERLINK(\"{urlInterna}\"; \"📍 VER RUTA\")";
+
+            var body = new ValueRange { Values = new List<IList<object>> { new List<object> { formula } } };
+
+            // Asumimos que la columna de Historial es la 'Q' (puedes ajustarla según tu diseño)
+            var request = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"Viajes!T{filaDestino}");
+            request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+
+            await request.ExecuteAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Error al crear vínculo: " + ex.Message);
+            return false;
+        }
+    }
+
+    #endregion
     public async Task<List<ViajeHistorial>> ObtenerHistorialPorOperadorAsync(string idOperador)
     {
         // Pedimos hasta la columna S para tener todos los datos de cierre
@@ -588,4 +711,5 @@ public class ConsultasGoogleSheets
             return false; // Si no hay internet, devuelve false para reintentar luego
         }
     }
+
 }

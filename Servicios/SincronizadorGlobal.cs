@@ -1,5 +1,7 @@
 ﻿using Microsoft.Maui.Networking;
 using LogiApp.Servicios;
+using LogiApp.Modelos;
+using System.IO;
 
 namespace LogiApp.Servicios;
 
@@ -12,8 +14,7 @@ public static class SincronizadorGlobal
 
         try
         {
-            // Instanciamos los servicios (esto requiere que modifiques ligeramente ConexionGoogleAuth si es necesario,
-            // pero podemos crear instancias nuevas rápido)
+            // Instanciamos los servicios
             var authService = new ConexionGoogleAuth();
             var (sService, dService) = await authService.ObtenerServiciosAsync();
             var sheets = new ConsultasGoogleSheets(sService);
@@ -62,7 +63,7 @@ public static class SincronizadorGlobal
             string folioActual = Preferences.Default.Get("FolioPendiente", "");
             if (!string.IsNullOrEmpty(folioActual))
             {
-                // Checar GPS pendiente
+                // --- Lógica Original de GPS ---
                 if (Preferences.Default.Get($"Offline_UbiPendiente_{folioActual}", false))
                 {
                     double lat = Preferences.Default.Get($"Offline_UbiLat_{folioActual}", 0.0);
@@ -75,7 +76,7 @@ public static class SincronizadorGlobal
                     }
                 }
 
-                // Checar Arribo pendiente
+                // --- Lógica Original de Arribo ---
                 if (Preferences.Default.Get($"Offline_ArriboPendiente_{folioActual}", false))
                 {
                     string horaLlegada = Preferences.Default.Get("HoraLlegadaReal_" + folioActual, "");
@@ -84,8 +85,44 @@ public static class SincronizadorGlobal
                         Preferences.Default.Remove($"Offline_ArriboPendiente_{folioActual}");
                     }
                 }
+
+                // --- 3. NUEVA LÓGICA: SINCRONIZAR TRACKING DE SQLite (Celdas Gemelas) ---
+                var dbLocal = new BaseDeDatosLocal();
+                var ubiPendientes = await dbLocal.ObtenerUbicacionesPendientesAsync();
+
+                if (ubiPendientes != null && ubiPendientes.Count > 0)
+                {
+                    // Recuperamos columnas y la fila donde nos quedamos
+                    string colA = Preferences.Default.Get("ColTracking_A", "A");
+                    string colB = Preferences.Default.Get("ColTracking_B", "B");
+                    int filaActual = Preferences.Default.Get("FilaActual_Tracking", 2);
+                    string hojaMes = $"Historial_{DateTime.Now.ToString("MMMM")}_{DateTime.Now.Year}";
+
+                    // Ordenamos por fecha para que se peguen en orden cronológico en las filas
+                    foreach (var ubi in ubiPendientes.OrderBy(x => x.FechaHora))
+                    {
+                        // Intentamos subir a la celda exacta
+                        bool ok = await sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, colA, colB, filaActual, ubi);
+
+                        if (ok)
+                        {
+                            // Si se subió, borramos de SQLite y avanzamos la fila para el siguiente
+                            await dbLocal.BorrarUbicacionAsync(ubi.Id);
+                            filaActual++;
+                            Preferences.Default.Set("FilaActual_Tracking", filaActual);
+                        }
+                        else
+                        {
+                            // Si falla uno, detenemos el ciclo para no saltarnos filas
+                            break;
+                        }
+                    }
+                }
             }
         }
-        catch { /* Falla silenciosa, nadie se da cuenta, se intenta luego */ }
+        catch
+        {
+            /* Falla silenciosa, se intenta en la próxima conexión */
+        }
     }
 }

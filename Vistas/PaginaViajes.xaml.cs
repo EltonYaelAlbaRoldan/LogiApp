@@ -1,5 +1,5 @@
 using LogiApp.Servicios;
-
+using LogiApp.Modelos;
 namespace LogiApp.Vistas;
 
 // Gestiona el despacho de nuevos viajes, validando recursos (unidad, remolque) y registrando el inicio en Sheets.
@@ -162,6 +162,48 @@ public partial class PaginaViajes : ContentPage
                 Preferences.Default.Set("Inicio_" + folio, fechaInicio);
                 Preferences.Default.Set("KmSalida_" + folio, KmSalidaEntry.Text);
                 Preferences.Default.Set("FuelSalida_" + folio, CombustibleEntry.Text);
+
+                string hojaMes = $"Historial_{DateTime.Now.ToString("MMMM")}_{DateTime.Now.Year}";
+                var (cA, cB, sId) = await _sheets.ObtenerColumnasLibresAsync(hojaMes);
+                await _sheets.InsertarFolioEncabezadoAsync(hojaMes, cA, folio);
+                bool vinculoOk = await _sheets.CrearVinculoHistorialAsync(folio, hojaMes, sId, cA);
+
+                if (!vinculoOk)
+                {
+                    // Opcional: registrar si no se pudo crear el link
+                    await DisplayAlert("Aviso", "Viaje iniciado, pero no se pudo crear el acceso directo.", "OK");
+                }
+
+                Preferences.Default.Set("ColTracking_A", cA);
+                Preferences.Default.Set("ColTracking_B", cB);
+                Preferences.Default.Set("FilaActual_Tracking", 3);
+
+                try
+                {
+                    var request = new GeolocationRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
+                    var location = await Geolocation.Default.GetLocationAsync(request);
+
+                    if (location != null)
+                    {
+                        var primeraUbi = new UbicacionViaje
+                        {
+                            FolioViaje = folio,
+                            Latitud = location.Latitude,
+                            Longitud = location.Longitude,
+                            FechaHora = DateTime.Now
+                        };
+
+                        // Mandamos a la Fila 2 inmediatamente
+                        await _sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, cA, cB, 2, primeraUbi);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Si falla el GPS aquí, guardamos el error pero dejamos que el viaje inicie
+                    await GestorErrores.GuardarErrorAsync(ex, "PrimeraUbicacionAuto", Preferences.Get("UsuarioLogeado", "Desconocido"));
+                }
+                // Escribir el Folio arriba (Fila 1)
+                await _sheets.InsertarFolioEncabezadoAsync(hojaMes, cA, folio);
 
                 await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
 
