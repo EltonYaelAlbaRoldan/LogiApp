@@ -302,6 +302,17 @@ public partial class PaginaTerminarViaje : ContentPage
             catch { }
         }
 
+        // --- LIMPIEZA PROFUNDA DE CACHÉ ---
+        // Borramos todo rastro de este folio para que no se "auto-termine" si se vuelve a usar
+        Preferences.Default.Remove("ArriboConfirmado_" + _folioActual);
+        Preferences.Default.Remove("HoraLlegadaReal_" + _folioActual);
+        Preferences.Default.Remove("Duracion_" + _folioActual);
+        Preferences.Default.Remove("Inicio_" + _folioActual);
+        Preferences.Default.Remove("Destino_" + _folioActual);
+        Preferences.Default.Remove("KmSalida_" + _folioActual);
+        Preferences.Default.Remove("FuelSalida_" + _folioActual);
+        Preferences.Default.Remove("FilaActual_Tracking"); // Para que el GPS reinicie desde arriba
+
         Preferences.Default.Set("ViajeEnCurso", false);
         Preferences.Default.Remove("FolioPendiente");
         _isTrackingRunning = false;
