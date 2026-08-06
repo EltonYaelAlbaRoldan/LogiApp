@@ -58,6 +58,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="LogiApp.SmokeTests\**\*.cs" />
+	  <None Remove="LogiApp.SmokeTests\**\*" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Resources\AppIcon\appicon.png" />
 	</ItemGroup>
 

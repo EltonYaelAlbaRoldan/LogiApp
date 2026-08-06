@@ -88,13 +88,37 @@
                 <Button
                     BackgroundColor="Gray"
                     Clicked="OnTomarFotoClicked"
-                    Text="📷 Tomar Foto de Evidencia"
+                    Text="📷 Agregar Foto de Evidencia"
                     TextColor="White" />
-                <Image
-                    x:Name="ImgPreview"
-                    Aspect="AspectFit"
-                    HeightRequest="150"
-                    IsVisible="False" />
+                <Label
+                    x:Name="LblCantidadFotos"
+                    HorizontalOptions="Center"
+                    Text="0 fotos agregadas"
+                    TextColor="Gray" />
+                <CollectionView
+                    x:Name="ListaFotos"
+                    HeightRequest="170"
+                    ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout Margin="4" WidthRequest="130">
+                                <Image
+                                    Aspect="AspectFill"
+                                    HeightRequest="120"
+                                    Source="{Binding .}"
+                                    WidthRequest="130" />
+                                <Button
+                                    BackgroundColor="#F44336"
+                                    Clicked="OnEliminarFotoClicked"
+                                    CommandParameter="{Binding .}"
+                                    FontSize="12"
+                                    HeightRequest="36"
+                                    Text="Eliminar"
+                                    TextColor="White" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
                 <Button
                     x:Name="BtnFinalizar"
                     BackgroundColor="#F44336"

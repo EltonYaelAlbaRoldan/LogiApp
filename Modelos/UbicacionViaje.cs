@@ -11,5 +11,9 @@ namespace LogiApp.Modelos
         public double Longitud { get; set; }
         public DateTime FechaHora { get; set; }
         public bool Sincronizado { get; set; }
+        public string? HojaTracking { get; set; }
+        public string? ColumnaTrackingA { get; set; }
+        public string? ColumnaTrackingB { get; set; }
+        public int FilaTracking { get; set; }
     }
 }

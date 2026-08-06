@@ -125,14 +125,19 @@ public partial class PaginaPerfil : ContentPage
             if (archivoExistente != null)
             {
                 var updateRequest = _driveService.Files.Update(new Google.Apis.Drive.v3.Data.File(), archivoExistente.Id, stream, "application/pdf");
-                await updateRequest.UploadAsync();
+                var progreso = await updateRequest.UploadAsync();
+                if (progreso.Status != Google.Apis.Upload.UploadStatus.Completed)
+                    throw new Exception(progreso.Exception?.Message ?? "No se pudo actualizar el documento en Drive.");
                 return archivoExistente.Id;
             }
             else
             {
                 var meta = new Google.Apis.Drive.v3.Data.File() { Name = nombreDocumento, Parents = new List<string> { carpetaId } };
                 var createRequest = _driveService.Files.Create(meta, stream, "application/pdf");
-                await createRequest.UploadAsync();
+                createRequest.Fields = "id";
+                var progreso = await createRequest.UploadAsync();
+                if (progreso.Status != Google.Apis.Upload.UploadStatus.Completed || createRequest.ResponseBody == null)
+                    throw new Exception(progreso.Exception?.Message ?? "No se pudo crear el documento en Drive.");
                 return createRequest.ResponseBody.Id;
             }
         }

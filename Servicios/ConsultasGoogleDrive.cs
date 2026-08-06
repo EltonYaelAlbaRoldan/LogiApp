@@ -59,6 +59,15 @@ public class ConsultasGoogleDrive
 
         return carpetaExistente?.Id ?? await CrearSubcarpetaAsync(nombreCarpeta, idPadre);
     }
+
+    private async Task<bool> ExisteArchivoAsync(string nombreArchivo, string idCarpeta)
+    {
+        var request = _service.Files.List();
+        request.Q = $"name = '{nombreArchivo}' and '{idCarpeta}' in parents and trashed = false";
+        request.Fields = "files(id)";
+        var resultado = await request.ExecuteAsync();
+        return resultado.Files.Count > 0;
+    }
     #endregion
 
     #region OPERACIONES CRUD
@@ -88,28 +97,38 @@ public class ConsultasGoogleDrive
     {
         try
         {
-            var metadata = new DriveData.File()
-            {
-                Name = nombreDeseado,
-                Parents = new List<string> { folderId }
-            };
+            var listRequest = _service.Files.List();
+            listRequest.Q = $"name = '{nombreDeseado}' and '{folderId}' in parents and trashed = false";
+            listRequest.Fields = "files(id, webViewLink)";
+            var existente = (await listRequest.ExecuteAsync()).Files.FirstOrDefault();
+
+            var metadata = new DriveData.File { Name = nombreDeseado };
+            if (existente == null) metadata.Parents = new List<string> { folderId };
 
             using (var stream = new FileStream(rutaLocal, FileMode.Open))
             {
-                var request = _service.Files.Create(metadata, stream, "application/pdf");
-                request.Fields = "id";
-                var progreso = await request.UploadAsync();
+                Google.Apis.Upload.IUploadProgress progreso;
+                string? link;
 
-                if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
-                    throw new Exception(progreso.Exception?.Message ?? "Error en la carga.");
-
-                var archivoSubido = request.ResponseBody;
-                if (archivoSubido == null)
+                if (existente == null)
                 {
-                    throw new Exception("La subida fue exitosa pero no se recibió el link de confirmación.");
+                    var request = _service.Files.Create(metadata, stream, "application/pdf");
+                    request.Fields = "id, webViewLink";
+                    progreso = await request.UploadAsync();
+                    link = request.ResponseBody?.WebViewLink;
+                }
+                else
+                {
+                    var request = _service.Files.Update(metadata, existente.Id, stream, "application/pdf");
+                    request.Fields = "id, webViewLink";
+                    progreso = await request.UploadAsync();
+                    link = request.ResponseBody?.WebViewLink ?? existente.WebViewLink;
                 }
 
-                return archivoSubido.WebViewLink;
+                if (progreso.Status != Google.Apis.Upload.UploadStatus.Completed)
+                    throw new Exception(progreso.Exception?.Message ?? "Error en la carga.");
+
+                return link ?? string.Empty;
             }
         }
         catch (Exception ex)
@@ -132,38 +151,57 @@ public class ConsultasGoogleDrive
             request.Fields = "id";
             var progreso = await request.UploadAsync();
 
-            if (progreso.Status == Google.Apis.Upload.UploadStatus.Failed)
-                throw new Exception(progreso.Exception?.Message);
+            if (progreso.Status != Google.Apis.Upload.UploadStatus.Completed)
+                throw new Exception(progreso.Exception?.Message ?? "No se completó la carga de la imagen.");
 
             return request.ResponseBody?.Id ?? string.Empty;
         }
     }
 
-    // Agrega este método al final de ConsultasGoogleDrive.cs
-    public async Task<string> SubirEvidenciaViajeRapidoAsync(string rutaLocal, string idOperador, string folio)
+    public async Task<string> SubirEvidenciasViajeAsync(IEnumerable<string> rutasLocales, string idOperador, string folio)
     {
         try
         {
-            // 1. Obtener o crear carpeta del operador y su subcarpeta "evidencias"
             string idCarpetaOperador = await ObtenerOCrearCarpetaAsync(idOperador, _rootFolderId, true);
             string idCarpetaEvidencias = await ObtenerOCrearCarpetaAsync("evidencias", idCarpetaOperador, false);
+            string idCarpetaViaje = await ObtenerOCrearCarpetaAsync(folio, idCarpetaEvidencias, false);
+            int numeroFoto = 1;
 
-            var metadata = new DriveData.File()
+            foreach (string rutaLocal in rutasLocales.Where(File.Exists))
             {
-                Name = $"Evidencia_{folio}_{DateTime.Now:HHmm}.jpg",
-                Parents = new List<string> { idCarpetaEvidencias }
-            };
+                string extension = Path.GetExtension(rutaLocal);
+                if (string.IsNullOrWhiteSpace(extension)) extension = ".jpg";
 
-            // 2. Subida del archivo usando FileStream seguro
-            using (var stream = new FileStream(rutaLocal, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
+                string nombreArchivo = $"Evidencia_{folio}_{numeroFoto:D2}{extension}";
+
+                // Si una sincronización anterior quedó a medias, no duplicamos las fotos ya cargadas.
+                if (await ExisteArchivoAsync(nombreArchivo, idCarpetaViaje))
+                {
+                    numeroFoto++;
+                    continue;
+                }
+
+                var metadata = new DriveData.File
+                {
+                    Name = nombreArchivo,
+                    Parents = new List<string> { idCarpetaViaje }
+                };
+
+                using var stream = new FileStream(rutaLocal, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 var request = _service.Files.Create(metadata, stream, "image/jpeg");
                 request.Fields = "id";
-                await request.UploadAsync();
+                var progreso = await request.UploadAsync();
+
+                if (progreso.Status != Google.Apis.Upload.UploadStatus.Completed)
+                    throw new Exception(progreso.Exception?.Message ?? $"No se pudo subir la fotografía {numeroFoto}.");
+
+                numeroFoto++;
             }
 
-            // 3. Devolvemos el link de la CARPETA de evidencias (como pediste)
-            return $"https://drive.google.com/drive/folders/{idCarpetaEvidencias}";
+            if (numeroFoto == 1)
+                throw new Exception("No se encontraron fotografías válidas para subir.");
+
+            return $"https://drive.google.com/drive/folders/{idCarpetaViaje}";
         }
         catch (Exception ex)
         {
@@ -171,23 +209,54 @@ public class ConsultasGoogleDrive
         }
     }
 
-    public async Task<(string fileId, string folderLink)> SubirEvidenciaMantenimientoAsync(string rutaLocal, string idOperador, string folio)
+    public Task<string> SubirEvidenciaViajeRapidoAsync(string rutaLocal, string idOperador, string folio)
+    {
+        return SubirEvidenciasViajeAsync(new[] { rutaLocal }, idOperador, folio);
+    }
+
+    public async Task<string> SubirEvidenciasMantenimientoAsync(IEnumerable<string> rutasLocales, string idOperador, string folio)
     {
         try
         {
             string idCarpetaOperador = await ObtenerOCrearCarpetaAsync(idOperador, _rootFolderId, true);
             string idCarpetaMantenimiento = await ObtenerOCrearCarpetaAsync("mantenimiento", idCarpetaOperador, false);
-            string nombreArchivo = $"Folio_{folio}.jpg";
+            string idCarpetaFolio = await ObtenerOCrearCarpetaAsync(folio, idCarpetaMantenimiento, false);
+            int numeroFoto = 1;
 
-            string fileId = await SubirArchivoGenericoAsync(rutaLocal, nombreArchivo, idCarpetaMantenimiento);
-            string folderLink = $"https://drive.google.com/drive/folders/{idCarpetaMantenimiento}";
+            foreach (string rutaLocal in rutasLocales.Where(File.Exists))
+            {
+                string extension = Path.GetExtension(rutaLocal);
+                if (string.IsNullOrWhiteSpace(extension)) extension = ".jpg";
+                string nombreArchivo = $"Mantenimiento_{folio}_{numeroFoto:D2}{extension}";
 
-            return (fileId, folderLink);
+                if (await ExisteArchivoAsync(nombreArchivo, idCarpetaFolio))
+                {
+                    numeroFoto++;
+                    continue;
+                }
+
+                string fileId = await SubirArchivoGenericoAsync(rutaLocal, nombreArchivo, idCarpetaFolio);
+                if (string.IsNullOrWhiteSpace(fileId))
+                    throw new Exception($"No se pudo confirmar la fotografía {numeroFoto}.");
+
+                numeroFoto++;
+            }
+
+            if (numeroFoto == 1)
+                throw new Exception("No se encontraron fotografías válidas para subir.");
+
+            return $"https://drive.google.com/drive/folders/{idCarpetaFolio}";
         }
         catch (Exception ex)
         {
             throw new Exception($"Error al organizar Drive: {ex.Message}");
         }
+    }
+
+    public async Task<(string fileId, string folderLink)> SubirEvidenciaMantenimientoAsync(string rutaLocal, string idOperador, string folio)
+    {
+        string folderLink = await SubirEvidenciasMantenimientoAsync(new[] { rutaLocal }, idOperador, folio);
+        return (string.Empty, folderLink);
     }
     #endregion
 }

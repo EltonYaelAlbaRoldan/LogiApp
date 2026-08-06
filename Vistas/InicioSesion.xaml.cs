@@ -1,4 +1,6 @@
-using LogiApp.Servicios;
+ï»¿using LogiApp.Servicios;
+
+using System.Security.Cryptography;
 
 namespace LogiApp.Vistas;
 
@@ -49,12 +51,12 @@ public partial class InicioSesion : ContentPage
         // Captura preventiva para el log si falla algo
         string idParaLog = string.IsNullOrWhiteSpace(UsuarioEntry.Text) ? "Desconocido" : UsuarioEntry.Text.Trim();
 
-        string usuario = UsuarioEntry.Text?.Trim();
+        string usuario = UsuarioEntry.Text?.Trim().ToUpperInvariant();
         string pass = ContrasenaEntry.Text?.Trim();
 
         if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(pass))
         {
-            await DisplayAlert("Campos Vacíos", "Ingresa tu ID y contraseña.", "OK");
+            await DisplayAlert("Campos VacÃ­os", "Ingresa tu ID y contraseÃ±a.", "OK");
             return;
         }
 
@@ -68,8 +70,8 @@ public partial class InicioSesion : ContentPage
             }
             catch (Exception ex)
             {
-                await GestorErrores.GuardarErrorAsync(ex, "Reintento Conexión Login", idParaLog);
-                await DisplayAlert("Sin Conexión", "Revisa tu internet.", "OK");
+                await GestorErrores.GuardarErrorAsync(ex, "Reintento ConexiÃ³n Login", idParaLog);
+                await DisplayAlert("Sin ConexiÃ³n", "Revisa tu internet.", "OK");
                 IsBusy = false;
                 return;
             }
@@ -87,8 +89,8 @@ public partial class InicioSesion : ContentPage
                     _ = GestorErrores.SincronizarLogsPendientesAsync(_sheets);
                     Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());
                     break;
-                case "CONTRASEÑA_INCORRECTA":
-                    await DisplayAlert("Error", "La contraseña es incorrecta.", "Reintentar");
+                case "CONTRASEÃ‘A_INCORRECTA":
+                    await DisplayAlert("Error", "La contraseÃ±a es incorrecta.", "Reintentar");
                     break;
                 case "USUARIO_NO_EXISTE":
                     await DisplayAlert("No Encontrado", "El ID de operador no existe.", "OK");
@@ -101,7 +103,7 @@ public partial class InicioSesion : ContentPage
         catch (Exception ex)
         {
             await GestorErrores.GuardarErrorAsync(ex, "OnLoginClicked - Catch", idParaLog);
-            await DisplayAlert("Error", "Problema de conexión: " + ex.Message, "OK");
+            await DisplayAlert("Error", "Problema de conexiÃ³n: " + ex.Message, "OK");
         }
         finally { IsBusy = false; }
     }
@@ -118,10 +120,10 @@ public partial class InicioSesion : ContentPage
     }
     #endregion
 
-    #region Recuperación de Contraseña
+    #region RecuperaciÃ³n de ContraseÃ±a
     private async void OnOlvideContrasenaClicked(object sender, EventArgs e)
     {
-        // SOLUCIÓN AL ERROR idOp: Se declara al inicio del método
+        // SOLUCIÃ“N AL ERROR idOp: Se declara al inicio del mÃ©todo
         string idOpFinal = "Desconocido";
 
         try
@@ -140,7 +142,7 @@ public partial class InicioSesion : ContentPage
                 return;
             }
 
-            string inputId = await DisplayPromptAsync("Recuperación", "Ingresa tu ID de Operador:", "Continuar", "Cancelar");
+            string inputId = await DisplayPromptAsync("RecuperaciÃ³n", "Ingresa tu ID de Operador:", "Continuar", "Cancelar");
             if (string.IsNullOrWhiteSpace(inputId)) return;
 
             idOpFinal = inputId.Trim(); // Se asigna el valor ingresado
@@ -152,13 +154,65 @@ public partial class InicioSesion : ContentPage
                 return;
             }
 
-            // Lógica de códigos y reenvíos... (Abreviada para claridad, mantén tu lógica de ciclos)
-            // Si hay un error aquí, saltará al catch y usará el idOpFinal
+            string codigo = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
+            bool enviado = await _emailService.EnviarCodigoRecuperacionAsync(operador.Correo, codigo);
+            if (!enviado)
+            {
+                await DisplayAlert("Error", "No fue posible enviar el cÃ³digo de recuperaciÃ³n.", "OK");
+                return;
+            }
+
+            bool codigoValido = false;
+            for (int intento = 1; intento <= 3; intento++)
+            {
+                string codigoIngresado = await DisplayPromptAsync(
+                    "VerificaciÃ³n", "Ingresa el cÃ³digo de 6 dÃ­gitos enviado a tu correo:",
+                    "Validar", "Cancelar", keyboard: Keyboard.Numeric, maxLength: 6);
+                if (string.IsNullOrWhiteSpace(codigoIngresado)) return;
+                if (codigoIngresado.Trim() == codigo)
+                {
+                    codigoValido = true;
+                    break;
+                }
+                await DisplayAlert("CÃ³digo incorrecto", $"Quedan {3 - intento} intento(s).", "OK");
+            }
+
+            if (!codigoValido)
+            {
+                Preferences.Default.Set("BloqueoRecuperacion", DateTime.Now.AddMinutes(15));
+                await DisplayAlert("Acceso restringido", "Demasiados intentos. Intenta nuevamente en 15 minutos.", "OK");
+                return;
+            }
+
+            string nuevaPassword = await DisplayPromptAsync(
+                "Nueva contraseÃ±a", "Ingresa una contraseÃ±a de al menos 8 caracteres:",
+                "Continuar", "Cancelar", maxLength: 64, keyboard: Keyboard.Text);
+            if (string.IsNullOrWhiteSpace(nuevaPassword)) return;
+            if (nuevaPassword.Length < 8)
+            {
+                await DisplayAlert("ContraseÃ±a invÃ¡lida", "Debe tener al menos 8 caracteres.", "OK");
+                return;
+            }
+
+            string confirmacion = await DisplayPromptAsync(
+                "Confirmar contraseÃ±a", "Escribe nuevamente la contraseÃ±a:",
+                "Guardar", "Cancelar", maxLength: 64, keyboard: Keyboard.Text);
+            if (confirmacion != nuevaPassword)
+            {
+                await DisplayAlert("No coincide", "Las contraseÃ±as no coinciden.", "OK");
+                return;
+            }
+
+            bool actualizada = await _sheets.ActualizarPasswordAsync(idOpFinal, nuevaPassword);
+            if (!actualizada) throw new Exception("No se pudo actualizar la contraseÃ±a en Sheets.");
+
+            Preferences.Default.Remove("BloqueoRecuperacion");
+            await DisplayAlert("Ã‰xito", "Tu contraseÃ±a fue actualizada.", "Iniciar sesiÃ³n");
         }
         catch (Exception ex)
         {
             await GestorErrores.GuardarErrorAsync(ex, "OnOlvideContrasenaClicked", idOpFinal);
-            await DisplayAlert("Error", "Ocurrió un problema: " + ex.Message, "OK");
+            await DisplayAlert("Error", "OcurriÃ³ un problema: " + ex.Message, "OK");
         }
     }
     #endregion

@@ -188,6 +188,31 @@
                     TextColor="#0A0A33" 
                     Clicked="OnAdjuntarEvidenciaClicked"/>
 
+                <CollectionView
+                    x:Name="ListaFotos"
+                    HeightRequest="170"
+                    ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout Margin="4" WidthRequest="130">
+                                <Image
+                                    Aspect="AspectFill"
+                                    HeightRequest="120"
+                                    Source="{Binding .}"
+                                    WidthRequest="130" />
+                                <Button
+                                    BackgroundColor="#F44336"
+                                    Clicked="OnEliminarFotoClicked"
+                                    CommandParameter="{Binding .}"
+                                    FontSize="12"
+                                    HeightRequest="36"
+                                    Text="Eliminar"
+                                    TextColor="White" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
                 <!--  Botón de envío  -->
                 <Button
                     x:Name="BtnGuardarMantenimiento"

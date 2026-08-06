@@ -13,7 +13,7 @@ public class ServicioEmail
     #region MÉTODOS PÚBLICOS
 
     // Método para enviar las credenciales al registrarse
-    public async Task EnviarCredencialesAsync(string correoDestino, string nombre, string idOperador)
+    public async Task<bool> EnviarCredencialesAsync(string correoDestino, string nombre, string idOperador)
     {
         string cuerpo = $@"
         <div style='font-family: sans-serif; max-width: 600px; border: 1px solid #eee; padding: 20px;'>
@@ -32,7 +32,7 @@ public class ServicioEmail
 
             <p>Tu ID de usuario asignado es: <b style='color:#2196F3;'>{idOperador}</b></p>
             
-            <p>Una vez que tu información sea validada, recibirás un <b>segundo correo electrónico</b> con tu contraseña y la confirmación de activación para que puedas iniciar sesión.</p>
+            <p>Una vez que tu información sea validada, podrás iniciar sesión con la contraseña que elegiste durante tu registro.</p>
             
             <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>
             <p style='font-size: 12px; color: #777;'>
@@ -41,7 +41,30 @@ public class ServicioEmail
         </div>";
 
         // Nota: Eliminamos el parámetro 'password' de la llamada porque ya no se enviará aquí
-        await EnviarCorreoGenericoAsync(correoDestino, "Expediente Recibido - LogiApp", cuerpo);
+        return await EnviarCorreoGenericoAsync(correoDestino, "Expediente Recibido - LogiApp", cuerpo);
+    }
+
+    public async Task<bool> EnviarAvisoNuevoOperadorAsync(string idOperador, string nombre, string correoOperador)
+    {
+        const string correoAdministrador = "22030013@itesa.edu.mx";
+        string cuerpo = $@"
+        <div style='font-family: sans-serif; max-width: 600px; border: 1px solid #eee; padding: 20px;'>
+            <h2 style='color: #0A0A33;'>Nuevo operador pendiente de validación</h2>
+            <p>Se registró un nuevo usuario en LogiApp y requiere revisión administrativa.</p>
+            <div style='background-color: #FFF3CD; border-left: 5px solid #FFC107; padding: 15px; margin: 20px 0;'>
+                <p><b>ID:</b> {idOperador}</p>
+                <p><b>Nombre:</b> {nombre}</p>
+                <p><b>Correo:</b> {correoOperador}</p>
+                <p><b>Estado:</b> VALIDACION</p>
+            </div>
+            <p>Ingresa a la hoja de Operadores para revisar su expediente y cambiar el estado a ACTIVO o INACTIVO.</p>
+            <p>Por seguridad, este correo no incluye la contraseña del operador.</p>
+        </div>";
+
+        return await EnviarCorreoGenericoAsync(
+            correoAdministrador,
+            $"Nuevo operador por validar: {idOperador}",
+            cuerpo);
     }
 
     // Método para enviar el código de recuperación

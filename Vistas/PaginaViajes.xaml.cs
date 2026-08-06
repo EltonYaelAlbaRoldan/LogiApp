@@ -1,4 +1,4 @@
-using LogiApp.Servicios;
+Ôªøusing LogiApp.Servicios;
 using LogiApp.Modelos;
 namespace LogiApp.Vistas;
 
@@ -17,14 +17,15 @@ public partial class PaginaViajes : ContentPage
     public PaginaViajes()
     {
         InitializeComponent();
+        BtnGuardarViaje.IsEnabled = false;
         InicializarDatos();
     }
 
     #endregion
 
-    #region InicializaciÛn y Carga de Datos
+    #region Inicializaci√≥n y Carga de Datos
 
-    // Establece la conexiÛn con Google y dispara la carga simult·nea de cat·logos.
+    // Establece la conexi√≥n con Google y dispara la carga simult√°nea de cat√°logos.
     private async void InicializarDatos()
     {
         try
@@ -32,13 +33,14 @@ public partial class PaginaViajes : ContentPage
             var (sService, _) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
 
-            // OptimizaciÛn: Carga de 4 listas en paralelo para reducir tiempo de espera
+            // Optimizaci√≥n: Carga de 4 listas en paralelo para reducir tiempo de espera
             await Task.WhenAll(
                 CargarUnidades(),
                 CargarRemolques(),
                 CargarDestinos(),
                 CargarClientes()
             );
+            BtnGuardarViaje.IsEnabled = true;
         }
         catch (Exception ex)
         {
@@ -80,7 +82,7 @@ public partial class PaginaViajes : ContentPage
         }
     }
 
-    // Consulta y puebla los cat·logos de Origen y Destino.
+    // Consulta y puebla los cat√°logos de Origen y Destino.
     private async Task CargarDestinos()
     {
         try
@@ -111,12 +113,12 @@ public partial class PaginaViajes : ContentPage
 
     #endregion
 
-    #region LÛgica de Negocio y Guardado
+    #region L√≥gica de Negocio y Guardado
 
     // Valida la integridad de los datos, genera un folio y registra el inicio del viaje en la nube.
     private async void OnGuardarViajeClicked(object sender, EventArgs e)
     {
-        // ValidaciÛn de campos obligatorios
+        // Validaci√≥n de campos obligatorios
         if (OrigenPicker.SelectedIndex == -1 || DestinoPicker.SelectedIndex == -1 ||
             UnidadPicker.SelectedIndex == -1 || ClientePicker.SelectedIndex == -1 ||
             string.IsNullOrWhiteSpace(KmSalidaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleEntry.Text))
@@ -130,7 +132,7 @@ public partial class PaginaViajes : ContentPage
 
         try
         {
-            // PreparaciÛn de datos para el registro
+            // Preparaci√≥n de datos para el registro
             string folio = await _sheets.GenerarFolioViajeAsync();
             string idOp = Preferences.Default.Get("UsuarioLogeado", "Sin ID");
             string fechaInicio = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
@@ -176,6 +178,7 @@ public partial class PaginaViajes : ContentPage
 
                 Preferences.Default.Set("ColTracking_A", cA);
                 Preferences.Default.Set("ColTracking_B", cB);
+                Preferences.Default.Set("HojaActual_Tracking", hojaMes);
                 Preferences.Default.Set("FilaActual_Tracking", 3);
 
                 try
@@ -194,20 +197,27 @@ public partial class PaginaViajes : ContentPage
                         };
 
                         // Mandamos a la Fila 2 inmediatamente
-                        await _sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, cA, cB, 2, primeraUbi);
+                        primeraUbi.HojaTracking = hojaMes;
+                        primeraUbi.ColumnaTrackingA = cA;
+                        primeraUbi.ColumnaTrackingB = cB;
+                        primeraUbi.FilaTracking = 2;
+
+                        bool primeraSubidaOk = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, cA, cB, 2, primeraUbi);
+                        if (!primeraSubidaOk)
+                            await new BaseDeDatosLocal().GuardarUbicacionLocalAsync(primeraUbi);
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Si falla el GPS aquÌ, guardamos el error pero dejamos que el viaje inicie
+                    // Si falla el GPS aqu√≠, guardamos el error pero dejamos que el viaje inicie
                     await GestorErrores.GuardarErrorAsync(ex, "PrimeraUbicacionAuto", Preferences.Get("UsuarioLogeado", "Desconocido"));
                 }
                 // Escribir el Folio arriba (Fila 1)
                 await _sheets.InsertarFolioEncabezadoAsync(hojaMes, cA, folio);
 
-                await DisplayAlert("…xito", $"Viaje {folio} registrado. °Buen camino!", "OK");
+                await DisplayAlert("√âxito", $"Viaje {folio} registrado. ¬°Buen camino!", "OK");
 
-                // NavegaciÛn autom·tica a la pantalla de monitoreo/cierre
+                // Navegaci√≥n autom√°tica a la pantalla de monitoreo/cierre
                 Application.Current.MainPage = new NavigationPage(new Vistas.PaginaTerminarViaje(folio));
             }
         }

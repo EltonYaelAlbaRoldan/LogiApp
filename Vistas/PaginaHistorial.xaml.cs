@@ -50,7 +50,7 @@ public partial class PaginaHistorial : ContentPage
         // Construimos el mensaje con los nuevos datos que ya extrae tu ConsultasGoogleSheets
         string detalle = $"📍 RUTA: {viaje.Origen} ➔ {viaje.Destino}\n\n" +
                      $"🚛 UNIDAD: {viaje.Unidad}\n" +
-                     $"📅 REGISTRO: {viaje.Fecha}" +
+                     $"📅 REGISTRO: {viaje.Fecha}\n" +
                      $"⏱️ DURACIÓN: {viaje.Duracion}\n" +
                      $"⛽ RENDIMIENTO: {viaje.Rendimiento}\n\n" +
                      $"--- DATOS DE LLEGADA ---\n" +

@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using LogiApp.Modelos;
+using System.Security.Cryptography;
 
 namespace LogiApp.Servicios;
 
@@ -42,6 +43,22 @@ public class ConsultasGoogleSheets
             {
                 Requests = new List<Request>()
             };
+
+            // Abrimos una fila física para no sobrescribir contenido o formato existente.
+            batchRequest.Requests.Add(new Request
+            {
+                InsertDimension = new InsertDimensionRequest
+                {
+                    Range = new DimensionRange
+                    {
+                        SheetId = sheetId,
+                        Dimension = "ROWS",
+                        StartIndex = filaDondeInsertar,
+                        EndIndex = filaDondeInsertar + 1
+                    },
+                    InheritFromBefore = filaDondeInsertar > 0
+                }
+            });
 
             // A) Insertar los valores
             batchRequest.Requests.Add(new Request
@@ -110,7 +127,24 @@ public class ConsultasGoogleSheets
 
     public async Task<string> GenerarIdUnicoFormateadoAsync()
     {
-        return await GenerarFolioSecuencialAsync("Operadores!A:A", "OP");
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:A").ExecuteAsync();
+        int maxId = 0;
+
+        if (response.Values != null)
+        {
+            foreach (var fila in response.Values.Skip(1))
+            {
+                string valor = fila.FirstOrDefault()?.ToString() ?? string.Empty;
+                string[] partes = valor.Split('-');
+                if (partes.Length >= 2 && partes[0].Equals("OP", StringComparison.OrdinalIgnoreCase) &&
+                    int.TryParse(partes[1], out int numero))
+                {
+                    maxId = Math.Max(maxId, numero);
+                }
+            }
+        }
+
+        return $"OP-{maxId + 1:D3}";
     }
 
     public async Task<Operador> ObtenerDatosOperadorAsync(string idOperador)
@@ -118,12 +152,13 @@ public class ConsultasGoogleSheets
         var range = "Operadores!A:M";
         var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, range).ExecuteAsync();
         var values = response.Values;
+        string idNormalizado = idOperador?.Trim().ToUpperInvariant() ?? string.Empty;
 
         if (values != null)
         {
             foreach (var row in values)
             {
-                if (row[0].ToString() == idOperador)
+                if (row.Count > 0 && row[0]?.ToString()?.Trim().ToUpperInvariant() == idNormalizado)
                 {
                     return new Operador
                     {
@@ -133,7 +168,7 @@ public class ConsultasGoogleSheets
                         VigenciaMedico = ParsearFechaSegura(row[9]?.ToString()),
                         Correo = row.Count > 3 ? row[3].ToString() : "",
                         LinkCarpeta = row.Count > 10 ? row[10].ToString() : "",
-                        Estado = row.Count > 12 ? row[12].ToString().ToUpper() : "VALIDACION"
+                        Estado = row.Count > 12 ? row[12].ToString().Trim().ToUpperInvariant() : "VALIDACION"
                     };
                 }
             }
@@ -176,8 +211,12 @@ public class ConsultasGoogleSheets
             // Columna A (0): ID | Columna L (11): Password | Columna M (12): Estado
             if (fila.Count > 0 && fila[0].ToString().Trim().ToUpper() == usuario.Trim().ToUpper())
             {
-                if (fila.Count > 11 && fila[11].ToString() == contrasena)
+                if (fila.Count > 11 && SeguridadPassword.Verificar(contrasena, fila[11].ToString()))
                 {
+                    // Migración transparente de contraseñas antiguas almacenadas en texto plano.
+                    if (!SeguridadPassword.EsHash(fila[11].ToString()))
+                        await ActualizarPasswordAsync(fila[0].ToString(), contrasena);
+
                     string estado = fila.Count > 12 ? fila[12].ToString().ToUpper() : "VALIDACION";
 
                     if (estado == "ACTIVO") return "EXITO";
@@ -197,7 +236,7 @@ public class ConsultasGoogleSheets
             if (fila == -1) return false;
 
             string rango = $"Operadores!L{fila}";
-            var body = new ValueRange { Values = new List<IList<object>> { new List<object> { nuevaPass } } };
+            var body = new ValueRange { Values = new List<IList<object>> { new List<object> { SeguridadPassword.CrearHash(nuevaPass) } } };
 
             var updateRequest = _service.Spreadsheets.Values.Update(body, _spreadsheetId, rango);
             updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
@@ -256,6 +295,7 @@ public class ConsultasGoogleSheets
 
         var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, range);
         appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+        appendRequest.InsertDataOption = SpreadsheetsResource.ValuesResource.AppendRequest.InsertDataOptionEnum.INSERTROWS;
         await appendRequest.ExecuteAsync();
     }
 
@@ -314,13 +354,15 @@ public class ConsultasGoogleSheets
             foreach (var fila in response.Values.Skip(1))
             {
                 string valor = fila.FirstOrDefault()?.ToString() ?? "";
-                if (valor.Contains("-") && int.TryParse(valor.Split('-').Last(), out int num))
+                string[] partes = valor.Split('-');
+                if (partes.Length >= 2 && int.TryParse(partes[1], out int num))
                 {
                     if (num > maxId) maxId = num;
                 }
             }
         }
-        return $"{prefijo}-{(maxId + 1):D3}";
+        // El sufijo aleatorio evita colisiones cuando dos dispositivos leen el mismo máximo.
+        return $"{prefijo}-{(maxId + 1):D3}-{RandomNumberGenerator.GetHexString(8)}";
     }
 
     private async Task<int> ObtenerNumeroFilaPorIdAsync(string idOperador)
@@ -384,14 +426,23 @@ public class ConsultasGoogleSheets
     {
         try
         {
-            string rango = "Viajes!A:K";
+            const string rango = "Viajes!A:K";
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
             var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
             appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+
+            // Append puede usar OVERWRITE sobre la fila que Sheets detecta como el final
+            // de la tabla. INSERT_ROWS garantiza que cada viaje conserve su propia fila.
+            appendRequest.InsertDataOption = SpreadsheetsResource.ValuesResource.AppendRequest.InsertDataOptionEnum.INSERTROWS;
+
             await appendRequest.ExecuteAsync();
             return true;
         }
-        catch { return false; }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error al registrar el inicio del viaje: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<string> GenerarFolioViajeAsync()
@@ -632,6 +683,55 @@ public class ConsultasGoogleSheets
         }
     }
 
+    public async Task<bool> ActualizarVinculoMapaRutaAsync(string folio, string hoja, string colA, string colB)
+    {
+        try
+        {
+            int filaViaje = await ObtenerNumeroFilaPorIdViajeAsync(folio);
+            if (filaViaje == -1) return false;
+
+            var response = await _service.Spreadsheets.Values
+                .Get(_spreadsheetId, $"{hoja}!{colB}2:{colB}")
+                .ExecuteAsync();
+
+            var coordenadas = response.Values?
+                .Where(f => f.Count > 0 && !string.IsNullOrWhiteSpace(f[0]?.ToString()))
+                .Select(f => f[0].ToString().Trim())
+                .Where(c => c.Contains(','))
+                .ToList() ?? new List<string>();
+
+            if (coordenadas.Count < 2) return false;
+
+            string origen = Uri.EscapeDataString(coordenadas.First());
+            string destino = Uri.EscapeDataString(coordenadas.Last());
+            var interiores = coordenadas.Skip(1).Take(coordenadas.Count - 2).ToList();
+            var waypoints = new List<string>();
+            const int maxWaypoints = 9;
+
+            if (interiores.Count <= maxWaypoints)
+                waypoints.AddRange(interiores);
+            else
+                for (int i = 1; i <= maxWaypoints; i++)
+                    waypoints.Add(interiores[(int)Math.Round(i * (interiores.Count - 1d) / (maxWaypoints + 1))]);
+
+            string url = $"https://www.google.com/maps/dir/?api=1&origin={origen}&destination={destino}&travelmode=driving";
+            if (waypoints.Count > 0)
+                url += "&waypoints=" + Uri.EscapeDataString(string.Join("|", waypoints));
+
+            string formula = $"=HYPERLINK(\"{url}\"; \"🗺️ VER MAPA\")";
+            var body = new ValueRange { Values = new List<IList<object>> { new List<object> { formula } } };
+            var request = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"Viajes!U{filaViaje}");
+            request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            await request.ExecuteAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Error al crear mapa de ruta: " + ex.Message);
+            return false;
+        }
+    }
+
     #endregion
     public async Task<List<ViajeHistorial>> ObtenerHistorialPorOperadorAsync(string idOperador)
     {
@@ -650,7 +750,7 @@ public class ConsultasGoogleSheets
                 {
                     // Cálculo de rendimiento (Km / L)
                     string rendimientoCalculado = "N/A";
-                    if (fila.Count > 17) // Si tiene datos de cierre (Q y R)
+                    if (fila.Count > 18) // Si tiene datos de cierre (R y S)
                     {
                         double.TryParse(fila[17]?.ToString(), out double kms);
                         double.TryParse(fila[18]?.ToString(), out double lts);
@@ -659,14 +759,14 @@ public class ConsultasGoogleSheets
 
                     lista.Add(new ViajeHistorial
                     {
-                        Folio = fila[0]?.ToString(),
-                        Fecha = fila[1]?.ToString(),
-                        Unidad = fila[3]?.ToString(),
-                        Origen = fila[5]?.ToString(),
-                        Destino = fila[6]?.ToString(),
-                        Estado = fila[10]?.ToString(),
-                        FechaLlegada = fila[11]?.ToString(),
-                        Duracion = fila[16]?.ToString(),
+                        Folio = fila.Count > 0 ? fila[0]?.ToString() : "",
+                        Fecha = fila.Count > 1 ? fila[1]?.ToString() : "",
+                        Unidad = fila.Count > 3 ? fila[3]?.ToString() : "",
+                        Origen = fila.Count > 5 ? fila[5]?.ToString() : "",
+                        Destino = fila.Count > 6 ? fila[6]?.ToString() : "",
+                        Estado = fila.Count > 10 ? fila[10]?.ToString() : "PENDIENTE",
+                        FechaLlegada = fila.Count > 11 ? fila[11]?.ToString() : "Pendiente",
+                        Duracion = fila.Count > 16 ? fila[16]?.ToString() : "N/A",
                         KmRecorrido = fila.Count > 17 ? fila[17]?.ToString() + " Km" : "0 Km",
                         CombConsumido = fila.Count > 18 ? fila[18]?.ToString() + " L" : "0 L",
                         Rendimiento = rendimientoCalculado
@@ -703,6 +803,7 @@ public class ConsultasGoogleSheets
             );
 
             request.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+            request.InsertDataOption = SpreadsheetsResource.ValuesResource.AppendRequest.InsertDataOptionEnum.INSERTROWS;
             await request.ExecuteAsync();
             return true;
         }

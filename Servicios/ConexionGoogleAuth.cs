@@ -11,7 +11,7 @@ public class ConexionGoogleAuth
 {
     #region CONFIGURACIÓN Y CREDENCIALES
     private const string ClientId = "547051792054-1u9vftvu5fltgcimbo3mteu4qk53253o.apps.googleusercontent.com";
-    private const string ClientSecret = "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"; 
+    private const string ClientSecret = "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";
     private const string RefreshToken = "1//04rdjOe3v9nXACgYIARAAGAQSNwF-L9Ir9YjhXRgY_C0lLEX3LD03q-7QkPcv3c4-gd6kYW70tr5Zuwj7R-j3fHPlr1ROOHvMw-g";
     private const string ApplicationName = "LogiApp";
     #endregion

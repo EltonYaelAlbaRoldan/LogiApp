@@ -9,6 +9,8 @@ namespace LogiApp
         public App()
         {
             InitializeComponent();
+            Connectivity.Current.ConnectivityChanged += OnGlobalConnectivityChanged;
+            _ = SincronizadorGlobal.IntentarSincronizacionSilenciosa();
 
             // Revisamos si el usuario ya estaba logeado
             string usuario = Preferences.Default.Get("UsuarioLogeado", "");

@@ -2,15 +2,19 @@
 using LogiApp.Servicios;
 using LogiApp.Modelos;
 using System.IO;
+using System.Text.Json;
 
 namespace LogiApp.Servicios;
 
 public static class SincronizadorGlobal
 {
+    private static readonly SemaphoreSlim _semaforo = new(1, 1);
+
     public static async Task IntentarSincronizacionSilenciosa()
     {
         // Si no hay internet, se vuelve a dormir
         if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet) return;
+        if (!await _semaforo.WaitAsync(0)) return;
 
         try
         {
@@ -31,18 +35,25 @@ public static class SincronizadorGlobal
                     string kmLlegada = Preferences.Default.Get($"Offline_KmLlegada_{folio}", "");
                     string fuelLlegada = Preferences.Default.Get($"Offline_FuelLlegada_{folio}", "");
                     string obs = Preferences.Default.Get($"Offline_Obs_{folio}", "N/A");
-                    string rutaFoto = Preferences.Default.Get($"Offline_RutaFoto_{folio}", "");
+                    string rutasFotosJson = Preferences.Default.Get($"Offline_RutasFotos_{folio}", "");
+                    var rutasFotos = string.IsNullOrWhiteSpace(rutasFotosJson)
+                        ? new List<string>()
+                        : JsonSerializer.Deserialize<List<string>>(rutasFotosJson) ?? new List<string>();
+
+                    // Compatibilidad con pendientes creados por versiones anteriores.
+                    string rutaFotoAnterior = Preferences.Default.Get($"Offline_RutaFoto_{folio}", "");
+                    if (rutasFotos.Count == 0 && File.Exists(rutaFotoAnterior)) rutasFotos.Add(rutaFotoAnterior);
                     string duracion = Preferences.Default.Get($"Offline_Duracion_{folio}", "N/A");
                     string recorrido = Preferences.Default.Get($"Offline_Recorrido_{folio}", "0");
                     string consumo = Preferences.Default.Get($"Offline_Consumo_{folio}", "0");
                     string horaLlegada = Preferences.Default.Get($"Offline_HoraLlegada_{folio}", fechaFin);
 
-                    string idOp = Preferences.Default.Get("UsuarioLogeado", "SinID");
+                    string idOp = Preferences.Default.Get($"Offline_IdOperador_{folio}", Preferences.Default.Get("UsuarioLogeado", "SinID"));
                     string linkCarpeta = "Sin Evidencia";
 
-                    if (File.Exists(rutaFoto))
+                    if (rutasFotos.Any(File.Exists))
                     {
-                        linkCarpeta = await drive.SubirEvidenciaViajeRapidoAsync(rutaFoto, idOp, folio);
+                        linkCarpeta = await drive.SubirEvidenciasViajeAsync(rutasFotos, idOp, folio);
                     }
 
                     await sheets.ActualizarEstatusYLlegadaAsync(folio, "EN DESTINO", horaLlegada);
@@ -51,15 +62,25 @@ public static class SincronizadorGlobal
                     if (exito)
                     {
                         Preferences.Default.Remove($"Offline_Pendiente_{folio}");
+                        Preferences.Default.Remove($"Offline_IdOperador_{folio}");
+                        Preferences.Default.Remove($"Offline_FechaFin_{folio}");
+                        Preferences.Default.Remove($"Offline_HoraLlegada_{folio}");
+                        Preferences.Default.Remove($"Offline_KmLlegada_{folio}");
+                        Preferences.Default.Remove($"Offline_FuelLlegada_{folio}");
+                        Preferences.Default.Remove($"Offline_Obs_{folio}");
+                        Preferences.Default.Remove($"Offline_RutasFotos_{folio}");
+                        Preferences.Default.Remove($"Offline_RutaFoto_{folio}");
+                        Preferences.Default.Remove($"Offline_Duracion_{folio}");
+                        Preferences.Default.Remove($"Offline_Recorrido_{folio}");
+                        Preferences.Default.Remove($"Offline_Consumo_{folio}");
                         listaFolios.Remove(folio);
                         string nuevaLista = string.Join(",", listaFolios);
-                        if (!string.IsNullOrEmpty(nuevaLista)) nuevaLista += ",";
                         Preferences.Default.Set("ListaFoliosOffline", nuevaLista);
                     }
                 }
             }
 
-            // 2. REVISAR LLEGADAS O GPS EN VIVO (El de la pantalla de Viaje)
+            // 2. REVISAR LLEGADAS EN VIVO (El de la pantalla de Viaje)
             string folioActual = Preferences.Default.Get("FolioPendiente", "");
             if (!string.IsNullOrEmpty(folioActual))
             {
@@ -86,43 +107,38 @@ public static class SincronizadorGlobal
                     }
                 }
 
-                // --- 3. NUEVA LÓGICA: SINCRONIZAR TRACKING DE SQLite (Celdas Gemelas) ---
-                var dbLocal = new BaseDeDatosLocal();
-                var ubiPendientes = await dbLocal.ObtenerUbicacionesPendientesAsync();
+            }
 
-                if (ubiPendientes != null && ubiPendientes.Count > 0)
+            // 3. Cada punto conserva su folio, hoja, columnas y fila. Así nunca se mezcla
+            // con el viaje que esté abierto cuando regrese la conexión.
+            var dbLocal = new BaseDeDatosLocal();
+            var ubiPendientes = await dbLocal.ObtenerUbicacionesPendientesAsync();
+            foreach (var ubi in ubiPendientes.OrderBy(x => x.FechaHora))
+            {
+                if (string.IsNullOrWhiteSpace(ubi.HojaTracking) ||
+                    string.IsNullOrWhiteSpace(ubi.ColumnaTrackingA) ||
+                    string.IsNullOrWhiteSpace(ubi.ColumnaTrackingB) || ubi.FilaTracking <= 0)
+                    continue;
+
+                bool ok = await sheets.SubirPuntoGPSTiempoRealAsync(
+                    ubi.HojaTracking, ubi.ColumnaTrackingA, ubi.ColumnaTrackingB, ubi.FilaTracking, ubi);
+                if (ok)
                 {
-                    // Recuperamos columnas y la fila donde nos quedamos
-                    string colA = Preferences.Default.Get("ColTracking_A", "A");
-                    string colB = Preferences.Default.Get("ColTracking_B", "B");
-                    int filaActual = Preferences.Default.Get("FilaActual_Tracking", 2);
-                    string hojaMes = $"Historial_{DateTime.Now.ToString("MMMM")}_{DateTime.Now.Year}";
-
-                    // Ordenamos por fecha para que se peguen en orden cronológico en las filas
-                    foreach (var ubi in ubiPendientes.OrderBy(x => x.FechaHora))
-                    {
-                        // Intentamos subir a la celda exacta
-                        bool ok = await sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, colA, colB, filaActual, ubi);
-
-                        if (ok)
-                        {
-                            // Si se subió, borramos de SQLite y avanzamos la fila para el siguiente
-                            await dbLocal.BorrarUbicacionAsync(ubi.Id);
-                            filaActual++;
-                            Preferences.Default.Set("FilaActual_Tracking", filaActual);
-                        }
-                        else
-                        {
-                            // Si falla uno, detenemos el ciclo para no saltarnos filas
-                            break;
-                        }
-                    }
+                    await dbLocal.BorrarUbicacionAsync(ubi.Id);
+                    await sheets.ActualizarVinculoMapaRutaAsync(
+                        ubi.FolioViaje, ubi.HojaTracking, ubi.ColumnaTrackingA, ubi.ColumnaTrackingB);
                 }
+                else break;
             }
         }
-        catch
+        catch (Exception ex)
         {
-            /* Falla silenciosa, se intenta en la próxima conexión */
+            System.Diagnostics.Debug.WriteLine($"Error de sincronización global: {ex}");
+            await GestorErrores.GuardarErrorAsync(ex, "SincronizacionGlobal", Preferences.Get("UsuarioLogeado", "Desconocido"));
+        }
+        finally
+        {
+            _semaforo.Release();
         }
     }
 }

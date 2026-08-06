@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System;
 using System.IO;
+using System.Collections.ObjectModel;
+using System.Text.Json;
 
 namespace LogiApp.Vistas;
 
@@ -17,10 +19,11 @@ public partial class PaginaTerminarViaje : ContentPage
     private ConsultasGoogleDrive _drive;
     private readonly ConexionGoogleAuth _authService = new();
     private string _folioActual;
-    private string _rutaFotoTemporal = string.Empty;
+    private readonly ObservableCollection<string> _rutasFotosTemporales = new();
     private CancellationTokenSource _ctsTracking;
     private bool _isTrackingRunning = false;
     private readonly BaseDeDatosLocal _dbLocal = new();
+    private readonly SemaphoreSlim _semaforoTracking = new(1, 1);
     #endregion
 
     public PaginaTerminarViaje(string folio)
@@ -30,6 +33,7 @@ public partial class PaginaTerminarViaje : ContentPage
         LblFolio.Text = $"Folio: {folio}";
         string destinoGuardado = Preferences.Default.Get("Destino_" + folio, "Destino no especificado");
         LblDestino.Text = $"Destino: {destinoGuardado}";
+        ListaFotos.ItemsSource = _rutasFotosTemporales;
     }
 
     protected override async void OnAppearing()
@@ -81,16 +85,21 @@ public partial class PaginaTerminarViaje : ContentPage
 
         try
         {
-            var pendientes = await _dbLocal.ObtenerUbicacionesPendientesAsync();
+            var pendientes = (await _dbLocal.ObtenerUbicacionesPendientesAsync())
+                .Where(x => string.Equals(x.FolioViaje, _folioActual, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(x => x.FechaHora)
+                .ToList();
             if (pendientes != null && pendientes.Count > 0)
             {
-                string hoja = $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}";
-                string colA = Preferences.Default.Get("ColTracking_A", "A");
-                string colB = Preferences.Default.Get("ColTracking_B", "B");
-
                 foreach (var ubi in pendientes)
                 {
-                    bool ok = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, colA, colB, ubi.Id, ubi);
+                    if (string.IsNullOrWhiteSpace(ubi.HojaTracking) ||
+                        string.IsNullOrWhiteSpace(ubi.ColumnaTrackingA) ||
+                        string.IsNullOrWhiteSpace(ubi.ColumnaTrackingB) || ubi.FilaTracking <= 0)
+                        continue;
+
+                    bool ok = await _sheets.SubirPuntoGPSTiempoRealAsync(
+                        ubi.HojaTracking, ubi.ColumnaTrackingA, ubi.ColumnaTrackingB, ubi.FilaTracking, ubi);
                     if (ok) await _dbLocal.BorrarUbicacionAsync(ubi.Id);
                 }
             }
@@ -125,13 +134,17 @@ public partial class PaginaTerminarViaje : ContentPage
             string colA = Preferences.Default.Get("ColTracking_A", "A");
             string colB = Preferences.Default.Get("ColTracking_B", "B");
             int filaActual = Preferences.Default.Get("FilaActual_Tracking", 2);
+            string hojaTracking = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
+            punto.HojaTracking = hojaTracking;
+            punto.ColumnaTrackingA = colA;
+            punto.ColumnaTrackingB = colB;
+            punto.FilaTracking = filaActual;
 
             if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
             {
                 try
                 {
-                    string hoja = $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}";
-                    subioExitosamente = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, colA, colB, filaActual, punto);
+                    subioExitosamente = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaTracking, colA, colB, filaActual, punto);
                 }
                 catch { subioExitosamente = false; }
             }
@@ -143,7 +156,6 @@ public partial class PaginaTerminarViaje : ContentPage
             }
             else
             {
-                punto.Id = filaActual;
                 await _dbLocal.GuardarUbicacionLocalAsync(punto);
                 BtnReportar.BackgroundColor = Colors.Orange;
                 BtnReportar.Text = "GUARDADO LOCAL ⚠️";
@@ -191,16 +203,21 @@ public partial class PaginaTerminarViaje : ContentPage
                 string colA = Preferences.Default.Get("ColTracking_A", "A");
                 string colB = Preferences.Default.Get("ColTracking_B", "B");
                 int fila = Preferences.Default.Get("FilaActual_Tracking", 2);
+                string hojaTracking = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
+                punto.HojaTracking = hojaTracking;
+                punto.ColumnaTrackingA = colA;
+                punto.ColumnaTrackingB = colB;
+                punto.FilaTracking = fila;
                 bool subio = false;
 
                 if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
                 {
-                    try { subio = await _sheets.SubirPuntoGPSTiempoRealAsync($"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}", colA, colB, fila, punto); }
+                    try { subio = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaTracking, colA, colB, fila, punto); }
                     catch { subio = false; }
                 }
 
                 if (subio) Preferences.Default.Set("FilaActual_Tracking", fila + 1);
-                else { punto.Id = fila; await _dbLocal.GuardarUbicacionLocalAsync(punto); Preferences.Default.Set("FilaActual_Tracking", fila + 1); }
+                else { await _dbLocal.GuardarUbicacionLocalAsync(punto); Preferences.Default.Set("FilaActual_Tracking", fila + 1); }
             }
         }
         catch { }
@@ -212,6 +229,25 @@ public partial class PaginaTerminarViaje : ContentPage
         if (!confirmar) return;
 
         IndicadorCarga.IsVisible = true;
+
+        BtnArribo.IsEnabled = false;
+        BtnReportar.IsEnabled = false;
+        _isTrackingRunning = false;
+        _ctsTracking?.Cancel();
+
+        bool coordenadaFinalGuardada = await CapturarYGuardarPuntoFinalAsync();
+        if (!coordenadaFinalGuardada)
+        {
+            IndicadorCarga.IsVisible = false;
+            BtnArribo.IsEnabled = true;
+            BtnReportar.IsEnabled = true;
+            _isTrackingRunning = true;
+            _ = IniciarTimerTracking();
+            await DisplayAlert("Ubicación requerida",
+                "No se pudo obtener la ubicación final. Activa el GPS y concede el permiso de ubicación antes de marcar la llegada.",
+                "OK");
+            return;
+        }
 
         // RESTAURACIÓN: Cálculo de duración de viaje
         string horaLlegadaReal = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
@@ -242,11 +278,64 @@ public partial class PaginaTerminarViaje : ContentPage
         IndicadorCarga.IsVisible = false;
     }
 
+    private async Task<bool> CapturarYGuardarPuntoFinalAsync()
+    {
+        try
+        {
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            var request = new GeolocationRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(15));
+            var location = await Geolocation.Default.GetLocationAsync(request, cts.Token);
+            if (location == null) return false;
+
+            await _semaforoTracking.WaitAsync();
+            try
+            {
+                string colA = Preferences.Default.Get("ColTracking_A", "A");
+                string colB = Preferences.Default.Get("ColTracking_B", "B");
+                int fila = Preferences.Default.Get("FilaActual_Tracking", 2);
+                string hoja = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
+                var punto = new UbicacionViaje
+                {
+                    FolioViaje = _folioActual,
+                    Latitud = location.Latitude,
+                    Longitud = location.Longitude,
+                    FechaHora = DateTime.Now,
+                    Sincronizado = false,
+                    HojaTracking = hoja,
+                    ColumnaTrackingA = colA,
+                    ColumnaTrackingB = colB,
+                    FilaTracking = fila
+                };
+
+                bool subio = false;
+                if (_sheets != null && Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
+                {
+                    subio = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, colA, colB, fila, punto);
+                    if (subio)
+                        await _sheets.ActualizarVinculoMapaRutaAsync(_folioActual, hoja, colA, colB);
+                }
+
+                if (!subio) await _dbLocal.GuardarUbicacionLocalAsync(punto);
+                Preferences.Default.Set("FilaActual_Tracking", fila + 1);
+                return true;
+            }
+            finally
+            {
+                _semaforoTracking.Release();
+            }
+        }
+        catch (Exception ex)
+        {
+            await GestorErrores.GuardarErrorAsync(ex, "UbicacionFinalViaje", Preferences.Get("UsuarioLogeado", "Desconocido"));
+            return false;
+        }
+    }
+
     private async void OnTerminarViajeClicked(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(KmLlegadaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleLlegadaEntry.Text) || string.IsNullOrEmpty(_rutaFotoTemporal))
+        if (string.IsNullOrWhiteSpace(KmLlegadaEntry.Text) || string.IsNullOrWhiteSpace(CombustibleLlegadaEntry.Text) || _rutasFotosTemporales.Count == 0)
         {
-            await DisplayAlert("Atención", "Captura kilometraje, combustible y foto obligatoria.", "OK");
+            await DisplayAlert("Atención", "Captura kilometraje, combustible y al menos una foto.", "OK");
             return;
         }
 
@@ -273,33 +362,64 @@ public partial class PaginaTerminarViaje : ContentPage
         string fechaFinReal = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         string horaLlegadaReal = Preferences.Default.Get("HoraLlegadaReal_" + _folioActual, fechaFinReal);
 
-        string rutaSeguraFoto = Path.Combine(FileSystem.AppDataDirectory, $"evidencia_{_folioActual}.jpg");
-        File.Copy(_rutaFotoTemporal, rutaSeguraFoto, true);
+        string carpetaLocalViaje = Path.Combine(FileSystem.AppDataDirectory, "EvidenciasViajes", _folioActual);
+        Directory.CreateDirectory(carpetaLocalViaje);
+        var rutasSeguras = new List<string>();
+
+        for (int i = 0; i < _rutasFotosTemporales.Count; i++)
+        {
+            string extension = Path.GetExtension(_rutasFotosTemporales[i]);
+            if (string.IsNullOrWhiteSpace(extension)) extension = ".jpg";
+            string rutaSegura = Path.Combine(carpetaLocalViaje, $"evidencia_{i + 1:D2}{extension}");
+            File.Copy(_rutasFotosTemporales[i], rutaSegura, true);
+            rutasSeguras.Add(rutaSegura);
+        }
 
         // Registro offline preventivo (ahora con los datos calculados)
         Preferences.Default.Set($"Offline_Pendiente_{_folioActual}", true);
+        Preferences.Default.Set($"Offline_IdOperador_{_folioActual}", Preferences.Get("UsuarioLogeado", "SinID"));
         Preferences.Default.Set($"Offline_KmLlegada_{_folioActual}", KmLlegadaEntry.Text);
         Preferences.Default.Set($"Offline_FuelLlegada_{_folioActual}", CombustibleLlegadaEntry.Text);
-        Preferences.Default.Set($"Offline_RutaFoto_{_folioActual}", rutaSeguraFoto);
+        Preferences.Default.Set($"Offline_RutasFotos_{_folioActual}", JsonSerializer.Serialize(rutasSeguras));
+        Preferences.Default.Set($"Offline_FechaFin_{_folioActual}", fechaFinReal);
+        Preferences.Default.Set($"Offline_HoraLlegada_{_folioActual}", horaLlegadaReal);
+        Preferences.Default.Set($"Offline_Obs_{_folioActual}", ObservacionesEditor.Text ?? "N/A");
         Preferences.Default.Set($"Offline_Duracion_{_folioActual}", duracionViaje);
         Preferences.Default.Set($"Offline_Recorrido_{_folioActual}", recorridoKmStr);
         Preferences.Default.Set($"Offline_Consumo_{_folioActual}", consumoLitrosStr);
+
+        var foliosPendientes = Preferences.Default.Get("ListaFoliosOffline", "")
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foliosPendientes.Add(_folioActual);
+        Preferences.Default.Set("ListaFoliosOffline", string.Join(",", foliosPendientes));
+
+        bool guardadoEnNube = false;
 
         if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
         {
             try
             {
                 string idOp = Preferences.Default.Get("UsuarioLogeado", "SinID");
-                string link = await _drive.SubirEvidenciaViajeRapidoAsync(rutaSeguraFoto, idOp, _folioActual);
+                string link = await _drive.SubirEvidenciasViajeAsync(rutasSeguras, idOp, _folioActual);
 
                 await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", horaLlegadaReal);
 
                 // RESTAURACIÓN: Pasar los datos calculados a la función final en lugar de "N/A"
                 bool ok = await _sheets.FinalizarViajeAsync(_folioActual, fechaFinReal, KmLlegadaEntry.Text, CombustibleLlegadaEntry.Text, ObservacionesEditor.Text, link, duracionViaje, recorridoKmStr, consumoLitrosStr);
 
-                if (ok) Preferences.Default.Remove($"Offline_Pendiente_{_folioActual}");
+                if (ok)
+                {
+                    guardadoEnNube = true;
+                    Preferences.Default.Remove($"Offline_Pendiente_{_folioActual}");
+                    foliosPendientes.Remove(_folioActual);
+                    Preferences.Default.Set("ListaFoliosOffline", string.Join(",", foliosPendientes));
+                }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                await GestorErrores.GuardarErrorAsync(ex, "SubirEvidenciasViaje", Preferences.Get("UsuarioLogeado", "Desconocido"));
+            }
         }
 
         // --- LIMPIEZA PROFUNDA DE CACHÉ ---
@@ -312,13 +432,17 @@ public partial class PaginaTerminarViaje : ContentPage
         Preferences.Default.Remove("KmSalida_" + _folioActual);
         Preferences.Default.Remove("FuelSalida_" + _folioActual);
         Preferences.Default.Remove("FilaActual_Tracking"); // Para que el GPS reinicie desde arriba
+        Preferences.Default.Remove("HojaActual_Tracking");
 
         Preferences.Default.Set("ViajeEnCurso", false);
         Preferences.Default.Remove("FolioPendiente");
         _isTrackingRunning = false;
         _ctsTracking?.Cancel();
 
-        await DisplayAlert("Éxito", "Viaje cerrado y guardado.", "OK");
+        string mensajeCierre = guardadoEnNube
+            ? $"Viaje cerrado. Se guardaron {_rutasFotosTemporales.Count} foto(s) en su carpeta de Drive."
+            : "Viaje cerrado y guardado localmente. Las fotos se subirán cuando haya conexión.";
+        await DisplayAlert("Éxito", mensajeCierre, "OK");
         Application.Current.MainPage = new NavigationPage(new PaginaMenu());
     }
 
@@ -329,10 +453,18 @@ public partial class PaginaTerminarViaje : ContentPage
             FileResult photo = await MediaPicker.Default.CapturePhotoAsync();
             if (photo != null)
             {
-                _rutaFotoTemporal = photo.FullPath;
-                ImgPreview.Source = ImageSource.FromStream(async (c) => await photo.OpenReadAsync());
-                ImgPreview.IsVisible = true;
+                _rutasFotosTemporales.Add(photo.FullPath);
+                LblCantidadFotos.Text = $"{_rutasFotosTemporales.Count} foto(s) agregada(s)";
             }
+        }
+    }
+
+    private void OnEliminarFotoClicked(object sender, EventArgs e)
+    {
+        if (sender is Button { CommandParameter: string ruta })
+        {
+            _rutasFotosTemporales.Remove(ruta);
+            LblCantidadFotos.Text = $"{_rutasFotosTemporales.Count} foto(s) agregada(s)";
         }
     }
 }

@@ -1,5 +1,6 @@
-using LogiApp.Servicios;
+ï»¿using LogiApp.Servicios;
 using Google.Apis.Sheets.v4.Data;
+using System.Collections.ObjectModel;
 
 namespace LogiApp.Vistas;
 
@@ -11,7 +12,7 @@ public partial class PaginaMantenimiento : ContentPage
     private ConsultasGoogleSheets _sheets;
     private ConsultasGoogleDrive _driveService;
     private readonly ConexionGoogleAuth _authService = new();
-    private string _rutaFotoLocal = string.Empty;
+    private readonly ObservableCollection<string> _rutasFotos = new();
 
     #endregion
 
@@ -20,14 +21,16 @@ public partial class PaginaMantenimiento : ContentPage
     public PaginaMantenimiento()
     {
         InitializeComponent();
+        ListaFotos.ItemsSource = _rutasFotos;
+        BtnGuardarMantenimiento.IsEnabled = false;
         InicializarDatos();
     }
 
     #endregion
 
-    #region Inicialización de Datos
+    #region InicializaciÃ³n de Datos
 
-    // Configura los servicios de Google y carga la información inicial.
+    // Configura los servicios de Google y carga la informaciÃ³n inicial.
     private async void InicializarDatos()
     {
         try
@@ -39,10 +42,11 @@ public partial class PaginaMantenimiento : ContentPage
             _driveService = new ConsultasGoogleDrive(dService);
 
             await CargarUnidades();
+            BtnGuardarMantenimiento.IsEnabled = true;
         }
         catch (Exception ex)
         {
-            // Blindaje: Registra error de inicialización
+            // Blindaje: Registra error de inicializaciÃ³n
             await GestorErrores.GuardarErrorAsync(ex, "InicializarDatos - Mantenimiento", Preferences.Get("UsuarioLogeado", "Desconocido"));
             await DisplayAlert("Error", "No se pudo conectar con el servidor.", "OK");
         }
@@ -91,11 +95,11 @@ public partial class PaginaMantenimiento : ContentPage
 
         if (UnidadPicker.SelectedIndex == -1)
         {
-            await DisplayAlert("Atención", "Selecciona una unidad de la lista.", "OK");
+            await DisplayAlert("AtenciÃ³n", "Selecciona una unidad de la lista.", "OK");
             return;
         }
 
-        // 1. Primero validamos que no estén vacíos
+        // 1. Primero validamos que no estÃ©n vacÃ­os
         bool faltanDatos =
             string.IsNullOrWhiteSpace(LugarEntry.Text) ||
             string.IsNullOrWhiteSpace(EstablecimientoEntry.Text) ||
@@ -106,18 +110,18 @@ public partial class PaginaMantenimiento : ContentPage
 
         if (faltanDatos)
         {
-            await DisplayAlert("Campos Vacíos", "Por favor completa todos los detalles.", "OK");
+            await DisplayAlert("Campos VacÃ­os", "Por favor completa todos los detalles.", "OK");
             return;
         }
 
-        // 2. Aseguramos que kilometraje y costo sean números
+        // 2. Aseguramos que kilometraje y costo sean nÃºmeros
         if (!double.TryParse(KilometrajeEntry.Text, out _) || !double.TryParse(CostoEntry.Text, out _))
         {
             // Lanzamos un error controlado para que el Gestor de Errores lo capture
             Exception exFormato = new Exception("Format: El kilometraje o costo contienen letras.");
-            await GestorErrores.GuardarErrorAsync(exFormato, "ValidaciónMantenimiento", idOperador);
+            await GestorErrores.GuardarErrorAsync(exFormato, "ValidaciÃ³nMantenimiento", idOperador);
 
-            await DisplayAlert("Error de Formato", "El Kilometraje y el Costo deben ser números.", "OK");
+            await DisplayAlert("Error de Formato", "El Kilometraje y el Costo deben ser nÃºmeros.", "OK");
             return;
         }
 
@@ -130,10 +134,9 @@ public partial class PaginaMantenimiento : ContentPage
             string unidadTexto = UnidadPicker.SelectedItem.ToString();
             string linkCarpeta = "Sin evidencia";
 
-            if (!string.IsNullOrEmpty(_rutaFotoLocal))
+            if (_rutasFotos.Count > 0)
             {
-                var resultadoDrive = await _driveService.SubirEvidenciaMantenimientoAsync(_rutaFotoLocal, idOperador, nuevoFolio);
-                linkCarpeta = resultadoDrive.folderLink;
+                linkCarpeta = await _driveService.SubirEvidenciasMantenimientoAsync(_rutasFotos, idOperador, nuevoFolio);
             }
 
             await _sheets.RegistrarMantenimientoAsync(
@@ -153,10 +156,10 @@ public partial class PaginaMantenimiento : ContentPage
                 linkCarpeta
             );
 
-            // Blindaje: Aprovechamos el éxito para sincronizar errores previos pendientes
+            // Blindaje: Aprovechamos el Ã©xito para sincronizar errores previos pendientes
             _ = GestorErrores.SincronizarLogsPendientesAsync(_sheets);
 
-            await DisplayAlert("Éxito", "Reporte guardado con link a evidencia.", "OK");
+            await DisplayAlert("Ã‰xito", "Reporte guardado con link a evidencia.", "OK");
             Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
         catch (Exception ex)
@@ -181,21 +184,32 @@ public partial class PaginaMantenimiento : ContentPage
 
             if (photo != null)
             {
-                _rutaFotoLocal = photo.FullPath;
-                BtnAdjuntar.Text = "Imagen Cargada";
+                _rutasFotos.Add(photo.FullPath);
+                BtnAdjuntar.Text = $"ðŸ“· Agregar otra foto ({_rutasFotos.Count})";
                 BtnAdjuntar.BackgroundColor = Microsoft.Maui.Graphics.Color.FromArgb("#4CAF50");
                 BtnAdjuntar.TextColor = Microsoft.Maui.Graphics.Color.FromArgb("#FFFFFF");
             }
         }
         catch (Exception ex)
         {
-            // Blindaje: Registra error de acceso a galería
+            // Blindaje: Registra error de acceso a galerÃ­a
             await GestorErrores.GuardarErrorAsync(ex, "AdjuntarEvidencia", Preferences.Get("UsuarioLogeado", "Desconocido"));
             await DisplayAlert("Error", "No se pudo cargar la imagen.", "OK");
         }
     }
 
-    // Regresa al menú principal de la aplicación.
+    private void OnEliminarFotoClicked(object sender, EventArgs e)
+    {
+        if (sender is Button { CommandParameter: string ruta })
+        {
+            _rutasFotos.Remove(ruta);
+            BtnAdjuntar.Text = _rutasFotos.Count == 0
+                ? "ðŸ“· Adjuntar Evidencia"
+                : $"ðŸ“· Agregar otra foto ({_rutasFotos.Count})";
+        }
+    }
+
+    // Regresa al menÃº principal de la aplicaciÃ³n.
     private async void OnVolverClicked(object sender, EventArgs e)
     {
         Application.Current.MainPage = new NavigationPage(new Vistas.PaginaMenu());

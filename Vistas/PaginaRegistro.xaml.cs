@@ -31,6 +31,7 @@ public partial class PaginaRegistro : ContentPage
     public PaginaRegistro()
     {
         InitializeComponent();
+        BtnRegistrarDatos.IsEnabled = false;
         InicializarConexion();
 
         try
@@ -73,6 +74,7 @@ public partial class PaginaRegistro : ContentPage
             var (sService, dService) = await _authService.ObtenerServiciosAsync();
             _sheets = new ConsultasGoogleSheets(sService);
             _drive = new ConsultasGoogleDrive(dService);
+            if (!Preferences.ContainsKey("IdPendiente")) BtnRegistrarDatos.IsEnabled = true;
         }
         catch (Exception ex)
         {
@@ -185,7 +187,7 @@ public partial class PaginaRegistro : ContentPage
                 _idOperadorGenerado, NombreEntry.Text, EdadEntry.Text, CorreoEntry.Text ?? "",
                 Tel1Entry.Text, Tel2Entry.Text ?? "", ClaveInterbancariaEntry.Text,
                 "'" + NumLicenciaEntry.Text, VigenciaLicenciaPicker.Date.ToString("d"),
-                VigenciaMedicoPicker.Date.ToString("d"), linkCarpeta, ContrasenaOperadorEntry.Text
+                VigenciaMedicoPicker.Date.ToString("d"), linkCarpeta, SeguridadPassword.CrearHash(ContrasenaOperadorEntry.Text)
             );
 
             // Persistencia local para recuperación en Fase 2
@@ -193,7 +195,6 @@ public partial class PaginaRegistro : ContentPage
             Preferences.Set("CarpetaPendiente", _folderIdDestino);
             Preferences.Set("CorreoPendiente", CorreoEntry.Text ?? "");
             Preferences.Set("NombrePendiente", NombreEntry.Text);
-            Preferences.Set("PassPendiente", ContrasenaOperadorEntry.Text);
 
             BloquearFormulario(true);
             BtnRegistrarDatos.IsEnabled = false;
@@ -256,19 +257,28 @@ public partial class PaginaRegistro : ContentPage
             string correo = Preferences.Get("CorreoPendiente", CorreoEntry.Text);
             string nombre = Preferences.Get("NombrePendiente", NombreEntry.Text);
 
-            try
-            {
-                await _emailService.EnviarCredencialesAsync(correo, nombre, _idOperadorGenerado);
-            }
-            catch (Exception ex)
-            {
-                // Registramos fallo en email pero no bloqueamos el flujo al usuario, ya que la parte crítica (Drive) ya se completó.
-                await GestorErrores.GuardarErrorAsync(ex, "EnvioEmailCredenciales", _idOperadorGenerado);
-            }
+            bool correoEnviado = await _emailService.EnviarCredencialesAsync(correo, nombre, _idOperadorGenerado);
+            if (!correoEnviado)
+                await GestorErrores.GuardarErrorAsync(new Exception("No fue posible enviar el correo de registro."), "EnvioEmailCredenciales", _idOperadorGenerado);
 
-            await DisplayAlert("Éxito", "Expediente completo y credenciales enviadas.", "Finalizar");
+            bool avisoAdministradorEnviado = await _emailService.EnviarAvisoNuevoOperadorAsync(
+                _idOperadorGenerado, nombre, correo);
+            if (!avisoAdministradorEnviado)
+                await GestorErrores.GuardarErrorAsync(
+                    new Exception("No fue posible notificar al administrador."),
+                    "AvisoAdministradorNuevoOperador",
+                    _idOperadorGenerado);
 
-            Preferences.Clear();
+            string mensaje = correoEnviado && avisoAdministradorEnviado
+                ? "Expediente completo. Se notificó al operador y al administrador."
+                : "Expediente completo, pero uno o más correos no pudieron enviarse.";
+            await DisplayAlert("Éxito", mensaje, "Finalizar");
+
+            Preferences.Remove("IdPendiente");
+            Preferences.Remove("CarpetaPendiente");
+            Preferences.Remove("CorreoPendiente");
+            Preferences.Remove("NombrePendiente");
+            Preferences.Remove("PassPendiente");
             _rutasArchivos.Clear();
             Application.Current.MainPage = new NavigationPage(new Vistas.PaginaLogeo());
         }

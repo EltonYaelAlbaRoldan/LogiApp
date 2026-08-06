@@ -46,9 +46,12 @@ public partial class PaginaMenu : ContentPage
                 {
                     Preferences.Remove("UsuarioLogeado");
 
-                    string mensaje = operador?.Estado == "INACTIVO"
-                        ? "Tu cuenta ha sido desactivada por el administrador."
-                        : "Sesión expirada o cuenta no válida.";
+                    string mensaje = operador?.Estado switch
+                    {
+                        "INACTIVO" => "Tu cuenta ha sido desactivada por el administrador.",
+                        "VALIDACION" => "Tu cuenta todavía está pendiente de validación.",
+                        _ => "Sesión expirada o cuenta no válida."
+                    };
 
                     await DisplayAlert("Sesión Cerrada", mensaje, "OK");
                     Application.Current.MainPage = new NavigationPage(new InicioSesion());
@@ -61,8 +64,10 @@ public partial class PaginaMenu : ContentPage
         }
         catch (Exception ex)
         {
-            // Si algo falla en la conexión, evitamos que la app truene
-            Console.WriteLine($"Error en OnAppearing: {ex.Message}");
+            BtnModuloViajes.IsEnabled = false;
+            BtnModuloViajes.BackgroundColor = Colors.Gray;
+            BtnModuloViajes.Text = "SIN CONEXIÓN - BLOQUEADO";
+            await GestorErrores.GuardarErrorAsync(ex, "ValidarOperadorMenu", Preferences.Get("UsuarioLogeado", "Desconocido"));
         }
 
         ActualizarEstadoBotones();
@@ -216,6 +221,13 @@ public partial class PaginaMenu : ContentPage
 
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
+        if (Preferences.Default.Get("ViajeEnCurso", false))
+        {
+            string folio = Preferences.Default.Get("FolioPendiente", "");
+            await DisplayAlert("Viaje en curso", $"Debes finalizar el viaje {folio} antes de cerrar sesión.", "OK");
+            return;
+        }
+
         bool deseaSalir = await DisplayAlert("Cerrar Sesión", "¿Está seguro?", "Sí", "No");
         if (deseaSalir)
         {
