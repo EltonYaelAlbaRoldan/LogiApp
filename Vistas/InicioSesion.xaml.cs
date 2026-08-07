@@ -145,7 +145,7 @@ public partial class InicioSesion : ContentPage
             string inputId = await DisplayPromptAsync("Recuperación", "Ingresa tu ID de Operador:", "Continuar", "Cancelar");
             if (string.IsNullOrWhiteSpace(inputId)) return;
 
-            idOpFinal = inputId.Trim(); // Se asigna el valor ingresado
+            idOpFinal = inputId.Trim().ToUpperInvariant();
 
             var operador = await _sheets.ObtenerDatosOperadorAsync(idOpFinal);
             if (operador == null || string.IsNullOrEmpty(operador.Correo))
@@ -204,7 +204,13 @@ public partial class InicioSesion : ContentPage
             }
 
             bool actualizada = await _sheets.ActualizarPasswordAsync(idOpFinal, nuevaPassword);
-            if (!actualizada) throw new Exception("No se pudo actualizar la contraseña en Sheets.");
+            if (!actualizada)
+            {
+                string detalle = string.IsNullOrWhiteSpace(_sheets.UltimoError)
+                    ? "No se pudo actualizar la contraseña en Sheets."
+                    : _sheets.UltimoError;
+                throw new Exception(detalle);
+            }
 
             Preferences.Default.Remove("BloqueoRecuperacion");
             await DisplayAlert("Éxito", "Tu contraseña fue actualizada.", "Iniciar sesión");

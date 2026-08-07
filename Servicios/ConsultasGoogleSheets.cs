@@ -10,6 +10,7 @@ public class ConsultasGoogleSheets
     #region CONFIGURACIÓN
     private readonly SheetsService _service;
     private readonly string _spreadsheetId = "1Gl41wM-3OPepAxE6K6TjRGbCJsfjjYOSlubkIaCTjs0";
+    public string UltimoError { get; private set; } = string.Empty;
 
     public ConsultasGoogleSheets(SheetsService service) => _service = service;
     #endregion
@@ -230,10 +231,15 @@ public class ConsultasGoogleSheets
     }
     public async Task<bool> ActualizarPasswordAsync(string idOperador, string nuevaPass)
     {
+        UltimoError = string.Empty;
         try
         {
             int fila = await ObtenerNumeroFilaPorIdAsync(idOperador);
-            if (fila == -1) return false;
+            if (fila == -1)
+            {
+                UltimoError = $"No se encontró la fila del operador {idOperador?.Trim().ToUpperInvariant()}.";
+                return false;
+            }
 
             string rango = $"Operadores!L{fila}";
             var body = new ValueRange { Values = new List<IList<object>> { new List<object> { SeguridadPassword.CrearHash(nuevaPass) } } };
@@ -244,7 +250,12 @@ public class ConsultasGoogleSheets
             await updateRequest.ExecuteAsync();
             return true;
         }
-        catch { return false; }
+        catch (Exception ex)
+        {
+            UltimoError = ex.Message;
+            System.Diagnostics.Debug.WriteLine($"Error al actualizar contraseña: {ex}");
+            return false;
+        }
     }
     #endregion
 
@@ -369,12 +380,14 @@ public class ConsultasGoogleSheets
     {
         var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Operadores!A:A").ExecuteAsync();
         var values = response.Values;
+        string idNormalizado = idOperador?.Trim().ToUpperInvariant() ?? string.Empty;
 
         if (values != null)
         {
             for (int i = 0; i < values.Count; i++)
             {
-                if (values[i].Count > 0 && values[i][0].ToString() == idOperador)
+                if (values[i].Count > 0 &&
+                    values[i][0]?.ToString()?.Trim().ToUpperInvariant() == idNormalizado)
                     return i + 1;
             }
         }
