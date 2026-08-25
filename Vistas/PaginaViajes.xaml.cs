@@ -166,9 +166,8 @@ public partial class PaginaViajes : ContentPage
                 Preferences.Default.Set("FuelSalida_" + folio, CombustibleEntry.Text);
 
                 string hojaMes = $"Historial_{DateTime.Now.ToString("MMMM")}_{DateTime.Now.Year}";
-                var (cA, cB, sId) = await _sheets.ObtenerColumnasLibresAsync(hojaMes);
-                await _sheets.InsertarFolioEncabezadoAsync(hojaMes, cA, folio);
-                bool vinculoOk = await _sheets.CrearVinculoHistorialAsync(folio, hojaMes, sId, cA);
+                var (filaTracking, sId) = await _sheets.ObtenerOCrearFilaTrackingAsync(hojaMes, folio);
+                bool vinculoOk = await _sheets.CrearVinculoHistorialAsync(folio, hojaMes, sId, filaTracking);
 
                 if (!vinculoOk)
                 {
@@ -176,10 +175,10 @@ public partial class PaginaViajes : ContentPage
                     await DisplayAlert("Aviso", "Viaje iniciado, pero no se pudo crear el acceso directo.", "OK");
                 }
 
-                Preferences.Default.Set("ColTracking_A", cA);
-                Preferences.Default.Set("ColTracking_B", cB);
                 Preferences.Default.Set("HojaActual_Tracking", hojaMes);
-                Preferences.Default.Set("FilaActual_Tracking", 3);
+                Preferences.Default.Set("FilaActual_Tracking", filaTracking);
+                Preferences.Default.Remove("ColTracking_A");
+                Preferences.Default.Remove("ColTracking_B");
 
                 try
                 {
@@ -198,11 +197,9 @@ public partial class PaginaViajes : ContentPage
 
                         // Mandamos a la Fila 2 inmediatamente
                         primeraUbi.HojaTracking = hojaMes;
-                        primeraUbi.ColumnaTrackingA = cA;
-                        primeraUbi.ColumnaTrackingB = cB;
-                        primeraUbi.FilaTracking = 2;
+                        primeraUbi.FilaTracking = filaTracking;
 
-                        bool primeraSubidaOk = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, cA, cB, 2, primeraUbi);
+                        bool primeraSubidaOk = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, folio, filaTracking, primeraUbi);
                         if (!primeraSubidaOk)
                             await new BaseDeDatosLocal().GuardarUbicacionLocalAsync(primeraUbi);
                     }
@@ -212,9 +209,6 @@ public partial class PaginaViajes : ContentPage
                     // Si falla el GPS aquí, guardamos el error pero dejamos que el viaje inicie
                     await GestorErrores.GuardarErrorAsync(ex, "PrimeraUbicacionAuto", Preferences.Get("UsuarioLogeado", "Desconocido"));
                 }
-                // Escribir el Folio arriba (Fila 1)
-                await _sheets.InsertarFolioEncabezadoAsync(hojaMes, cA, folio);
-
                 await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
 
                 // Navegación automática a la pantalla de monitoreo/cierre

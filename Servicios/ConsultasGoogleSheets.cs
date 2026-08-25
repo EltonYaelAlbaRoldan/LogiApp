@@ -2,11 +2,15 @@
 using Google.Apis.Sheets.v4.Data;
 using LogiApp.Modelos;
 using System.Security.Cryptography;
+using System.Globalization;
 
 namespace LogiApp.Servicios;
 
 public class ConsultasGoogleSheets
 {
+    private static readonly SemaphoreSlim _semaforoTracking = new(1, 1);
+    private const int MaxCaracteresBloqueTracking = 45000;
+    private const int PrimeraColumnaRecorrido = 2;
     #region CONFIGURACIÓN
     private readonly SheetsService _service;
     private readonly string _spreadsheetId = "1Gl41wM-3OPepAxE6K6TjRGbCJsfjjYOSlubkIaCTjs0";
@@ -574,7 +578,7 @@ public class ConsultasGoogleSheets
 
     #endregion
 
-    #region SECCIÓN 7: TRACKING HORIZONTAL (A-B, D-E...)
+    #region SECCIÓN 7: TRACKING VERTICAL (UNA FILA POR VIAJE)
 
     // 1. Algoritmo para letras de columnas (Maneja A, B, AA, ZZZ...)
     private string ObtenerLetraColumna(int columna)
@@ -589,69 +593,278 @@ public class ConsultasGoogleSheets
         return nombreColumna;
     }
 
-    // 2. Busca o crea la hoja y devuelve las columnas gemelas (A-B, D-E, etc.)
-    public async Task<(string colA, string colB, string sheetId)> ObtenerColumnasLibresAsync(string nombreHoja)
+    public async Task<(int fila, string sheetId)> ObtenerOCrearFilaTrackingAsync(string nombreHoja, string folio)
     {
-        // Verificar si la hoja existe
         var spreadsheet = await _service.Spreadsheets.Get(_spreadsheetId).ExecuteAsync();
         var hoja = spreadsheet.Sheets.FirstOrDefault(s => s.Properties.Title == nombreHoja);
 
-        string sId;
-
         if (hoja == null)
         {
-            // Si no existe, la creamos
-            var addSheetRequest = new Request { AddSheet = new AddSheetRequest { Properties = new SheetProperties { Title = nombreHoja } } };
-            var batchUpdate = new BatchUpdateSpreadsheetRequest { Requests = new List<Request> { addSheetRequest } };
-            var nuevaHojaRes = await _service.Spreadsheets.BatchUpdate(batchUpdate, _spreadsheetId).ExecuteAsync();
-            sId = nuevaHojaRes.Replies[0].AddSheet.Properties.SheetId.ToString();
-            return (ObtenerLetraColumna(1), ObtenerLetraColumna(2), sId);
+            var addSheet = new Request
+            {
+                AddSheet = new AddSheetRequest
+                {
+                    Properties = new SheetProperties
+                    {
+                        Title = nombreHoja,
+                        GridProperties = new GridProperties { RowCount = 1000, ColumnCount = 26 }
+                    }
+                }
+            };
+            var creada = await _service.Spreadsheets.BatchUpdate(
+                new BatchUpdateSpreadsheetRequest { Requests = new List<Request> { addSheet } }, _spreadsheetId).ExecuteAsync();
+            hoja = new Sheet { Properties = creada.Replies[0].AddSheet.Properties };
+
+            var encabezados = new ValueRange
+            {
+                Values = new List<IList<object>> { new List<object> { "FOLIO", "RECORRIDO" } }
+            };
+            var reqEncabezados = _service.Spreadsheets.Values.Update(encabezados, _spreadsheetId, $"{nombreHoja}!A1:B1");
+            reqEncabezados.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            await reqEncabezados.ExecuteAsync();
         }
 
-        sId = hoja.Properties.SheetId.ToString();
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, $"{nombreHoja}!1:1").ExecuteAsync();
-        int numCols = (response.Values != null && response.Values.Count > 0) ? response.Values[0].Count : 0;
+        int sheetId = (int)hoja.Properties.SheetId;
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, $"{nombreHoja}!A:A").ExecuteAsync();
+        int fila = -1;
+        if (response.Values != null)
+        {
+            for (int i = 1; i < response.Values.Count; i++)
+            {
+                if (response.Values[i].Count > 0 &&
+                    string.Equals(response.Values[i][0]?.ToString()?.Trim(), folio.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    fila = i + 1;
+                    break;
+                }
+            }
+        }
 
-        // Calculamos el inicio: si hay datos, saltamos 2 columnas + 1 de espacio
-        int indiceInicio = (numCols == 0) ? 1 : numCols + 2;
+        if (fila == -1)
+        {
+            fila = Math.Max(2, (response.Values?.Count ?? 1) + 1);
+            var body = new ValueRange { Values = new List<IList<object>> { new List<object> { folio } } };
+            var req = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"{nombreHoja}!A{fila}");
+            req.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            await req.ExecuteAsync();
+        }
 
-        return (ObtenerLetraColumna(indiceInicio), ObtenerLetraColumna(indiceInicio + 1), sId);
+        await FormatearFilaTrackingAsync(sheetId, fila);
+        return (fila, sheetId.ToString(CultureInfo.InvariantCulture));
     }
 
-    // 3. Escribe un punto GPS en una FILA y COLUMNA específica (Solución a image_70ab21)
-    public async Task<bool> SubirPuntoGPSTiempoRealAsync(string hoja, string colA, string colB, int fila, UbicacionViaje p)
+    private async Task FormatearFilaTrackingAsync(int sheetId, int fila)
     {
+        var requests = new List<Request>
+        {
+            new Request
+            {
+                UpdateDimensionProperties = new UpdateDimensionPropertiesRequest
+                {
+                    Range = new DimensionRange { SheetId = sheetId, Dimension = "COLUMNS", StartIndex = 1, EndIndex = 2 },
+                    Properties = new DimensionProperties { PixelSize = 520 }, Fields = "pixelSize"
+                }
+            },
+            new Request
+            {
+                UpdateDimensionProperties = new UpdateDimensionPropertiesRequest
+                {
+                    Range = new DimensionRange { SheetId = sheetId, Dimension = "ROWS", StartIndex = fila - 1, EndIndex = fila },
+                    Properties = new DimensionProperties { PixelSize = 30 }, Fields = "pixelSize"
+                }
+            },
+            new Request
+            {
+                RepeatCell = new RepeatCellRequest
+                {
+                    Range = new GridRange { SheetId = sheetId, StartRowIndex = fila - 1, EndRowIndex = fila, StartColumnIndex = 1, EndColumnIndex = 2 },
+                    Cell = new CellData { UserEnteredFormat = new CellFormat { WrapStrategy = "CLIP", VerticalAlignment = "TOP" } },
+                    Fields = "userEnteredFormat.wrapStrategy,userEnteredFormat.verticalAlignment"
+                }
+            }
+        };
+        await _service.Spreadsheets.BatchUpdate(
+            new BatchUpdateSpreadsheetRequest { Requests = requests }, _spreadsheetId).ExecuteAsync();
+    }
+
+    private async Task AsegurarColumnasAsync(int sheetId, int columnasActuales, int columnaNecesaria)
+    {
+        if (columnaNecesaria <= columnasActuales) return;
+        var request = new Request
+        {
+            AppendDimension = new AppendDimensionRequest
+            {
+                SheetId = sheetId, Dimension = "COLUMNS", Length = Math.Max(5, columnaNecesaria - columnasActuales)
+            }
+        };
+        await _service.Spreadsheets.BatchUpdate(
+            new BatchUpdateSpreadsheetRequest { Requests = new List<Request> { request } }, _spreadsheetId).ExecuteAsync();
+    }
+
+    private async Task FormatearCeldaRecorridoAsync(int sheetId, int fila, int columna)
+    {
+        var requests = new List<Request>
+        {
+            new Request
+            {
+                UpdateDimensionProperties = new UpdateDimensionPropertiesRequest
+                {
+                    Range = new DimensionRange { SheetId = sheetId, Dimension = "COLUMNS", StartIndex = columna - 1, EndIndex = columna },
+                    Properties = new DimensionProperties { PixelSize = 520 }, Fields = "pixelSize"
+                }
+            },
+            new Request
+            {
+                RepeatCell = new RepeatCellRequest
+                {
+                    Range = new GridRange { SheetId = sheetId, StartRowIndex = fila - 1, EndRowIndex = fila, StartColumnIndex = columna - 1, EndColumnIndex = columna },
+                    Cell = new CellData { UserEnteredFormat = new CellFormat { WrapStrategy = "CLIP", VerticalAlignment = "TOP" } },
+                    Fields = "userEnteredFormat.wrapStrategy,userEnteredFormat.verticalAlignment"
+                }
+            }
+        };
+        await _service.Spreadsheets.BatchUpdate(
+            new BatchUpdateSpreadsheetRequest { Requests = requests }, _spreadsheetId).ExecuteAsync();
+    }
+
+    private static bool TryParsearLineaTracking(string linea, out double latitud, out double longitud)
+    {
+        latitud = longitud = 0;
+        int separador = linea.LastIndexOf(':');
+        if (separador < 0) return false;
+        string[] partes = linea[(separador + 1)..].Split(',', StringSplitOptions.TrimEntries);
+        return partes.Length == 2 &&
+            double.TryParse(partes[0], NumberStyles.Float, CultureInfo.InvariantCulture, out latitud) &&
+            double.TryParse(partes[1], NumberStyles.Float, CultureInfo.InvariantCulture, out longitud);
+    }
+
+    private static bool EsDuplicadoConsecutivo(string ultimaLinea, UbicacionViaje punto) =>
+        TryParsearLineaTracking(ultimaLinea, out double lat, out double lon) &&
+        Math.Abs(lat - punto.Latitud) < 0.000001 && Math.Abs(lon - punto.Longitud) < 0.000001;
+
+    private async Task ColorearExtremosTrackingAsync(int sheetId, int fila, IReadOnlyList<string> bloques)
+    {
+        int totalLineas = bloques.Sum(b => b.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length);
+        if (totalLineas == 0) return;
+
+        var negro = new TextFormat { ForegroundColor = new Google.Apis.Sheets.v4.Data.Color { Red = 0.12f, Green = 0.12f, Blue = 0.12f } };
+        var verde = new TextFormat { ForegroundColor = new Google.Apis.Sheets.v4.Data.Color { Red = 0.10f, Green = 0.55f, Blue = 0.20f }, Bold = true };
+        var rojo = new TextFormat { ForegroundColor = new Google.Apis.Sheets.v4.Data.Color { Red = 0.85f, Green = 0.12f, Blue = 0.12f }, Bold = true };
+        var requests = new List<Request>();
+        int ultimaCelda = -1;
+        for (int i = bloques.Count - 1; i >= 0; i--)
+        {
+            if (!string.IsNullOrEmpty(bloques[i])) { ultimaCelda = i; break; }
+        }
+
+        for (int i = 0; i < bloques.Count; i++)
+        {
+            string contenido = bloques[i];
+            if (string.IsNullOrEmpty(contenido)) continue;
+            var estilos = new SortedDictionary<int, TextFormat> { [0] = negro };
+            string[] lineas = contenido.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+            if (i == 0)
+            {
+                estilos[0] = verde;
+                if (contenido.Length > lineas[0].Length)
+                    estilos[lineas[0].Length] = negro;
+            }
+
+            if (totalLineas > 1 && i == ultimaCelda)
+            {
+                int inicioUltima = contenido.LastIndexOf(lineas[^1], StringComparison.Ordinal);
+                estilos[inicioUltima] = rojo;
+            }
+
+            var cellData = new CellData
+            {
+                TextFormatRuns = estilos.Select(e => new TextFormatRun { StartIndex = e.Key, Format = e.Value }).ToList()
+            };
+            requests.Add(new Request
+            {
+                UpdateCells = new UpdateCellsRequest
+                {
+                    Range = new GridRange
+                    {
+                        SheetId = sheetId, StartRowIndex = fila - 1, EndRowIndex = fila,
+                        StartColumnIndex = i + 1, EndColumnIndex = i + 2
+                    },
+                    Rows = new List<RowData> { new RowData { Values = new List<CellData> { cellData } } },
+                    Fields = "textFormatRuns"
+                }
+            });
+        }
+
+        if (requests.Count > 0)
+            await _service.Spreadsheets.BatchUpdate(
+                new BatchUpdateSpreadsheetRequest { Requests = requests }, _spreadsheetId).ExecuteAsync();
+    }
+
+    public async Task<bool> SubirPuntoGPSTiempoRealAsync(string hoja, string folio, int fila, UbicacionViaje p)
+    {
+        await _semaforoTracking.WaitAsync();
         try
         {
-            var valores = new List<IList<object>> {
-            new List<object> { p.FechaHora.ToString("dd/MM HH:mm:ss"), $"{p.Latitud}, {p.Longitud}" }
-        };
+            var spreadsheet = await _service.Spreadsheets.Get(_spreadsheetId).ExecuteAsync();
+            var sheet = spreadsheet.Sheets.FirstOrDefault(s => s.Properties.Title == hoja);
+            if (sheet == null) return false;
+            int sheetId = (int)sheet.Properties.SheetId;
+            int columnasActuales = sheet.Properties.GridProperties?.ColumnCount ?? 26;
 
-            var valueRange = new ValueRange { Values = valores };
-            string rangoExacto = $"{hoja}!{colA}{fila}:{colB}{fila}";
+            if (fila < 2) (fila, _) = await ObtenerOCrearFilaTrackingAsync(hoja, folio);
 
-            var request = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, rangoExacto);
-            request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            string ultimaColumna = ObtenerLetraColumna(columnasActuales);
+            var response = await _service.Spreadsheets.Values.Get(
+                _spreadsheetId, $"{hoja}!B{fila}:{ultimaColumna}{fila}").ExecuteAsync();
+            var bloques = response.Values?.FirstOrDefault()?.Select(x => x?.ToString() ?? "").ToList()
+                ?? new List<string>();
+            int indiceBloque = Math.Max(0, bloques.Count - 1);
+            string bloqueActual = bloques.Count == 0 ? string.Empty : bloques[indiceBloque];
+            string ultimaLinea = bloqueActual.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault()?.Trim() ?? string.Empty;
+            if (EsDuplicadoConsecutivo(ultimaLinea, p)) return true;
 
+            string linea = $"{p.FechaHora:dd/MM HH:mm} : {p.Latitud.ToString("G17", CultureInfo.InvariantCulture)}, {p.Longitud.ToString("G17", CultureInfo.InvariantCulture)}";
+            string contenido = string.IsNullOrEmpty(bloqueActual) ? linea : $"{bloqueActual}\n{linea}";
+            if (contenido.Length > MaxCaracteresBloqueTracking)
+            {
+                indiceBloque++;
+                contenido = linea;
+            }
+
+            int columnaDestino = PrimeraColumnaRecorrido + indiceBloque;
+            await AsegurarColumnasAsync(sheetId, columnasActuales, columnaDestino);
+            await FormatearCeldaRecorridoAsync(sheetId, fila, columnaDestino);
+            string letraDestino = ObtenerLetraColumna(columnaDestino);
+            var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object> { contenido } } };
+            var request = _service.Spreadsheets.Values.Update(valueRange, _spreadsheetId, $"{hoja}!{letraDestino}{fila}");
+            request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
             await request.ExecuteAsync();
+            while (bloques.Count <= indiceBloque) bloques.Add(string.Empty);
+            bloques[indiceBloque] = contenido;
+            await ColorearExtremosTrackingAsync(sheetId, fila, bloques);
             return true;
         }
-        catch { return false; }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error al guardar tracking: {ex.Message}");
+            return false;
+        }
+        finally { _semaforoTracking.Release(); }
     }
 
-    // 4. Inserta el encabezado del Folio en la fila 1
-    public async Task InsertarFolioEncabezadoAsync(string hoja, string colA, string folio)
+    // Migra silenciosamente puntos offline creados por la versión horizontal anterior.
+    public async Task<bool> SubirPuntoGPSTiempoRealAsync(string hoja, string colA, string colB, int fila, UbicacionViaje p)
     {
-        var body = new ValueRange { Values = new List<IList<object>> { new List<object> { $"FOLIO: {folio}" } } };
-        var req = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"{hoja}!{colA}1");
-        req.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-        await req.ExecuteAsync();
+        var (filaNueva, _) = await ObtenerOCrearFilaTrackingAsync(hoja, p.FolioViaje ?? "SIN FOLIO");
+        p.FilaTracking = filaNueva;
+        return await SubirPuntoGPSTiempoRealAsync(hoja, p.FolioViaje ?? "SIN FOLIO", filaNueva, p);
     }
     #endregion
 
     #region SECCIÓN 8: VÍNCULOS DINÁMICOS AL HISTORIAL
 
-    public async Task<bool> CrearVinculoHistorialAsync(string folio, string nombreHojaMes, string sheetId, string colLetra)
+    public async Task<bool> CrearVinculoHistorialAsync(string folio, string nombreHojaMes, string sheetId, int filaTracking)
     {
         try
         {
@@ -674,8 +887,8 @@ public class ConsultasGoogleSheets
             if (filaDestino == -1) return false;
 
             // 2. Construimos la URL interna de Google Sheets
-            // gid: ID único de la pestaña | range: Celda donde inicia el folio (ej: D1)
-            string urlInterna = $"https://docs.google.com/spreadsheets/d/{_spreadsheetId}/edit#gid={sheetId}&range={colLetra}1";
+            // Cada viaje ocupa una fila; el enlace abre directamente su folio en la columna A.
+            string urlInterna = $"https://docs.google.com/spreadsheets/d/{_spreadsheetId}/edit#gid={sheetId}&range=A{filaTracking}";
 
             // 3. Creamos la fórmula de Hipervínculo (Usamos sintaxis estándar de la API)
             string formula = $"=HYPERLINK(\"{urlInterna}\"; \"📍 VER RUTA\")";
@@ -696,22 +909,32 @@ public class ConsultasGoogleSheets
         }
     }
 
-    public async Task<bool> ActualizarVinculoMapaRutaAsync(string folio, string hoja, string colA, string colB)
+    public async Task<bool> ActualizarVinculoMapaRutaAsync(string folio, string hoja, int filaTracking)
     {
         try
         {
             int filaViaje = await ObtenerNumeroFilaPorIdViajeAsync(folio);
             if (filaViaje == -1) return false;
 
+            var spreadsheet = await _service.Spreadsheets.Get(_spreadsheetId).ExecuteAsync();
+            var sheet = spreadsheet.Sheets.FirstOrDefault(s => s.Properties.Title == hoja);
+            if (sheet == null) return false;
+            int columnas = sheet.Properties.GridProperties?.ColumnCount ?? 26;
+            string ultimaColumna = ObtenerLetraColumna(columnas);
             var response = await _service.Spreadsheets.Values
-                .Get(_spreadsheetId, $"{hoja}!{colB}2:{colB}")
+                .Get(_spreadsheetId, $"{hoja}!B{filaTracking}:{ultimaColumna}{filaTracking}")
                 .ExecuteAsync();
 
-            var coordenadas = response.Values?
-                .Where(f => f.Count > 0 && !string.IsNullOrWhiteSpace(f[0]?.ToString()))
-                .Select(f => f[0].ToString().Trim())
-                .Where(c => c.Contains(','))
-                .ToList() ?? new List<string>();
+            var coordenadas = new List<string>();
+            foreach (var celda in response.Values?.FirstOrDefault() ?? new List<object>())
+            {
+                foreach (string linea in (celda?.ToString() ?? string.Empty)
+                    .Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (TryParsearLineaTracking(linea.Trim(), out double lat, out double lon))
+                        coordenadas.Add($"{lat.ToString("G17", CultureInfo.InvariantCulture)},{lon.ToString("G17", CultureInfo.InvariantCulture)}");
+                }
+            }
 
             if (coordenadas.Count < 2) return false;
 
@@ -743,6 +966,13 @@ public class ConsultasGoogleSheets
             System.Diagnostics.Debug.WriteLine("Error al crear mapa de ruta: " + ex.Message);
             return false;
         }
+    }
+
+    // Compatibilidad para llamadas o datos de la versión horizontal anterior.
+    public async Task<bool> ActualizarVinculoMapaRutaAsync(string folio, string hoja, string colA, string colB)
+    {
+        var (fila, _) = await ObtenerOCrearFilaTrackingAsync(hoja, folio);
+        return await ActualizarVinculoMapaRutaAsync(folio, hoja, fila);
     }
 
     #endregion

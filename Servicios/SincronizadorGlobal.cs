@@ -109,24 +109,30 @@ public static class SincronizadorGlobal
 
             }
 
-            // 3. Cada punto conserva su folio, hoja, columnas y fila. Así nunca se mezcla
+            // 3. Cada punto conserva su folio, hoja y fila. Así nunca se mezcla
             // con el viaje que esté abierto cuando regrese la conexión.
             var dbLocal = new BaseDeDatosLocal();
             var ubiPendientes = await dbLocal.ObtenerUbicacionesPendientesAsync();
             foreach (var ubi in ubiPendientes.OrderBy(x => x.FechaHora))
             {
-                if (string.IsNullOrWhiteSpace(ubi.HojaTracking) ||
-                    string.IsNullOrWhiteSpace(ubi.ColumnaTrackingA) ||
-                    string.IsNullOrWhiteSpace(ubi.ColumnaTrackingB) || ubi.FilaTracking <= 0)
+                if (string.IsNullOrWhiteSpace(ubi.HojaTracking) || ubi.FilaTracking <= 0)
                     continue;
 
-                bool ok = await sheets.SubirPuntoGPSTiempoRealAsync(
-                    ubi.HojaTracking, ubi.ColumnaTrackingA, ubi.ColumnaTrackingB, ubi.FilaTracking, ubi);
+                bool esFormatoAnterior = !string.IsNullOrWhiteSpace(ubi.ColumnaTrackingA) ||
+                    !string.IsNullOrWhiteSpace(ubi.ColumnaTrackingB);
+                bool ok = esFormatoAnterior
+                    ? await sheets.SubirPuntoGPSTiempoRealAsync(
+                        ubi.HojaTracking, ubi.ColumnaTrackingA ?? "A", ubi.ColumnaTrackingB ?? "B", ubi.FilaTracking, ubi)
+                    : await sheets.SubirPuntoGPSTiempoRealAsync(
+                        ubi.HojaTracking, ubi.FolioViaje ?? "SIN FOLIO", ubi.FilaTracking, ubi);
                 if (ok)
                 {
                     await dbLocal.BorrarUbicacionAsync(ubi.Id);
+                    int filaMapa = esFormatoAnterior
+                        ? (await sheets.ObtenerOCrearFilaTrackingAsync(ubi.HojaTracking, ubi.FolioViaje ?? "SIN FOLIO")).fila
+                        : ubi.FilaTracking;
                     await sheets.ActualizarVinculoMapaRutaAsync(
-                        ubi.FolioViaje, ubi.HojaTracking, ubi.ColumnaTrackingA, ubi.ColumnaTrackingB);
+                        ubi.FolioViaje ?? "SIN FOLIO", ubi.HojaTracking, filaMapa);
                 }
                 else break;
             }

@@ -40,6 +40,7 @@ public partial class PaginaTerminarViaje : ContentPage
     {
         base.OnAppearing();
         await InicializarServicio();
+        await AsegurarTrackingVerticalAsync();
         if (!_isTrackingRunning) _ = IniciarTimerTracking();
 
         if (Preferences.Default.Get("ArriboConfirmado_" + _folioActual, false))
@@ -79,6 +80,25 @@ public partial class PaginaTerminarViaje : ContentPage
         catch { }
     }
 
+    private async Task AsegurarTrackingVerticalAsync()
+    {
+        if (_sheets == null) return;
+        string hoja = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
+        bool vieneDeFormatoAnterior = !string.IsNullOrWhiteSpace(Preferences.Default.Get("ColTracking_A", "")) ||
+            !string.IsNullOrWhiteSpace(Preferences.Default.Get("ColTracking_B", ""));
+        int fila = Preferences.Default.Get("FilaActual_Tracking", 0);
+        if (!vieneDeFormatoAnterior && fila >= 2) return;
+
+        try
+        {
+            (fila, _) = await _sheets.ObtenerOCrearFilaTrackingAsync(hoja, _folioActual);
+            Preferences.Default.Set("FilaActual_Tracking", fila);
+            Preferences.Default.Remove("ColTracking_A");
+            Preferences.Default.Remove("ColTracking_B");
+        }
+        catch { }
+    }
+
     private async Task IntentarSincronizarDatosEnVivoAsync()
     {
         if (_sheets == null || Connectivity.Current.NetworkAccess != NetworkAccess.Internet) return;
@@ -93,13 +113,14 @@ public partial class PaginaTerminarViaje : ContentPage
             {
                 foreach (var ubi in pendientes)
                 {
-                    if (string.IsNullOrWhiteSpace(ubi.HojaTracking) ||
-                        string.IsNullOrWhiteSpace(ubi.ColumnaTrackingA) ||
-                        string.IsNullOrWhiteSpace(ubi.ColumnaTrackingB) || ubi.FilaTracking <= 0)
+                    if (string.IsNullOrWhiteSpace(ubi.HojaTracking) || ubi.FilaTracking <= 0)
                         continue;
 
-                    bool ok = await _sheets.SubirPuntoGPSTiempoRealAsync(
-                        ubi.HojaTracking, ubi.ColumnaTrackingA, ubi.ColumnaTrackingB, ubi.FilaTracking, ubi);
+                    bool ok = !string.IsNullOrWhiteSpace(ubi.ColumnaTrackingA) || !string.IsNullOrWhiteSpace(ubi.ColumnaTrackingB)
+                        ? await _sheets.SubirPuntoGPSTiempoRealAsync(
+                            ubi.HojaTracking, ubi.ColumnaTrackingA ?? "A", ubi.ColumnaTrackingB ?? "B", ubi.FilaTracking, ubi)
+                        : await _sheets.SubirPuntoGPSTiempoRealAsync(
+                            ubi.HojaTracking, ubi.FolioViaje ?? _folioActual, ubi.FilaTracking, ubi);
                     if (ok) await _dbLocal.BorrarUbicacionAsync(ubi.Id);
                 }
             }
@@ -131,20 +152,16 @@ public partial class PaginaTerminarViaje : ContentPage
             };
 
             bool subioExitosamente = false;
-            string colA = Preferences.Default.Get("ColTracking_A", "A");
-            string colB = Preferences.Default.Get("ColTracking_B", "B");
             int filaActual = Preferences.Default.Get("FilaActual_Tracking", 2);
             string hojaTracking = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
             punto.HojaTracking = hojaTracking;
-            punto.ColumnaTrackingA = colA;
-            punto.ColumnaTrackingB = colB;
             punto.FilaTracking = filaActual;
 
             if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
             {
                 try
                 {
-                    subioExitosamente = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaTracking, colA, colB, filaActual, punto);
+                    subioExitosamente = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaTracking, _folioActual, filaActual, punto);
                 }
                 catch { subioExitosamente = false; }
             }
@@ -161,7 +178,7 @@ public partial class PaginaTerminarViaje : ContentPage
                 BtnReportar.Text = "GUARDADO LOCAL ⚠️";
             }
 
-            Preferences.Default.Set("FilaActual_Tracking", filaActual + 1);
+            Preferences.Default.Set("FilaActual_Tracking", filaActual);
         }
         catch (Exception)
         {
@@ -200,24 +217,20 @@ public partial class PaginaTerminarViaje : ContentPage
             {
                 var punto = new UbicacionViaje { FolioViaje = _folioActual, Latitud = location.Latitude, Longitud = location.Longitude, FechaHora = DateTime.Now };
 
-                string colA = Preferences.Default.Get("ColTracking_A", "A");
-                string colB = Preferences.Default.Get("ColTracking_B", "B");
                 int fila = Preferences.Default.Get("FilaActual_Tracking", 2);
                 string hojaTracking = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
                 punto.HojaTracking = hojaTracking;
-                punto.ColumnaTrackingA = colA;
-                punto.ColumnaTrackingB = colB;
                 punto.FilaTracking = fila;
                 bool subio = false;
 
                 if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
                 {
-                    try { subio = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaTracking, colA, colB, fila, punto); }
+                    try { subio = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaTracking, _folioActual, fila, punto); }
                     catch { subio = false; }
                 }
 
-                if (subio) Preferences.Default.Set("FilaActual_Tracking", fila + 1);
-                else { await _dbLocal.GuardarUbicacionLocalAsync(punto); Preferences.Default.Set("FilaActual_Tracking", fila + 1); }
+                if (subio) Preferences.Default.Set("FilaActual_Tracking", fila);
+                else { await _dbLocal.GuardarUbicacionLocalAsync(punto); Preferences.Default.Set("FilaActual_Tracking", fila); }
             }
         }
         catch { }
@@ -290,8 +303,6 @@ public partial class PaginaTerminarViaje : ContentPage
             await _semaforoTracking.WaitAsync();
             try
             {
-                string colA = Preferences.Default.Get("ColTracking_A", "A");
-                string colB = Preferences.Default.Get("ColTracking_B", "B");
                 int fila = Preferences.Default.Get("FilaActual_Tracking", 2);
                 string hoja = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
                 var punto = new UbicacionViaje
@@ -302,21 +313,19 @@ public partial class PaginaTerminarViaje : ContentPage
                     FechaHora = DateTime.Now,
                     Sincronizado = false,
                     HojaTracking = hoja,
-                    ColumnaTrackingA = colA,
-                    ColumnaTrackingB = colB,
                     FilaTracking = fila
                 };
 
                 bool subio = false;
                 if (_sheets != null && Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
                 {
-                    subio = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, colA, colB, fila, punto);
+                    subio = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, _folioActual, fila, punto);
                     if (subio)
-                        await _sheets.ActualizarVinculoMapaRutaAsync(_folioActual, hoja, colA, colB);
+                        await _sheets.ActualizarVinculoMapaRutaAsync(_folioActual, hoja, fila);
                 }
 
                 if (!subio) await _dbLocal.GuardarUbicacionLocalAsync(punto);
-                Preferences.Default.Set("FilaActual_Tracking", fila + 1);
+                Preferences.Default.Set("FilaActual_Tracking", fila);
                 return true;
             }
             finally
