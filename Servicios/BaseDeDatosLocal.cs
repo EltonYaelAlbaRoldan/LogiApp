@@ -84,7 +84,26 @@ namespace LogiApp.Servicios
         public async Task GuardarUbicacionLocalAsync(UbicacionViaje ubi)
         {
             await _semaphore.WaitAsync();
-            try { Inicializar(); await _database.InsertAsync(ubi); }
+            try
+            {
+                Inicializar();
+                var ultima = await _database.Table<UbicacionViaje>()
+                    .Where(x => x.FolioViaje == ubi.FolioViaje)
+                    .OrderByDescending(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+                // Un mismo punto puede llegar desde el botón y desde el servicio casi al
+                // mismo tiempo. No repetimos coordenadas prácticamente idénticas.
+                if (ultima != null &&
+                    Math.Abs(ultima.Latitud - ubi.Latitud) <= 0.00001 &&
+                    Math.Abs(ultima.Longitud - ubi.Longitud) <= 0.00001)
+                {
+                    ubi.Id = ultima.Id;
+                    return;
+                }
+
+                await _database.InsertAsync(ubi);
+            }
             finally { _semaphore.Release(); }
         }
 

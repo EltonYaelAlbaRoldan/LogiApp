@@ -161,6 +161,7 @@ public partial class PaginaViajes : ContentPage
                 Preferences.Default.Set("Destino_" + folio, DestinoPicker.SelectedItem.ToString());
                 Preferences.Default.Set("ViajeEnCurso", true);
                 Preferences.Default.Set("FolioPendiente", folio);
+                Preferences.Default.Set($"TrackingUbicacionActivo_{folio}", true);
                 Preferences.Default.Set("Inicio_" + folio, fechaInicio);
                 Preferences.Default.Set("KmSalida_" + folio, KmSalidaEntry.Text);
                 Preferences.Default.Set("FuelSalida_" + folio, CombustibleEntry.Text);
@@ -199,9 +200,12 @@ public partial class PaginaViajes : ContentPage
                         primeraUbi.HojaTracking = hojaMes;
                         primeraUbi.FilaTracking = filaTracking;
 
+                        var dbLocal = new BaseDeDatosLocal();
+                        await dbLocal.GuardarUbicacionLocalAsync(primeraUbi);
                         bool primeraSubidaOk = await _sheets.SubirPuntoGPSTiempoRealAsync(hojaMes, folio, filaTracking, primeraUbi);
-                        if (!primeraSubidaOk)
-                            await new BaseDeDatosLocal().GuardarUbicacionLocalAsync(primeraUbi);
+                        if (primeraSubidaOk && primeraUbi.Id > 0)
+                            await dbLocal.BorrarUbicacionAsync(primeraUbi.Id);
+                        Preferences.Default.Set($"UltimaCapturaTrackingTicks_{folio}", primeraUbi.FechaHora.Ticks);
                     }
                 }
                 catch (Exception ex)
@@ -209,6 +213,16 @@ public partial class PaginaViajes : ContentPage
                     // Si falla el GPS aquí, guardamos el error pero dejamos que el viaje inicie
                     await GestorErrores.GuardarErrorAsync(ex, "PrimeraUbicacionAuto", Preferences.Get("UsuarioLogeado", "Desconocido"));
                 }
+                bool permisoNotificaciones = await ControlTrackingSegundoPlano.SolicitarPermisoNotificacionesAsync();
+                if (!permisoNotificaciones)
+                {
+                    Preferences.Default.Set($"AvisoNotificacionTracking_{folio}", true);
+                    await DisplayAlert(
+                        "Permiso recomendado",
+                        "Permite las notificaciones de LogiApp para ver el aviso de viaje en curso mientras se registra la ruta.",
+                        "Entendido");
+                }
+                ControlTrackingSegundoPlano.Iniciar();
                 await DisplayAlert("Éxito", $"Viaje {folio} registrado. ¡Buen camino!", "OK");
 
                 // Navegación automática a la pantalla de monitoreo/cierre

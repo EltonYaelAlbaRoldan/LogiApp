@@ -41,7 +41,20 @@ public partial class PaginaTerminarViaje : ContentPage
         base.OnAppearing();
         await InicializarServicio();
         await AsegurarTrackingVerticalAsync();
+        bool permisoNotificaciones = await ControlTrackingSegundoPlano.SolicitarPermisoNotificacionesAsync();
+        string llaveAvisoNotificacion = $"AvisoNotificacionTracking_{_folioActual}";
+        if (!permisoNotificaciones && !Preferences.Default.Get(llaveAvisoNotificacion, false))
+        {
+            Preferences.Default.Set(llaveAvisoNotificacion, true);
+            await DisplayAlert(
+                "Permiso recomendado",
+                "Activa las notificaciones de LogiApp para ver el aviso permanente mientras el viaje está en curso.",
+                "Entendido");
+        }
+        ControlTrackingSegundoPlano.Iniciar();
+#if !ANDROID
         if (!_isTrackingRunning) _ = IniciarTimerTracking();
+#endif
 
         if (Preferences.Default.Get("ArriboConfirmado_" + _folioActual, false))
         {
@@ -156,6 +169,7 @@ public partial class PaginaTerminarViaje : ContentPage
             string hojaTracking = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
             punto.HojaTracking = hojaTracking;
             punto.FilaTracking = filaActual;
+            await _dbLocal.GuardarUbicacionLocalAsync(punto);
 
             if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
             {
@@ -168,12 +182,12 @@ public partial class PaginaTerminarViaje : ContentPage
 
             if (subioExitosamente)
             {
+                if (punto.Id > 0) await _dbLocal.BorrarUbicacionAsync(punto.Id);
                 BtnReportar.BackgroundColor = Colors.Green;
                 BtnReportar.Text = "UBICACIÓN ENVIADA ✅";
             }
             else
             {
-                await _dbLocal.GuardarUbicacionLocalAsync(punto);
                 BtnReportar.BackgroundColor = Colors.Orange;
                 BtnReportar.Text = "GUARDADO LOCAL ⚠️";
             }
@@ -221,6 +235,7 @@ public partial class PaginaTerminarViaje : ContentPage
                 string hojaTracking = Preferences.Default.Get("HojaActual_Tracking", $"Historial_{DateTime.Now:MMMM}_{DateTime.Now.Year}");
                 punto.HojaTracking = hojaTracking;
                 punto.FilaTracking = fila;
+                await _dbLocal.GuardarUbicacionLocalAsync(punto);
                 bool subio = false;
 
                 if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
@@ -229,8 +244,8 @@ public partial class PaginaTerminarViaje : ContentPage
                     catch { subio = false; }
                 }
 
-                if (subio) Preferences.Default.Set("FilaActual_Tracking", fila);
-                else { await _dbLocal.GuardarUbicacionLocalAsync(punto); Preferences.Default.Set("FilaActual_Tracking", fila); }
+                if (subio && punto.Id > 0) await _dbLocal.BorrarUbicacionAsync(punto.Id);
+                Preferences.Default.Set("FilaActual_Tracking", fila);
             }
         }
         catch { }
@@ -261,6 +276,8 @@ public partial class PaginaTerminarViaje : ContentPage
                 "OK");
             return;
         }
+        Preferences.Default.Set($"TrackingUbicacionActivo_{_folioActual}", false);
+        ControlTrackingSegundoPlano.Detener();
 
         // RESTAURACIÓN: Cálculo de duración de viaje
         string horaLlegadaReal = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
@@ -315,6 +332,7 @@ public partial class PaginaTerminarViaje : ContentPage
                     HojaTracking = hoja,
                     FilaTracking = fila
                 };
+                await _dbLocal.GuardarUbicacionLocalAsync(punto);
 
                 bool subio = false;
                 if (_sheets != null && Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
@@ -324,7 +342,7 @@ public partial class PaginaTerminarViaje : ContentPage
                         await _sheets.ActualizarVinculoMapaRutaAsync(_folioActual, hoja, fila);
                 }
 
-                if (!subio) await _dbLocal.GuardarUbicacionLocalAsync(punto);
+                if (subio && punto.Id > 0) await _dbLocal.BorrarUbicacionAsync(punto.Id);
                 Preferences.Default.Set("FilaActual_Tracking", fila);
                 return true;
             }
@@ -442,11 +460,15 @@ public partial class PaginaTerminarViaje : ContentPage
         Preferences.Default.Remove("FuelSalida_" + _folioActual);
         Preferences.Default.Remove("FilaActual_Tracking"); // Para que el GPS reinicie desde arriba
         Preferences.Default.Remove("HojaActual_Tracking");
+        Preferences.Default.Remove($"UltimaCapturaTrackingTicks_{_folioActual}");
+        Preferences.Default.Remove($"TrackingUbicacionActivo_{_folioActual}");
+        Preferences.Default.Remove($"AvisoNotificacionTracking_{_folioActual}");
 
         Preferences.Default.Set("ViajeEnCurso", false);
         Preferences.Default.Remove("FolioPendiente");
         _isTrackingRunning = false;
         _ctsTracking?.Cancel();
+        ControlTrackingSegundoPlano.Detener();
 
         string mensajeCierre = guardadoEnNube
             ? $"Viaje cerrado. Se guardaron {_rutasFotosTemporales.Count} foto(s) en su carpeta de Drive."
