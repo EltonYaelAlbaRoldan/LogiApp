@@ -801,7 +801,8 @@ public class ConsultasGoogleSheets
                 new BatchUpdateSpreadsheetRequest { Requests = requests }, _spreadsheetId).ExecuteAsync();
     }
 
-    public async Task<bool> SubirPuntoGPSTiempoRealAsync(string hoja, string folio, int fila, UbicacionViaje p)
+    public async Task<bool> SubirPuntoGPSTiempoRealAsync(
+        string hoja, string folio, int fila, UbicacionViaje p, bool permitirDuplicado = false)
     {
         await _semaforoTracking.WaitAsync();
         try
@@ -822,7 +823,7 @@ public class ConsultasGoogleSheets
             int indiceBloque = Math.Max(0, bloques.Count - 1);
             string bloqueActual = bloques.Count == 0 ? string.Empty : bloques[indiceBloque];
             string ultimaLinea = bloqueActual.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault()?.Trim() ?? string.Empty;
-            if (EsDuplicadoConsecutivo(ultimaLinea, p)) return true;
+            if (!permitirDuplicado && EsDuplicadoConsecutivo(ultimaLinea, p)) return true;
 
             string linea = $"{p.FechaHora:dd/MM HH:mm} : {p.Latitud.ToString("G17", CultureInfo.InvariantCulture)}, {p.Longitud.ToString("G17", CultureInfo.InvariantCulture)}";
             string contenido = string.IsNullOrEmpty(bloqueActual) ? linea : $"{bloqueActual}\n{linea}";

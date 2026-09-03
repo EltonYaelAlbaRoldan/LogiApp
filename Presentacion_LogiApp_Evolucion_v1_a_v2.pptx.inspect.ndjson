@@ -1,0 +1,248 @@
+{"kind":"deck","id":"pr/se02m7","name":"Deck"}
+{"kind":"layout","layoutId":"93f5e487-6141-44aa-9d1b-4a3c8b159319","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"0c24edf8-08de-41b9-8620-f7881fa18643","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/dwj8bv","slide":1,"title":"LOGIAPP","textShapes":4}
+{"kind":"shape","id":"sh/b610jmlw","slide":1,"name":"box","bbox":[0,0,34,720]}
+{"kind":"textbox","id":"sh/c7ahcrm1","slide":1,"name":"text","text":"LOGIAPP","textPreview":"LOGIAPP","textChars":7,"textLines":1,"bbox":[74,54,300,28]}
+{"kind":"textbox","id":"sh/d8jilw3m","slide":1,"name":"text","text":"Evolución de la\nversión 1.0 a la 2.2","textPreview":"Evolución de la | versión 1.0 a la 2.2","textChars":36,"textLines":2,"bbox":[74,172,760,190]}
+{"kind":"textbox","id":"sh/y9szeh47","slide":1,"name":"text","text":"Mejoras orientadas a la operación, la seguridad y la continuidad de los viajes","textPreview":"Mejoras orientadas a la operación, la seguridad y la continuidad de los viajes","textChars":78,"textLines":1,"bbox":[78,392,780,90]}
+{"kind":"shape","id":"sh/za10nmls","slide":1,"name":"box","bbox":[78,548,300,5]}
+{"kind":"textbox","id":"sh/0ba1grmd","slide":1,"name":"text","text":"Presentación de actualización","textPreview":"Presentación de actualización","textChars":29,"textLines":1,"bbox":[78,576,500,32]}
+{"kind":"image","id":"im/wvahknux","slide":1,"name":"","alt":"Imagen principal de LogiApp","bbox":[930,68,290,290]}
+{"kind":"notes","id":"nt/dwj8bv","slide":1,"text":""}
+{"kind":"slide","id":"sl/4ifd3m","slide":2,"title":"EL COMIENZO","textShapes":8}
+{"kind":"textbox","id":"sh/5gre50za","slide":2,"name":"kicker","text":"EL COMIENZO","textPreview":"EL COMIENZO","textChars":11,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/idgvalgj","slide":2,"name":"slide-title","text":"La versión 1.0 inició la digitalización","textPreview":"La versión 1.0 inició la digitalización","textChars":39,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/jepw3qh4","slide":2,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/sjidgvyl","slide":2,"name":"slide-number","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"textbox","id":"sh/qh0velgv","slide":2,"name":"text","text":"El primer paso fue reunir en una sola aplicación las tareas esenciales del operador.","textPreview":"El primer paso fue reunir en una sola aplicación las tareas esenciales del operador.","textChars":84,"textLines":1,"bbox":[590,212,570,70]}
+{"kind":"shape","id":"sh/ri9w7qh0","slide":2,"name":"bullet","bbox":[590,318,10,10]}
+{"kind":"textbox","id":"sh/0n2xkfyx","slide":2,"name":"bullet-text","text":"Registro del operador y acceso personal.","textPreview":"Registro del operador y acceso personal.","textChars":40,"textLines":1,"bbox":[614,310,546,54]}
+{"kind":"shape","id":"sh/1obedkzi","slide":2,"name":"bullet","bbox":[590,390,10,10]}
+{"kind":"textbox","id":"sh/t0badkjq","slide":2,"name":"bullet-text","text":"Captura de viajes, unidades y destinos.","textPreview":"Captura de viajes, unidades y destinos.","textChars":39,"textLines":1,"bbox":[614,382,546,54]}
+{"kind":"shape","id":"sh/sz2t4f25","slide":2,"name":"bullet","bbox":[590,462,10,10]}
+{"kind":"textbox","id":"sh/7ytsba1k","slide":2,"name":"bullet-text","text":"Cierre con kilometraje, combustible y evidencia.","textPreview":"Cierre con kilometraje, combustible y evidencia.","textChars":48,"textLines":1,"bbox":[614,454,546,54]}
+{"kind":"textbox","id":"sh/6xkb25kz","slide":2,"name":"text","text":"La base ya estaba lista; la versión 2.0 amplió el control y la seguridad.","textPreview":"La base ya estaba lista; la versión 2.0 amplió el control y la seguridad.","textChars":73,"textLines":1,"bbox":[590,548,570,58]}
+{"kind":"image","id":"im/cjelo3et","slide":2,"name":"","alt":"Transporte y operación","bbox":[70,205,460,390]}
+{"kind":"notes","id":"nt/4ifd3m","slide":2,"text":""}
+{"kind":"slide","id":"sl/4aro0o","slide":3,"title":"EL SALTO DE VERSIÓN","textShapes":8}
+{"kind":"textbox","id":"sh/5w7ul4ni","slide":3,"name":"kicker","text":"EL SALTO DE VERSIÓN","textPreview":"EL SALTO DE VERSIÓN","textChars":19,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/itwbq9o7","slide":3,"name":"slide-title","text":"La versión 2.0 convirtió el registro en seguimiento","textPreview":"La versión 2.0 convirtió el registro en seguimiento","textChars":51,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/3u5sje5s","slide":3,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/szytwj69","slide":3,"name":"slide-number","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"textbox","id":"sh/d07uponu","slide":3,"name":"text","text":"Versión 1.0","textPreview":"Versión 1.0","textChars":11,"textLines":1,"bbox":[78,218,420,44]}
+{"kind":"textbox","id":"sh/qxgbu9o3","slide":3,"name":"text","text":"Versión 2.0","textPreview":"Versión 2.0","textChars":11,"textLines":1,"bbox":[720,218,420,44]}
+{"kind":"shape","id":"sh/rypcne5o","slide":3,"name":"box","bbox":[78,286,470,250]}
+{"kind":"shape","id":"sh/03it0365","slide":3,"name":"box","bbox":[720,286,470,250]}
+{"kind":"textbox","id":"sh/1orutonq","slide":3,"name":"text","text":"Información del operador\n\nRegistro de salida y cierre\n\nUna evidencia por proceso","textPreview":"Información del operador |  | Registro de salida y cierre |  | Una evidencia por proceso","textChars":80,"textLines":5,"bbox":[112,322,400,180]}
+{"kind":"textbox","id":"sh/t4325c7a","slide":3,"name":"text","text":"Ruta visible en Google Maps\n\nVarias fotos por viaje\n\nCarpetas separadas y acceso más seguro","textPreview":"Ruta visible en Google Maps |  | Varias fotos por viaje |  | Carpetas separadas y acceso más seguro","textChars":91,"textLines":5,"bbox":[754,322,400,180]}
+{"kind":"textbox","id":"sh/s3u1w76p","slide":3,"name":"text","text":"La aplicación pasó de capturar datos a acompañar el viaje completo.","textPreview":"La aplicación pasó de capturar datos a acompañar el viaje completo.","textChars":67,"textLines":1,"bbox":[190,584,900,46]}
+{"kind":"notes","id":"nt/4aro0o","slide":3,"text":""}
+{"kind":"slide","id":"sl/zpabiv","slide":4,"title":"EVOLUCIÓN","textShapes":14}
+{"kind":"textbox","id":"sh/83qpg7ml","slide":4,"name":"kicker","text":"EVOLUCIÓN","textPreview":"EVOLUCIÓN","textChars":9,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/72h872l0","slide":4,"name":"slide-title","text":"Cada actualización respondió a una situación real","textPreview":"Cada actualización respondió a una situación real","textChars":49,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/6187eh4f","slide":4,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/l0zq5c3u","slide":4,"name":"slide-number","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"shape","id":"sh/kfqpc7mp","slide":4,"name":"box","bbox":[100,358,1080,3]}
+{"kind":"shape","id":"sh/zeh832l4","slide":4,"name":"box","bbox":[135,348,22,22]}
+{"kind":"textbox","id":"sh/yd87ax4j","slide":4,"name":"text","text":"1.0","textPreview":"1.0","textChars":3,"textLines":1,"bbox":[90,258,110,50]}
+{"kind":"textbox","id":"sh/5w3qhw3e","slide":4,"name":"text","text":"Digitalización","textPreview":"Digitalización","textChars":14,"textLines":1,"bbox":[45,397,200,70]}
+{"kind":"shape","id":"sh/4ba9ormt","slide":4,"name":"box","bbox":[380,348,22,22]}
+{"kind":"textbox","id":"sh/654bm1cn","slide":4,"name":"text","text":"2.0","textPreview":"2.0","textChars":3,"textLines":1,"bbox":[335,258,110,50]}
+{"kind":"textbox","id":"sh/r6xcv6d8","slide":4,"name":"text","text":"Operación completa","textPreview":"Operación completa","textChars":18,"textLines":1,"bbox":[290,397,200,70]}
+{"kind":"shape","id":"sh/s76dobud","slide":4,"name":"box","bbox":[625,348,22,22]}
+{"kind":"textbox","id":"sh/t8fuxgvy","slide":4,"name":"text","text":"2.1","textPreview":"2.1","textChars":3,"textLines":1,"bbox":[580,258,110,50]}
+{"kind":"textbox","id":"sh/i14bihcb","slide":4,"name":"text","text":"Rutas más claras","textPreview":"Rutas más claras","textChars":16,"textLines":1,"bbox":[535,397,200,70]}
+{"kind":"shape","id":"sh/j2dcrmdw","slide":4,"name":"box","bbox":[870,348,22,22]}
+{"kind":"textbox","id":"sh/43mtkruh","slide":4,"name":"text","text":"2.2","textPreview":"2.2","textChars":3,"textLines":1,"bbox":[825,258,110,50]}
+{"kind":"textbox","id":"sh/54vutwv2","slide":4,"name":"text","text":"Seguimiento confiable","textPreview":"Seguimiento confiable","textChars":21,"textLines":1,"bbox":[780,397,200,70]}
+{"kind":"shape","id":"sh/2x8vulcv","slide":4,"name":"box","bbox":[1115,348,22,22]}
+{"kind":"textbox","id":"sh/3yhc3qd0","slide":4,"name":"text","text":"Actual","textPreview":"Actual","textChars":6,"textLines":1,"bbox":[1070,258,110,50]}
+{"kind":"textbox","id":"sh/z6p0zepg","slide":4,"name":"text","text":"Cierre preciso","textPreview":"Cierre preciso","textChars":14,"textLines":1,"bbox":[1025,397,200,70]}
+{"kind":"textbox","id":"sh/y5gz69ov","slide":4,"name":"text","text":"La mejora ha sido continua y guiada por lo que ocurre durante los viajes reales.","textPreview":"La mejora ha sido continua y guiada por lo que ocurre durante los viajes reales.","textChars":80,"textLines":1,"bbox":[185,520,910,72]}
+{"kind":"notes","id":"nt/zpabiv","slide":4,"text":""}
+{"kind":"slide","id":"sl/yaqe9x","slide":5,"title":"SEGURIDAD DESDE LA VERSIÓN 2.0","textShapes":8}
+{"kind":"textbox","id":"sh/9srelwvq","slide":5,"name":"kicker","text":"SEGURIDAD DESDE LA VERSIÓN 2.0","textPreview":"SEGURIDAD DESDE LA VERSIÓN 2.0","textChars":30,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/mpgfahwf","slide":5,"name":"slide-title","text":"Las contraseñas ya no se guardan de forma legible","textPreview":"Las contraseñas ya no se guardan de forma legible","textChars":49,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/nq9wjmd0","slide":5,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/0nyx87e9","slide":5,"name":"slide-number","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"shape","id":"sh/1o7ehcvu","slide":5,"name":"box","bbox":[70,210,400,390]}
+{"kind":"textbox","id":"sh/zmpwf2do","slide":5,"name":"text","text":"Protección mediante hash","textPreview":"Protección mediante hash","textChars":24,"textLines":1,"bbox":[550,225,610,48]}
+{"kind":"shape","id":"sh/czyd47ed","slide":5,"name":"bullet","bbox":[550,312,10,10]}
+{"kind":"textbox","id":"sh/d07edcvi","slide":5,"name":"bullet-text","text":"La contraseña se transforma antes de guardarse.","textPreview":"La contraseña se transforma antes de guardarse.","textChars":47,"textLines":1,"bbox":[574,304,586,54]}
+{"kind":"shape","id":"sh/twbe1cne","slide":5,"name":"bullet","bbox":[550,390,10,10]}
+{"kind":"textbox","id":"sh/8v2ds7m9","slide":5,"name":"bullet-text","text":"No puede leerse directamente desde la base de datos.","textPreview":"No puede leerse directamente desde la base de datos.","textChars":52,"textLines":1,"bbox":[574,382,586,54]}
+{"kind":"shape","id":"sh/7utwz25o","slide":5,"name":"bullet","bbox":[550,468,10,10]}
+{"kind":"textbox","id":"sh/6tkvqh43","slide":5,"name":"bullet-text","text":"Al iniciar sesión se comprueba sin mostrar el valor original.","textPreview":"Al iniciar sesión se comprueba sin mostrar el valor original.","textChars":61,"textLines":1,"bbox":[574,460,586,54]}
+{"kind":"textbox","id":"sh/lsbexcni","slide":5,"name":"text","text":"En palabras sencillas: la app confirma la contraseña sin almacenarla tal como fue escrita.","textPreview":"En palabras sencillas: la app confirma la contraseña sin almacenarla tal como fue escrita.","textChars":90,"textLines":1,"bbox":[550,548,610,66]}
+{"kind":"image","id":"im/fa1cvm9c","slide":5,"name":"","alt":"Acceso seguro","bbox":[145,270,250,250]}
+{"kind":"notes","id":"nt/yaqe9x","slide":5,"text":""}
+{"kind":"slide","id":"sl/st7atu","slide":6,"title":"PRIMERA MEJORA IMPORTANTE","textShapes":8}
+{"kind":"textbox","id":"sh/m9k72t0r","slide":6,"name":"kicker","text":"PRIMERA MEJORA IMPORTANTE","textPreview":"PRIMERA MEJORA IMPORTANTE","textChars":25,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/9cbqxoz2","slide":6,"name":"slide-title","text":"El error de almacenamiento quedó resuelto","textPreview":"El error de almacenamiento quedó resuelto","textChars":41,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/8b2p4jih","slide":6,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/ved8zyh8","slide":6,"name":"slide-number","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"shape","id":"sh/ad476t0n","slide":6,"name":"box","bbox":[60,188,470,410]}
+{"kind":"textbox","id":"sh/wfmp83it","slide":6,"name":"text","text":"¿Qué ocurría?","textPreview":"¿Qué ocurría?","textChars":13,"textLines":1,"bbox":[580,206,560,42]}
+{"kind":"shape","id":"sh/ri9onuh4","slide":6,"name":"bullet","bbox":[580,276,10,10]}
+{"kind":"textbox","id":"sh/qh07up0j","slide":6,"name":"bullet-text","text":"La hoja alcanzaba su límite al colocar cada ubicación de forma horizontal.","textPreview":"La hoja alcanzaba su límite al colocar cada ubicación de forma horizontal.","textChars":74,"textLines":1,"bbox":[604,268,566,54]}
+{"kind":"shape","id":"sh/ozq1gnux","slide":6,"name":"bullet","bbox":[580,356,10,10]}
+{"kind":"textbox","id":"sh/p0z29sbi","slide":6,"name":"bullet-text","text":"El operador recibía un mensaje que no podía resolver por sí mismo.","textPreview":"El operador recibía un mensaje que no podía resolver por sí mismo.","textChars":66,"textLines":1,"bbox":[604,348,566,54]}
+{"kind":"shape","id":"sh/2xojedc7","slide":6,"name":"box","bbox":[580,452,590,120]}
+{"kind":"textbox","id":"sh/nyxknitc","slide":6,"name":"text","text":"Solución","textPreview":"Solución","textChars":8,"textLines":1,"bbox":[610,470,160,30]}
+{"kind":"textbox","id":"sh/cnqlknu9","slide":6,"name":"text","text":"Ahora el recorrido se concentra y continúa en la siguiente columna solo cuando es necesario.","textPreview":"Ahora el recorrido se concentra y continúa en la siguiente columna solo cuando es necesario.","textChars":92,"textLines":1,"bbox":[610,510,520,48]}
+{"kind":"image","id":"im/kzq1gfe9","slide":6,"name":"","alt":"Mensaje de error original","bbox":[83,207,424,372]}
+{"kind":"notes","id":"nt/st7atu","slide":6,"text":""}
+{"kind":"slide","id":"sl/xg4g69","slide":7,"title":"SEGUIMIENTO ORGANIZADO","textShapes":7}
+{"kind":"textbox","id":"sh/l0v6pw3i","slide":7,"name":"kicker","text":"SEGUIMIENTO ORGANIZADO","textPreview":"SEGUIMIENTO ORGANIZADO","textChars":22,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/yxk7ehk7","slide":7,"name":"slide-title","text":"La ruta ahora es más fácil de leer","textPreview":"La ruta ahora es más fácil de leer","textChars":34,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/jytonmls","slide":7,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/83mpkb29","slide":7,"name":"slide-number","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"shape","id":"sh/6147i1k3","slide":7,"name":"box","bbox":[130,390,1020,3]}
+{"kind":"shape","id":"sh/72dor6lo","slide":7,"name":"box","bbox":[160,374,34,34]}
+{"kind":"shape","id":"sh/o7i5872p","slide":7,"name":"box","bbox":[623,374,34,34]}
+{"kind":"shape","id":"sh/98r6hc3a","slide":7,"name":"box","bbox":[1086,374,34,34]}
+{"kind":"textbox","id":"sh/5g7eh0nu","slide":7,"name":"text","text":"Inicio","textPreview":"Inicio","textChars":6,"textLines":1,"bbox":[120,430,110,34]}
+{"kind":"textbox","id":"sh/4fydovm9","slide":7,"name":"text","text":"Recorrido","textPreview":"Recorrido","textChars":9,"textLines":1,"bbox":[565,430,150,34]}
+{"kind":"textbox","id":"sh/jepwfq5o","slide":7,"name":"text","text":"Llegada","textPreview":"Llegada","textChars":7,"textLines":1,"bbox":[1030,430,150,34]}
+{"kind":"textbox","id":"sh/idgvml43","slide":7,"name":"text","text":"Todas las ubicaciones quedan ordenadas por fecha y hora para reconstruir el trayecto.","textPreview":"Todas las ubicaciones quedan ordenadas por fecha y hora para reconstruir el trayecto.","textChars":85,"textLines":1,"bbox":[140,520,1000,70]}
+{"kind":"image","id":"im/sbyxwvup","slide":7,"name":"","alt":"Ejemplo de ubicaciones ordenadas","bbox":[86,210,1108,118]}
+{"kind":"notes","id":"nt/xg4g69","slide":7,"text":""}
+{"kind":"slide","id":"sl/jd4ud9","slide":8,"title":"CONSULTA VISUAL","textShapes":10}
+{"kind":"textbox","id":"sh/8re10jyx","slide":8,"name":"kicker","text":"CONSULTA VISUAL","textPreview":"CONSULTA VISUAL","textChars":15,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/nq5k7exc","slide":8,"name":"slide-title","text":"La ruta completa puede abrirse en Google Maps","textPreview":"La ruta completa puede abrirse en Google Maps","textChars":45,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/m5wjy9gr","slide":8,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/l4n254fm","slide":8,"name":"slide-number","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"shape","id":"sh/03e1wzy1","slide":8,"name":"box","bbox":[70,205,520,375]}
+{"kind":"shape","id":"sh/z25k3uxg","slide":8,"name":"box","bbox":[115,455,430,3]}
+{"kind":"shape","id":"sh/y1wjupgv","slide":8,"name":"box","bbox":[130,439,34,34]}
+{"kind":"shape","id":"sh/d03i1kfa","slide":8,"name":"box","bbox":[500,439,34,34]}
+{"kind":"shape","id":"sh/czu1szyp","slide":8,"name":"box","bbox":[275,365,20,20]}
+{"kind":"shape","id":"sh/qtgjqdg3","slide":8,"name":"box","bbox":[385,405,20,20]}
+{"kind":"textbox","id":"sh/rup0ziho","slide":8,"name":"text","text":"Origen","textPreview":"Origen","textChars":6,"textLines":1,"bbox":[94,492,110,32]}
+{"kind":"textbox","id":"sh/svy1sny9","slide":8,"name":"text","text":"Destino","textPreview":"Destino","textChars":7,"textLines":1,"bbox":[462,492,110,32]}
+{"kind":"textbox","id":"sh/dwri1szu","slide":8,"name":"text","text":"VER RUTA","textPreview":"VER RUTA","textChars":8,"textLines":1,"bbox":[228,250,210,48]}
+{"kind":"textbox","id":"sh/ipgjmdg7","slide":8,"name":"text","text":"El enlace reúne el inicio, la llegada y puntos intermedios.","textPreview":"El enlace reúne el inicio, la llegada y puntos intermedios.","textChars":59,"textLines":1,"bbox":[650,220,500,70]}
+{"kind":"shape","id":"sh/3qp0vihs","slide":8,"name":"bullet","bbox":[650,338,10,10]}
+{"kind":"textbox","id":"sh/4ry1o3yd","slide":8,"name":"bullet-text","text":"Lee todas las columnas utilizadas por el viaje.","textPreview":"Lee todas las columnas utilizadas por el viaje.","textChars":47,"textLines":1,"bbox":[674,330,486,54]}
+{"kind":"shape","id":"sh/5s7ix8zy","slide":8,"name":"bullet","bbox":[650,416,10,10]}
+{"kind":"textbox","id":"sh/u1wjitgb","slide":8,"name":"bullet-text","text":"Selecciona puntos intermedios para mostrar el recorrido.","textPreview":"Selecciona puntos intermedios para mostrar el recorrido.","textChars":56,"textLines":1,"bbox":[674,408,486,54]}
+{"kind":"shape","id":"sh/v250ryhg","slide":8,"name":"bullet","bbox":[650,494,10,10]}
+{"kind":"textbox","id":"sh/zu1o3atc","slide":8,"name":"bullet-text","text":"Permite revisar la ruta desde un mapa conocido.","textPreview":"Permite revisar la ruta desde un mapa conocido.","textChars":47,"textLines":1,"bbox":[674,486,486,54]}
+{"kind":"notes","id":"nt/jd4ud9","slide":8,"text":""}
+{"kind":"slide","id":"sl/87oy03","slide":9,"title":"TRABAJO SIN CONEXIÓN","textShapes":16}
+{"kind":"textbox","id":"sh/ed4zqho3","slide":9,"name":"kicker","text":"TRABAJO SIN CONEXIÓN","textPreview":"TRABAJO SIN CONEXIÓN","textChars":20,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/10fi1cnu","slide":9,"name":"slide-title","text":"Sin internet, el registro del viaje continúa","textPreview":"Sin internet, el registro del viaje continúa","textChars":44,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/0z6hs769","slide":9,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/rad0v25s","slide":9,"name":"slide-number","text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"shape","id":"sh/q94zmxo7","slide":9,"name":"box","bbox":[54,230,270,300]}
+{"kind":"textbox","id":"sh/dcvixcni","slide":9,"name":"text","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[76,248,56,48]}
+{"kind":"textbox","id":"sh/cbmho76x","slide":9,"name":"text","text":"Captura","textPreview":"Captura","textChars":7,"textLines":1,"bbox":[76,318,226,42]}
+{"kind":"textbox","id":"sh/36t0ri5g","slide":9,"name":"text","text":"La app obtiene la ubicación.","textPreview":"La app obtiene la ubicación.","textChars":28,"textLines":1,"bbox":[76,376,226,92]}
+{"kind":"shape","id":"sh/25kzixov","slide":9,"name":"box","bbox":[359,230,270,300]}
+{"kind":"textbox","id":"sh/w76l8rmp","slide":9,"name":"text","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[381,248,56,48]}
+{"kind":"textbox","id":"sh/x8f2hwnu","slide":9,"name":"text","text":"Resguarda","textPreview":"Resguarda","textChars":9,"textLines":1,"bbox":[381,318,226,42]}
+{"kind":"textbox","id":"sh/a5436h4j","slide":9,"name":"text","text":"Se guarda primero en el teléfono.","textPreview":"Se guarda primero en el teléfono.","textChars":33,"textLines":1,"bbox":[381,376,226,92]}
+{"kind":"shape","id":"sh/v6xkfm54","slide":9,"name":"box","bbox":[664,230,270,300]}
+{"kind":"textbox","id":"sh/83ml47md","slide":9,"name":"text","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[686,248,56,48]}
+{"kind":"textbox","id":"sh/94v2dcny","slide":9,"name":"text","text":"Espera","textPreview":"Espera","textChars":6,"textLines":1,"bbox":[686,318,226,42]}
+{"kind":"textbox","id":"sh/m1432ho7","slide":9,"name":"text","text":"Permanece segura sin conexión.","textPreview":"Permanece segura sin conexión.","textChars":30,"textLines":1,"bbox":[686,376,226,92]}
+{"kind":"shape","id":"sh/n2dkbm5s","slide":9,"name":"box","bbox":[969,230,270,300]}
+{"kind":"textbox","id":"sh/szqlgbmh","slide":9,"name":"text","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[991,248,56,48]}
+{"kind":"textbox","id":"sh/t0zmpgn2","slide":9,"name":"text","text":"Sincroniza","textPreview":"Sincroniza","textChars":10,"textLines":1,"bbox":[991,318,226,42]}
+{"kind":"textbox","id":"sh/1gv2tgf6","slide":9,"name":"text","text":"Se envía al recuperar internet.","textPreview":"Se envía al recuperar internet.","textChars":31,"textLines":1,"bbox":[991,376,226,92]}
+{"kind":"textbox","id":"sh/0fml0be1","slide":9,"name":"text","text":"Resultado: el operador puede continuar su viaje aunque apague los datos móviles.","textPreview":"Resultado: el operador puede continuar su viaje aunque apague los datos móviles.","textChars":80,"textLines":1,"bbox":[150,556,980,64]}
+{"kind":"notes","id":"nt/87oy03","slide":9,"text":""}
+{"kind":"slide","id":"sl/kpjt0o","slide":10,"title":"PANTALLA APAGADA","textShapes":10}
+{"kind":"textbox","id":"sh/ihwb2h8z","slide":10,"name":"kicker","text":"PANTALLA APAGADA","textPreview":"PANTALLA APAGADA","textChars":16,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/547uxwrq","slide":10,"name":"slide-title","text":"El seguimiento continúa sin mantener la app abierta","textPreview":"El seguimiento continúa sin mantener la app abierta","textChars":51,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/4jyd4rq5","slide":10,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/r6pczm9g","slide":10,"name":"slide-number","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"shape","id":"sh/65gv6h8b","slide":10,"name":"box","bbox":[80,205,430,385]}
+{"kind":"textbox","id":"sh/t87u1w7m","slide":10,"name":"text","text":"LogiApp — viaje en curso","textPreview":"LogiApp — viaje en curso","textChars":24,"textLines":1,"bbox":[115,252,360,42]}
+{"kind":"textbox","id":"sh/s7yd8rq1","slide":10,"name":"text","text":"Registrando la ruta aun con la pantalla apagada","textPreview":"Registrando la ruta aun con la pantalla apagada","textChars":47,"textLines":1,"bbox":[115,314,340,80]}
+{"kind":"shape","id":"sh/fa9c36ps","slide":10,"name":"box","bbox":[115,440,330,2]}
+{"kind":"textbox","id":"sh/e9gva187","slide":10,"name":"text","text":"La notificación permanece durante el viaje y desaparece al marcar la llegada.","textPreview":"La notificación permanece durante el viaje y desaparece al marcar la llegada.","textChars":77,"textLines":1,"bbox":[115,470,340,82]}
+{"kind":"textbox","id":"sh/o3mhone5","slide":10,"name":"text","text":"El operador puede:","textPreview":"El operador puede:","textChars":18,"textLines":1,"bbox":[580,220,500,42]}
+{"kind":"shape","id":"sh/p4fixsvq","slide":10,"name":"bullet","bbox":[580,300,10,10]}
+{"kind":"textbox","id":"sh/214zmdwf","slide":10,"name":"bullet-text","text":"Usar otras aplicaciones del dispositivo.","textPreview":"Usar otras aplicaciones del dispositivo.","textChars":40,"textLines":1,"bbox":[604,292,536,54]}
+{"kind":"shape","id":"sh/32d0vidk","slide":10,"name":"bullet","bbox":[580,378,10,10]}
+{"kind":"textbox","id":"sh/c76hsneh","slide":10,"name":"bullet-text","text":"Apagar la pantalla durante el trayecto.","textPreview":"Apagar la pantalla durante el trayecto.","textChars":39,"textLines":1,"bbox":[604,370,536,54]}
+{"kind":"shape","id":"sh/xsfi1sv2","slide":10,"name":"bullet","bbox":[580,456,10,10]}
+{"kind":"textbox","id":"sh/a5ozqdwb","slide":10,"name":"bullet-text","text":"Conservar las ubicaciones aunque no tenga internet.","textPreview":"Conservar las ubicaciones aunque no tenga internet.","textChars":51,"textLines":1,"bbox":[604,448,536,54]}
+{"kind":"notes","id":"nt/kpjt0o","slide":10,"text":""}
+{"kind":"slide","id":"sl/rh29ra","slide":11,"title":"EVIDENCIAS ORGANIZADAS","textShapes":12}
+{"kind":"textbox","id":"sh/8na9s3ih","slide":11,"name":"kicker","text":"EVIDENCIAS ORGANIZADAS","textPreview":"EVIDENCIAS ORGANIZADAS","textChars":22,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/7mh8jy1w","slide":11,"name":"slide-title","text":"Cada viaje puede guardar varias fotos de evidencia","textPreview":"Cada viaje puede guardar varias fotos de evidencia","textChars":50,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/6l8rqt0b","slide":11,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/hsjqp8jy","slide":11,"name":"slide-number","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"textbox","id":"sh/gra9w3it","slide":11,"name":"text","text":"El operador agrega todas las fotografías necesarias antes de cerrar el viaje.","textPreview":"El operador agrega todas las fotografías necesarias antes de cerrar el viaje.","textChars":77,"textLines":1,"bbox":[70,195,1080,52]}
+{"kind":"shape","id":"sh/vq18ny18","slide":11,"name":"box","bbox":[70,290,230,170]}
+{"kind":"textbox","id":"sh/upsrud0n","slide":11,"name":"text","text":"FOTO 01","textPreview":"FOTO 01","textChars":7,"textLines":1,"bbox":[70,340,230,50]}
+{"kind":"shape","id":"sh/xwzqdoju","slide":11,"name":"box","bbox":[340,290,230,170]}
+{"kind":"textbox","id":"sh/wv6pkji9","slide":11,"name":"text","text":"FOTO 02","textPreview":"FOTO 02","textChars":7,"textLines":1,"bbox":[340,340,230,50]}
+{"kind":"shape","id":"sh/yhgbm983","slide":11,"name":"box","bbox":[610,290,230,170]}
+{"kind":"textbox","id":"sh/z2pcfe9o","slide":11,"name":"text","text":"FOTO 03","textPreview":"FOTO 03","textChars":7,"textLines":1,"bbox":[610,340,230,50]}
+{"kind":"shape","id":"sh/k3ytojqt","slide":11,"name":"box","bbox":[900,270,300,250]}
+{"kind":"textbox","id":"sh/l47uhore","slide":11,"name":"text","text":"Operador","textPreview":"Operador","textChars":8,"textLines":1,"bbox":[930,294,240,34]}
+{"kind":"textbox","id":"sh/650bqt8z","slide":11,"name":"text","text":"Evidencias","textPreview":"Evidencias","textChars":10,"textLines":1,"bbox":[955,350,215,34]}
+{"kind":"textbox","id":"sh/769cjy9k","slide":11,"name":"text","text":"Folio del viaje","textPreview":"Folio del viaje","textChars":15,"textLines":1,"bbox":[980,405,190,34]}
+{"kind":"textbox","id":"sh/87its3q5","slide":11,"name":"text","text":"Fotos del viaje","textPreview":"Fotos del viaje","textChars":15,"textLines":1,"bbox":[1005,460,165,34]}
+{"kind":"textbox","id":"sh/t8rulo7q","slide":11,"name":"text","text":"Las fotos se conservan juntas por folio y separadas de otros viajes y operadores.","textPreview":"Las fotos se conservan juntas por folio y separadas de otros viajes y operadores.","textChars":81,"textLines":1,"bbox":[155,570,970,52]}
+{"kind":"notes","id":"nt/rh29ra","slide":11,"text":""}
+{"kind":"slide","id":"sl/88fvmx","slide":12,"title":"ACCESO Y SEGURIDAD","textShapes":8}
+{"kind":"textbox","id":"sh/pozytcb2","slide":12,"name":"kicker","text":"ACCESO Y SEGURIDAD","textPreview":"ACCESO Y SEGURIDAD","textChars":18,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/2l8zyxcb","slide":12,"name":"slide-title","text":"También simplificamos el registro del operador","textPreview":"También simplificamos el registro del operador","textChars":46,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/3mhgr2dw","slide":12,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/gj6hwnu5","slide":12,"name":"slide-number","text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"textbox","id":"sh/1kfypsvq","slide":12,"name":"text","text":"Antes","textPreview":"Antes","textChars":5,"textLines":1,"bbox":[76,220,470,44]}
+{"kind":"textbox","id":"sh/ehofudcf","slide":12,"name":"text","text":"Ahora","textPreview":"Ahora","textChars":5,"textLines":1,"bbox":[690,220,470,44]}
+{"kind":"shape","id":"sh/fixgnidk","slide":12,"name":"box","bbox":[76,286,490,230]}
+{"kind":"shape","id":"sh/sf6xsnu9","slide":12,"name":"box","bbox":[690,286,490,230]}
+{"kind":"textbox","id":"sh/tgfylsvu","slide":12,"name":"text","text":"La licencia podía rechazarse por la cantidad de caracteres.\n\nLa contraseña tenía menos protección.","textPreview":"La licencia podía rechazarse por la cantidad de caracteres. |  | La contraseña tenía menos protección.","textChars":98,"textLines":3,"bbox":[108,324,430,150]}
+{"kind":"textbox","id":"sh/9wzaxk7y","slide":12,"name":"text","text":"El campo de licencia acepta la extensión necesaria.\n\nLas contraseñas se guardan de forma más segura.","textPreview":"El campo de licencia acepta la extensión necesaria. |  | Las contraseñas se guardan de forma más segura.","textChars":100,"textLines":3,"bbox":[722,324,430,150]}
+{"kind":"textbox","id":"sh/obq94z6d","slide":12,"name":"text","text":"Menos obstáculos para registrarse y mayor confianza en el acceso.","textPreview":"Menos obstáculos para registrarse y mayor confianza en el acceso.","textChars":65,"textLines":1,"bbox":[210,546,860,58]}
+{"kind":"notes","id":"nt/88fvmx","slide":12,"text":""}
+{"kind":"slide","id":"sl/mz1rwl","slide":13,"title":"CIERRE DEL VIAJE","textShapes":8}
+{"kind":"textbox","id":"sh/rmxgjm9w","slide":13,"name":"kicker","text":"CIERRE DEL VIAJE","textPreview":"CIERRE DEL VIAJE","textChars":16,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/sn6xsrah","slide":13,"name":"slide-title","text":"La llegada siempre conserva su hora real","textPreview":"La llegada siempre conserva su hora real","textChars":40,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/dofylwrm","slide":13,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/ih4fmhsz","slide":13,"name":"slide-number","text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"textbox","id":"sh/3idgfm9k","slide":13,"name":"text","text":"Durante el recorrido","textPreview":"Durante el recorrido","textChars":20,"textLines":1,"bbox":[70,210,510,40]}
+{"kind":"textbox","id":"sh/4jmxora5","slide":13,"name":"text","text":"Al marcar la llegada","textPreview":"Al marcar la llegada","textChars":20,"textLines":1,"bbox":[700,210,510,40]}
+{"kind":"shape","id":"sh/5kfyhwrq","slide":13,"name":"box","bbox":[70,278,510,230]}
+{"kind":"shape","id":"sh/ud4fixs3","slide":13,"name":"box","bbox":[700,278,510,230]}
+{"kind":"textbox","id":"sh/vedgb29o","slide":13,"name":"text","text":"Las coordenadas prácticamente iguales se omiten para evitar repeticiones innecesarias.","textPreview":"Las coordenadas prácticamente iguales se omiten para evitar repeticiones innecesarias.","textChars":86,"textLines":1,"bbox":[104,330,440,126]}
+{"kind":"textbox","id":"sh/ju1gru5g","slide":13,"name":"text","text":"La ubicación final se registra siempre, aunque el vehículo no se haya movido desde el último punto.","textPreview":"La ubicación final se registra siempre, aunque el vehículo no se haya movido desde el último punto.","textChars":99,"textLines":1,"bbox":[734,330,440,126]}
+{"kind":"textbox","id":"sh/yt8zip4v","slide":13,"name":"text","text":"Así, la última línea roja representa realmente el momento de llegada.","textPreview":"Así, la última línea roja representa realmente el momento de llegada.","textChars":69,"textLines":1,"bbox":[210,570,860,52]}
+{"kind":"notes","id":"nt/mz1rwl","slide":13,"text":""}
+{"kind":"slide","id":"sl/efwleq","slide":14,"title":"EXPERIENCIA DIARIA","textShapes":15}
+{"kind":"textbox","id":"sh/4vqp8n6p","slide":14,"name":"kicker","text":"EXPERIENCIA DIARIA","textPreview":"EXPERIENCIA DIARIA","textChars":18,"textLines":1,"bbox":[60,34,600,24]}
+{"kind":"textbox","id":"sh/juhozip4","slide":14,"name":"slide-title","text":"Para el operador, el proceso sigue siendo sencillo","textPreview":"Para el operador, el proceso sigue siendo sencillo","textChars":50,"textLines":1,"bbox":[60,66,1160,76]}
+{"kind":"shape","id":"sh/it876doj","slide":14,"name":"title-rule","bbox":[60,154,1160,2]}
+{"kind":"textbox","id":"sh/x8z6xs7y","slide":14,"name":"slide-number","text":"14","textPreview":"14","textChars":2,"textLines":1,"bbox":[1175,674,45,20]}
+{"kind":"textbox","id":"sh/w7q54n6d","slide":14,"name":"text","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[80,205,70,54]}
+{"kind":"shape","id":"sh/v6hovip8","slide":14,"name":"box","bbox":[160,217,3,52]}
+{"kind":"textbox","id":"sh/a5on2don","slide":14,"name":"text","text":"Inicia","textPreview":"Inicia","textChars":6,"textLines":1,"bbox":[190,205,220,48]}
+{"kind":"textbox","id":"sh/14j69cni","slide":14,"name":"text","text":"Registra los datos y comienza el viaje.","textPreview":"Registra los datos y comienza el viaje.","textChars":39,"textLines":1,"bbox":[420,205,720,60]}
+{"kind":"textbox","id":"sh/g3apg76x","slide":14,"name":"text","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[80,310,70,54]}
+{"kind":"shape","id":"sh/mp4vi5o7","slide":14,"name":"box","bbox":[160,322,3,52]}
+{"kind":"textbox","id":"sh/nqdcrq5s","slide":14,"name":"text","text":"Conduce","textPreview":"Conduce","textChars":7,"textLines":1,"bbox":[190,310,220,48]}
+{"kind":"textbox","id":"sh/ormdkv6d","slide":14,"name":"text","text":"La app acompaña el recorrido en segundo plano.","textPreview":"La app acompaña el recorrido en segundo plano.","textChars":46,"textLines":1,"bbox":[420,310,720,60]}
+{"kind":"textbox","id":"sh/9svut0ni","slide":14,"name":"text","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[80,415,70,54]}
+{"kind":"shape","id":"sh/e1kvelov","slide":14,"name":"box","bbox":[160,427,3,52]}
+{"kind":"textbox","id":"sh/z2tcnq5g","slide":14,"name":"text","text":"Llega","textPreview":"Llega","textChars":5,"textLines":1,"bbox":[190,415,220,48]}
+{"kind":"textbox","id":"sh/032dgv61","slide":14,"name":"text","text":"Marca la llegada y guarda la hora final.","textPreview":"Marca la llegada y guarda la hora final.","textChars":40,"textLines":1,"bbox":[420,415,720,60]}
+{"kind":"textbox","id":"sh/14vup0nm","slide":14,"name":"text","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[80,520,70,54]}
+{"kind":"shape","id":"sh/ixovqpof","slide":14,"name":"box","bbox":[160,532,3,52]}
+{"kind":"textbox","id":"sh/jyxwza50","slide":14,"name":"text","text":"Cierra","textPreview":"Cierra","textChars":6,"textLines":1,"bbox":[190,520,220,48]}
+{"kind":"textbox","id":"sh/f2psr2lc","slide":14,"name":"text","text":"Agrega evidencia y completa el viaje.","textPreview":"Agrega evidencia y completa el viaje.","textChars":37,"textLines":1,"bbox":[420,520,720,60]}
+{"kind":"notes","id":"nt/efwleq","slide":14,"text":""}
+{"kind":"slide","id":"sl/iq34qn","slide":15,"title":"LOGIAPP","textShapes":5}
+{"kind":"textbox","id":"sh/ojmd0ny9","slide":15,"name":"text","text":"LOGIAPP","textPreview":"LOGIAPP","textChars":7,"textLines":1,"bbox":[70,48,300,28]}
+{"kind":"textbox","id":"sh/nidw7iho","slide":15,"name":"text","text":"Una actualización pensada\npara la operación real","textPreview":"Una actualización pensada | para la operación real","textChars":48,"textLines":2,"bbox":[70,142,1010,150]}
+{"kind":"textbox","id":"sh/mh4vydg3","slide":15,"name":"text","text":"Más continuidad. Menos errores. Mejor visibilidad del viaje.","textPreview":"Más continuidad. Menos errores. Mejor visibilidad del viaje.","textChars":60,"textLines":1,"bbox":[74,330,920,60]}
+{"kind":"shape","id":"sh/1gve58zy","slide":15,"name":"box","bbox":[74,448,1120,2]}
+{"kind":"textbox","id":"sh/0fmdw3yd","slide":15,"name":"text","text":"Resultado de la evolución","textPreview":"Resultado de la evolución","textChars":25,"textLines":1,"bbox":[74,480,410,38]}
+{"kind":"textbox","id":"sh/zetw3yhs","slide":15,"name":"text","text":"Una aplicación más segura, preparada para trabajar sin conexión, conservar varias evidencias y mostrar el recorrido completo.","textPreview":"Una aplicación más segura, preparada para trabajar sin conexión, conservar varias evidencias y mostrar el recorrido completo.","textChars":125,"textLines":1,"bbox":[74,532,1050,78]}
+{"kind":"notes","id":"nt/iq34qn","slide":15,"text":""}

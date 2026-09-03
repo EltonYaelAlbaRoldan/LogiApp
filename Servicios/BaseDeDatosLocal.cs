@@ -81,7 +81,7 @@ namespace LogiApp.Servicios
         #endregion
 
         #region Métodos para UbicacionViaje (GPS Offline)
-        public async Task GuardarUbicacionLocalAsync(UbicacionViaje ubi)
+        public async Task GuardarUbicacionLocalAsync(UbicacionViaje ubi, bool permitirDuplicado = false)
         {
             await _semaphore.WaitAsync();
             try
@@ -94,7 +94,7 @@ namespace LogiApp.Servicios
 
                 // Un mismo punto puede llegar desde el botón y desde el servicio casi al
                 // mismo tiempo. No repetimos coordenadas prácticamente idénticas.
-                if (ultima != null &&
+                if (!permitirDuplicado && ultima != null &&
                     Math.Abs(ultima.Latitud - ubi.Latitud) <= 0.00001 &&
                     Math.Abs(ultima.Longitud - ubi.Longitud) <= 0.00001)
                 {

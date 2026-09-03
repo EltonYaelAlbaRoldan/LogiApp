@@ -332,12 +332,15 @@ public partial class PaginaTerminarViaje : ContentPage
                     HojaTracking = hoja,
                     FilaTracking = fila
                 };
-                await _dbLocal.GuardarUbicacionLocalAsync(punto);
+                // La llegada conserva su hora real aunque el vehículo lleve varios
+                // minutos detenido en exactamente las mismas coordenadas.
+                await _dbLocal.GuardarUbicacionLocalAsync(punto, permitirDuplicado: true);
 
                 bool subio = false;
                 if (_sheets != null && Connectivity.Current.NetworkAccess == NetworkAccess.Internet)
                 {
-                    subio = await _sheets.SubirPuntoGPSTiempoRealAsync(hoja, _folioActual, fila, punto);
+                    subio = await _sheets.SubirPuntoGPSTiempoRealAsync(
+                        hoja, _folioActual, fila, punto, permitirDuplicado: true);
                     if (subio)
                         await _sheets.ActualizarVinculoMapaRutaAsync(_folioActual, hoja, fila);
                 }
