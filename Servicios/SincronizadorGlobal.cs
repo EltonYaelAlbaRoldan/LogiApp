@@ -34,6 +34,7 @@ public static class SincronizadorGlobal
                     string fechaFin = Preferences.Default.Get($"Offline_FechaFin_{folio}", "");
                     string kmLlegada = Preferences.Default.Get($"Offline_KmLlegada_{folio}", "");
                     string fuelLlegada = Preferences.Default.Get($"Offline_FuelLlegada_{folio}", "");
+                    string fuelRecarga = Preferences.Default.Get($"Offline_FuelRecarga_{folio}", "0"); // <-- NUEVA LÍNEA
                     string obs = Preferences.Default.Get($"Offline_Obs_{folio}", "N/A");
                     string rutasFotosJson = Preferences.Default.Get($"Offline_RutasFotos_{folio}", "");
                     var rutasFotos = string.IsNullOrWhiteSpace(rutasFotosJson)
@@ -57,8 +58,7 @@ public static class SincronizadorGlobal
                     }
 
                     await sheets.ActualizarEstatusYLlegadaAsync(folio, "EN DESTINO", horaLlegada);
-                    bool exito = await sheets.FinalizarViajeAsync(folio, fechaFin, kmLlegada, fuelLlegada, obs, linkCarpeta, duracion, recorrido, consumo);
-
+                    bool exito = await sheets.FinalizarViajeAsync(folio, fechaFin, kmLlegada, fuelLlegada, fuelRecarga, obs, linkCarpeta, duracion, recorrido, consumo);
                     if (exito)
                     {
                         Preferences.Default.Remove($"Offline_Pendiente_{folio}");
@@ -73,6 +73,7 @@ public static class SincronizadorGlobal
                         Preferences.Default.Remove($"Offline_Duracion_{folio}");
                         Preferences.Default.Remove($"Offline_Recorrido_{folio}");
                         Preferences.Default.Remove($"Offline_Consumo_{folio}");
+                        Preferences.Default.Remove($"Offline_FuelRecarga_{folio}");
                         listaFolios.Remove(folio);
                         string nuevaLista = string.Join(",", listaFolios);
                         Preferences.Default.Set("ListaFoliosOffline", nuevaLista);

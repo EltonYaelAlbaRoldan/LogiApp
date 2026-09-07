@@ -70,31 +70,57 @@
                     FontAttributes="Bold"
                     FontSize="18"
                     Text="Datos de Cierre y Evidencias" />
+
                 <Label Text="Kilometraje de Llegada:" />
                 <Entry
                     x:Name="KmLlegadaEntry"
                     Keyboard="Numeric"
                     Placeholder="000000" />
+
                 <Label Text="Combustible de Llegada:" />
                 <Entry
                     x:Name="CombustibleLlegadaEntry"
                     Keyboard="Numeric"
-                    Placeholder="Litros" />
+                    Placeholder="Litros en tanque al llegar" />
+
+                <!-- SECCIÓN DE RECARGA DE COMBUSTIBLE EN RUTA -->
+                <HorizontalStackLayout Spacing="10">
+                    <Switch x:Name="SwitchRecarga" Toggled="OnSwitchRecargaToggled" />
+                    <Label
+                        Text="¿Cargaste gasolina/diésel en el viaje?"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <VerticalStackLayout
+                    x:Name="SeccionRecarga"
+                    IsVisible="False"
+                    Spacing="5">
+                    <Label Text="Combustible Recargado (Litros):" TextColor="#2196F3" />
+                    <Entry
+                        x:Name="CombustibleRecargaEntry"
+                        Keyboard="Numeric"
+                        Placeholder="Litros cargados"
+                        Text="0" />
+                </VerticalStackLayout>
+
                 <Label Text="Observaciones:" />
                 <Editor
                     x:Name="ObservacionesEditor"
                     HeightRequest="80"
                     Placeholder="Notas de entrega..." />
+
                 <Button
                     BackgroundColor="Gray"
                     Clicked="OnTomarFotoClicked"
                     Text="📷 Agregar Foto de Evidencia"
                     TextColor="White" />
+
                 <Label
                     x:Name="LblCantidadFotos"
                     HorizontalOptions="Center"
                     Text="0 fotos agregadas"
                     TextColor="Gray" />
+
                 <CollectionView
                     x:Name="ListaFotos"
                     HeightRequest="170"
@@ -119,6 +145,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
                 <Button
                     x:Name="BtnFinalizar"
                     BackgroundColor="#F44336"

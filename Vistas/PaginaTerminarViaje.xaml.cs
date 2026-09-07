@@ -369,25 +369,30 @@ public partial class PaginaTerminarViaje : ContentPage
             return;
         }
 
-        // RESTAURACIÓN: Lógica de validación de KM y Combustible
-        double kmSalida = 0, fuelSalida = 0, kmLlegada = 0, fuelLlegada = 0;
-        double.TryParse(Preferences.Default.Get("KmSalida_" + _folioActual, "0"), out kmSalida);
-        double.TryParse(Preferences.Default.Get("FuelSalida_" + _folioActual, "0"), out fuelSalida);
-        double.TryParse(KmLlegadaEntry.Text, out kmLlegada);
-        double.TryParse(CombustibleLlegadaEntry.Text, out fuelLlegada);
+        double.TryParse(Preferences.Default.Get("KmSalida_" + _folioActual, "0"), out double kmSalida);
+        double.TryParse(Preferences.Default.Get("FuelSalida_" + _folioActual, "0"), out double fuelSalida);
+        double.TryParse(KmLlegadaEntry.Text, out double kmLlegada);
+        double.TryParse(CombustibleLlegadaEntry.Text, out double fuelLlegada);
+        double.TryParse(CombustibleRecargaEntry?.Text ?? "0", out double fuelRecargado);
 
-        if (kmLlegada < kmSalida || fuelLlegada > fuelSalida)
+        if (kmLlegada < kmSalida)
         {
-            await DisplayAlert("Error", "Los datos de KM o Combustible no son lógicos.", "OK");
+            await DisplayAlert("Error", "El kilometraje final no puede ser menor al inicial.", "OK");
+            return;
+        }
+
+        if (fuelLlegada > (fuelSalida + fuelRecargado))
+        {
+            await DisplayAlert("Error", "El combustible final no coincide. Si cargaste gasolina, activa la opción de recarga.", "OK");
             return;
         }
 
         BtnFinalizar.IsEnabled = false;
         IndicadorCarga.IsVisible = true;
 
-        // RESTAURACIÓN: Cálculos finales
         string recorridoKmStr = (kmLlegada - kmSalida).ToString("0.##");
-        string consumoLitrosStr = (fuelSalida - fuelLlegada).ToString("0.##");
+        string consumoLitrosStr = (fuelSalida + fuelRecargado - fuelLlegada).ToString("0.##");
+        string fuelRecargadoStr = fuelRecargado.ToString("0.##");
         string duracionViaje = Preferences.Default.Get("Duracion_" + _folioActual, "N/A");
         string fechaFinReal = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         string horaLlegadaReal = Preferences.Default.Get("HoraLlegadaReal_" + _folioActual, fechaFinReal);
@@ -435,8 +440,7 @@ public partial class PaginaTerminarViaje : ContentPage
 
                 await _sheets.ActualizarEstatusYLlegadaAsync(_folioActual, "EN DESTINO", horaLlegadaReal);
 
-                // RESTAURACIÓN: Pasar los datos calculados a la función final en lugar de "N/A"
-                bool ok = await _sheets.FinalizarViajeAsync(_folioActual, fechaFinReal, KmLlegadaEntry.Text, CombustibleLlegadaEntry.Text, ObservacionesEditor.Text, link, duracionViaje, recorridoKmStr, consumoLitrosStr);
+                bool ok = await _sheets.FinalizarViajeAsync(_folioActual, fechaFinReal, KmLlegadaEntry.Text, CombustibleLlegadaEntry.Text, fuelRecargadoStr, ObservacionesEditor.Text, link, duracionViaje, recorridoKmStr, consumoLitrosStr);
 
                 if (ok)
                 {
@@ -499,6 +503,14 @@ public partial class PaginaTerminarViaje : ContentPage
         {
             _rutasFotosTemporales.Remove(ruta);
             LblCantidadFotos.Text = $"{_rutasFotosTemporales.Count} foto(s) agregada(s)";
+        }
+    }
+    private void OnSwitchRecargaToggled(object sender, ToggledEventArgs e)
+    {
+        SeccionRecarga.IsVisible = e.Value;
+        if (!e.Value && CombustibleRecargaEntry != null)
+        {
+            CombustibleRecargaEntry.Text = "0";
         }
     }
 }

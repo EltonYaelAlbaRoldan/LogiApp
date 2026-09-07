@@ -398,7 +398,6 @@ public class ConsultasGoogleSheets
         return -1;
     }
     #endregion
-
     #region SECCIÓN 6: GESTIÓN DE VIAJES
 
     public async Task<List<string>> ObtenerListaDestinosAsync()
@@ -424,7 +423,7 @@ public class ConsultasGoogleSheets
     {
         try
         {
-            string rango = "Clientes!A2:A100"; // Apunta a tu nueva hoja
+            string rango = "Clientes!A2:A100";
             var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, rango).ExecuteAsync();
             var lista = new List<string>();
             if (response.Values != null)
@@ -447,9 +446,6 @@ public class ConsultasGoogleSheets
             var valueRange = new ValueRange { Values = new List<IList<object>> { new List<object>(datos) } };
             var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, rango);
             appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-
-            // Append puede usar OVERWRITE sobre la fila que Sheets detecta como el final
-            // de la tabla. INSERT_ROWS garantiza que cada viaje conserve su propia fila.
             appendRequest.InsertDataOption = SpreadsheetsResource.ValuesResource.AppendRequest.InsertDataOptionEnum.INSERTROWS;
 
             await appendRequest.ExecuteAsync();
@@ -467,7 +463,6 @@ public class ConsultasGoogleSheets
         return await GenerarFolioSecuencialAsync("Viajes!A:A", "VJ");
     }
 
-    // Le agregamos el parámetro opcional 'horaCaptura'
     public async Task<bool> ActualizarUbicacionViajeAsync(string folio, double latitud, double longitud, string horaCaptura = null)
     {
         try
@@ -490,9 +485,8 @@ public class ConsultasGoogleSheets
                         ubicacionFinal = lugar.AdminArea;
                 }
             }
-            catch { /* Si no hay internet, el Geocoding falla pero nos quedamos con las coordenadas */ }
+            catch { /* Si falla el Geocoding por falta de red, conservamos las coordenadas */ }
 
-            // Usamos la hora congelada, o la hora actual si viene vacío
             string horaReporte = horaCaptura ?? DateTime.Now.ToString("HH:mm");
             string estatusConLugar = $"EN TRANSITO - ({ubicacionFinal}) - {horaReporte}";
 
@@ -528,7 +522,8 @@ public class ConsultasGoogleSheets
         catch { return false; }
     }
 
-    public async Task<bool> FinalizarViajeAsync(string folio, string fechaFin, string kmFin, string fuelFin, string observaciones, string linkCarpeta, string duracion, string recorridoKm, string consumoLitros)
+    // Se agrega 'fuelRecarga' para incluir el registro de recargas de combustible durante el viaje
+    public async Task<bool> FinalizarViajeAsync(string folio, string fechaFin, string kmFin, string fuelFin, string fuelRecarga, string observaciones, string linkCarpeta, string duracion, string recorridoKm, string consumoLitros)
     {
         try
         {
@@ -537,11 +532,11 @@ public class ConsultasGoogleSheets
 
             string obsFinal = string.IsNullOrWhiteSpace(observaciones) ? "N/A" : observaciones;
 
-            // Rango actualizado L:R (Q=Recorrido KM, R=Consumo Litros)
-            var datosCierre = new List<object> { kmFin, fuelFin, obsFinal, linkCarpeta, duracion, recorridoKm, consumoLitros };
+            // Rango M:T (KmFin, FuelFin, FuelRecarga, Observaciones, Evidencias, Duración, Recorrido KM, Consumo Litros)
+            var datosCierre = new List<object> { kmFin, fuelFin, fuelRecarga, obsFinal, linkCarpeta, duracion, recorridoKm, consumoLitros };
             var bodyCierre = new ValueRange { Values = new List<IList<object>> { datosCierre } };
 
-            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!M{fila}:S{fila}");
+            var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!M{fila}:T{fila}");
             req1.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await req1.ExecuteAsync();
 
@@ -577,7 +572,6 @@ public class ConsultasGoogleSheets
     }
 
     #endregion
-
     #region SECCIÓN 7: TRACKING VERTICAL (UNA FILA POR VIAJE)
 
     // 1. Algoritmo para letras de columnas (Maneja A, B, AA, ZZZ...)
