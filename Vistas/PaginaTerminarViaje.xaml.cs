@@ -415,6 +415,7 @@ public partial class PaginaTerminarViaje : ContentPage
         Preferences.Default.Set($"Offline_IdOperador_{_folioActual}", Preferences.Get("UsuarioLogeado", "SinID"));
         Preferences.Default.Set($"Offline_KmLlegada_{_folioActual}", KmLlegadaEntry.Text);
         Preferences.Default.Set($"Offline_FuelLlegada_{_folioActual}", CombustibleLlegadaEntry.Text);
+        Preferences.Default.Set($"Offline_FuelRecarga_{_folioActual}", fuelRecargadoStr);
         Preferences.Default.Set($"Offline_RutasFotos_{_folioActual}", JsonSerializer.Serialize(rutasSeguras));
         Preferences.Default.Set($"Offline_FechaFin_{_folioActual}", fechaFinReal);
         Preferences.Default.Set($"Offline_HoraLlegada_{_folioActual}", horaLlegadaReal);

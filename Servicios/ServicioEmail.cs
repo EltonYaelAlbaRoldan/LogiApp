@@ -40,13 +40,12 @@ public class ServicioEmail
             </p>
         </div>";
 
-        // Nota: Eliminamos el parámetro 'password' de la llamada porque ya no se enviará aquí
         return await EnviarCorreoGenericoAsync(correoDestino, "Expediente Recibido - LogiApp", cuerpo);
     }
 
     public async Task<bool> EnviarAvisoNuevoOperadorAsync(string idOperador, string nombre, string correoOperador)
     {
-        const string correoAdministrador = "22030013@itesa.edu.mx";
+        const string correoAdministrador = "trafico@tlbtransportes.mx"; //aquí poner nuevo corre o del administrador
         string cuerpo = $@"
         <div style='font-family: sans-serif; max-width: 600px; border: 1px solid #eee; padding: 20px;'>
             <h2 style='color: #0A0A33;'>Nuevo operador pendiente de validación</h2>
@@ -58,7 +57,6 @@ public class ServicioEmail
                 <p><b>Estado:</b> VALIDACION</p>
             </div>
             <p>Ingresa a la hoja de Operadores para revisar su expediente y cambiar el estado a ACTIVO o INACTIVO.</p>
-            <p>Por seguridad, este correo no incluye la contraseña del operador.</p>
         </div>";
 
         return await EnviarCorreoGenericoAsync(

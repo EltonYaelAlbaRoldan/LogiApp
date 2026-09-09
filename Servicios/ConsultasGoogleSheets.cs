@@ -398,6 +398,7 @@ public class ConsultasGoogleSheets
         return -1;
     }
     #endregion
+
     #region SECCIÓN 6: GESTIÓN DE VIAJES
 
     public async Task<List<string>> ObtenerListaDestinosAsync()
@@ -531,9 +532,12 @@ public class ConsultasGoogleSheets
             if (fila == -1) return false;
 
             string obsFinal = string.IsNullOrWhiteSpace(observaciones) ? "N/A" : observaciones;
+            string enlaceEvidencias = string.IsNullOrWhiteSpace(linkCarpeta)
+                ? ""
+                : $"=HYPERLINK(\"{linkCarpeta.Replace("\"", "\"\"")}\"; \"VER EVIDENCIAS\")";
 
             // Rango M:T (KmFin, FuelFin, FuelRecarga, Observaciones, Evidencias, Duración, Recorrido KM, Consumo Litros)
-            var datosCierre = new List<object> { kmFin, fuelFin, fuelRecarga, obsFinal, linkCarpeta, duracion, recorridoKm, consumoLitros };
+            var datosCierre = new List<object> { kmFin, fuelFin, fuelRecarga, obsFinal, enlaceEvidencias, duracion, recorridoKm, consumoLitros };
             var bodyCierre = new ValueRange { Values = new List<IList<object>> { datosCierre } };
 
             var req1 = _service.Spreadsheets.Values.Update(bodyCierre, _spreadsheetId, $"Viajes!M{fila}:T{fila}");
@@ -572,6 +576,7 @@ public class ConsultasGoogleSheets
     }
 
     #endregion
+
     #region SECCIÓN 7: TRACKING VERTICAL (UNA FILA POR VIAJE)
 
     // 1. Algoritmo para letras de columnas (Maneja A, B, AA, ZZZ...)
@@ -891,7 +896,7 @@ public class ConsultasGoogleSheets
             var body = new ValueRange { Values = new List<IList<object>> { new List<object> { formula } } };
 
             // Asumimos que la columna de Historial es la 'Q' (puedes ajustarla según tu diseño)
-            var request = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"Viajes!T{filaDestino}");
+            var request = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"Viajes!U{filaDestino}");
             request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
 
             await request.ExecuteAsync();
@@ -951,7 +956,7 @@ public class ConsultasGoogleSheets
 
             string formula = $"=HYPERLINK(\"{url}\"; \"🗺️ VER MAPA\")";
             var body = new ValueRange { Values = new List<IList<object>> { new List<object> { formula } } };
-            var request = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"Viajes!U{filaViaje}");
+            var request = _service.Spreadsheets.Values.Update(body, _spreadsheetId, $"Viajes!V{filaViaje}");
             request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await request.ExecuteAsync();
             return true;
@@ -974,7 +979,7 @@ public class ConsultasGoogleSheets
     public async Task<List<ViajeHistorial>> ObtenerHistorialPorOperadorAsync(string idOperador)
     {
         // Pedimos hasta la columna S para tener todos los datos de cierre
-        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:S").ExecuteAsync();
+        var response = await _service.Spreadsheets.Values.Get(_spreadsheetId, "Viajes!A:V").ExecuteAsync();
         var values = response.Values;
         var lista = new List<ViajeHistorial>();
 
@@ -988,10 +993,10 @@ public class ConsultasGoogleSheets
                 {
                     // Cálculo de rendimiento (Km / L)
                     string rendimientoCalculado = "N/A";
-                    if (fila.Count > 18) // Si tiene datos de cierre (R y S)
+                    if (fila.Count > 19) // Si tiene recorrido y consumo (S y T)
                     {
-                        double.TryParse(fila[17]?.ToString(), out double kms);
-                        double.TryParse(fila[18]?.ToString(), out double lts);
+                        double.TryParse(fila[18]?.ToString(), out double kms);
+                        double.TryParse(fila[19]?.ToString(), out double lts);
                         if (lts > 0) rendimientoCalculado = (kms / lts).ToString("0.##") + " Km/L";
                     }
 
@@ -1004,9 +1009,9 @@ public class ConsultasGoogleSheets
                         Destino = fila.Count > 6 ? fila[6]?.ToString() : "",
                         Estado = fila.Count > 10 ? fila[10]?.ToString() : "PENDIENTE",
                         FechaLlegada = fila.Count > 11 ? fila[11]?.ToString() : "Pendiente",
-                        Duracion = fila.Count > 16 ? fila[16]?.ToString() : "N/A",
-                        KmRecorrido = fila.Count > 17 ? fila[17]?.ToString() + " Km" : "0 Km",
-                        CombConsumido = fila.Count > 18 ? fila[18]?.ToString() + " L" : "0 L",
+                        Duracion = fila.Count > 17 ? fila[17]?.ToString() : "N/A",
+                        KmRecorrido = fila.Count > 18 ? fila[18]?.ToString() + " Km" : "0 Km",
+                        CombConsumido = fila.Count > 19 ? fila[19]?.ToString() + " L" : "0 L",
                         Rendimiento = rendimientoCalculado
                     });
                 }
