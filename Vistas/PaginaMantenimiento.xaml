@@ -141,48 +141,15 @@
                     x:Name="KilometrajeEntry"
                     Keyboard="Numeric"
                     MaxLength="10"
-                    Placeholder="Kilometraje Actual (Cambio de aceite)" />
+                    Placeholder="Kilometraje Actual" />
 
                 <BoxView HeightRequest="1" Color="#E0E0E0" />
-
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="16"
-                    Text="Información Financiera"
-                    TextColor="Gray" />
-
-                <Entry
-                    x:Name="CostoEntry"
-                    Keyboard="Numeric"
-                    Placeholder="Costo Total ($)"
-                    Visual="Material" />
-
-                <Label
-                    Margin="0,10,0,0"
-                    FontSize="14"
-                    Text="Checklist Rápido de Seguridad"
-                    TextColor="Gray" />
-                <Border
-                    Padding="15"
-                    BackgroundColor="White"
-                    StrokeShape="RoundRectangle 10">
-                    <VerticalStackLayout Spacing="10">
-                        <HorizontalStackLayout Spacing="10">
-                            <CheckBox x:Name="CheckAceite" Color="#2196F3" />
-                            <Label Text="Aceite / Anticongelante OK" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-                        <HorizontalStackLayout Spacing="10">
-                            <CheckBox x:Name="CheckFrenos" Color="#2196F3" />
-                            <Label Text="Frenos y Aire OK" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
 
                 <Button
                     x:Name="BtnAdjuntar"
                     Margin="0,10,0,0"
-                    BackgroundColor="#F8F8F8"
-                    BorderColor="#D0D0D0"
+                    BackgroundColor="#3982b8"
+                    BorderColor="#0A0A33"
                     BorderWidth="1"
                     Text="📷 Adjuntar Evidencia"
                     TextColor="#0A0A33" 
@@ -222,10 +189,39 @@
                     CornerRadius="12"
                     FontAttributes="Bold"
                     HeightRequest="60"
-                    Text="GUARDAR REPORTE COMPLETO"
+                    Text="GUARDAR REPORTE"
                     TextColor="White" />
 
             </VerticalStackLayout>
+            
         </ScrollView>
+        <Grid x:Name="OverlayCarga" 
+              Grid.RowSpan="2" 
+              IsVisible="False" 
+              BackgroundColor="#99000000" 
+              HorizontalOptions="Fill" 
+              VerticalOptions="Fill">
+
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
+                <!-- La ruedita de carga -->
+                <ActivityIndicator x:Name="CargandoGuardar" 
+                                   IsRunning="False" 
+                                   Color="#0A0A33" 
+                                   WidthRequest="70" 
+                                   HeightRequest="70" />
+
+                <!-- Mensaje para el usuario -->
+                <Label x:Name="MensajeCarga"
+                       Text="Guardando reporte..." 
+                       TextColor="#0A0A33" 
+                       FontAttributes="Bold" 
+                       FontSize="18" 
+                       HorizontalTextAlignment="Center" />
+            </StackLayout>
+        </Grid>
+
     </Grid>
+    
 </ContentPage>
+    
+    

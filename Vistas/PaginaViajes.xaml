@@ -130,10 +130,17 @@
                     Keyboard="Numeric"
                     Placeholder="Nivel de Combustible (Litros)" />
 
+                <ActivityIndicator x:Name="CargandoGuardar" 
+                   IsRunning="False" 
+                   IsVisible="False" 
+                   Color="#2196F3" 
+                   HorizontalOptions="Center" 
+                   Margin="0,0,0,10" />
+                
                 <Button
                     x:Name="BtnGuardarViaje"
                     Margin="0,20"
-                    BackgroundColor="#2196F3"
+                    BackgroundColor="#0A0A33"
                     Clicked="OnGuardarViajeClicked"
                     CornerRadius="12"
                     FontAttributes="Bold"

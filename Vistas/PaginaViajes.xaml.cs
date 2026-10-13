@@ -1,5 +1,6 @@
 ﻿using LogiApp.Servicios;
 using LogiApp.Modelos;
+
 namespace LogiApp.Vistas;
 
 // Gestiona el despacho de nuevos viajes, validando recursos (unidad, remolque) y registrando el inicio en Sheets.
@@ -44,7 +45,15 @@ public partial class PaginaViajes : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", ex.Message, "OK");
+            string error = ex.Message.ToLower();
+            string msj = "Ocurrió un problema al cargar los datos. Intenta abrir la pantalla nuevamente.";
+
+            if (error.Contains("timedout") || error.Contains("network") || error.Contains("100"))
+            {
+                msj = "Error de conexión. Revisa tu acceso a internet para poder cargar los datos.";
+            }
+
+            await DisplayAlert("Problema de conexión", msj, "OK");
         }
     }
 
@@ -93,7 +102,15 @@ public partial class PaginaViajes : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudieron cargar los destinos: " + ex.Message, "OK");
+            string error = ex.Message.ToLower();
+            string msj = "No se pudieron cargar los destinos.";
+
+            if (error.Contains("timedout") || error.Contains("network") || error.Contains("100"))
+            {
+                msj = "Internet inestable. No se pudieron cargar los destinos.";
+            }
+
+            await DisplayAlert("Aviso", msj, "OK");
         }
     }
 
@@ -107,7 +124,15 @@ public partial class PaginaViajes : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudieron cargar los clientes: " + ex.Message, "OK");
+            string error = ex.Message.ToLower();
+            string msj = "No se pudieron cargar los clientes.";
+
+            if (error.Contains("timedout") || error.Contains("network") || error.Contains("100"))
+            {
+                msj = "Internet inestable. No se pudieron cargar los clientes.";
+            }
+
+            await DisplayAlert("Aviso", msj, "OK");
         }
     }
 
@@ -127,7 +152,11 @@ public partial class PaginaViajes : ContentPage
             return;
         }
 
+        // 1. BLOQUEAMOS EL BOTÓN, CAMBIAMOS EL TEXTO Y MOSTRAMOS EL CIRCULITO
         BtnGuardarViaje.IsEnabled = false;
+        BtnGuardarViaje.Text = "INICIANDO...";
+        CargandoGuardar.IsVisible = true;
+        CargandoGuardar.IsRunning = true;
         IsBusy = true;
 
         try
@@ -231,11 +260,23 @@ public partial class PaginaViajes : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error al guardar en Sheets: " + ex.Message, "OK");
+            string error = ex.Message.ToLower();
+            string msj = "Ocurrió un problema al guardar el viaje. Intenta nuevamente.";
+
+            if (error.Contains("timedout") || error.Contains("network") || error.Contains("100"))
+            {
+                msj = "Error de conexión. Revisa tu acceso a internet e intenta iniciar el viaje de nuevo.";
+            }
+
+            await DisplayAlert("Revisa tu conexión", msj, "Entendido");
         }
         finally
         {
+            // 2. REGRESAMOS EL BOTÓN Y EL CIRCULITO A LA NORMALIDAD (Incluso si hay error)
             BtnGuardarViaje.IsEnabled = true;
+            BtnGuardarViaje.Text = "INICIAR VIAJE";
+            CargandoGuardar.IsVisible = false;
+            CargandoGuardar.IsRunning = false;
             IsBusy = false;
         }
     }

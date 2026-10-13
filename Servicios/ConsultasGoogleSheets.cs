@@ -300,12 +300,14 @@ public class ConsultasGoogleSheets
     public async Task RegistrarMantenimientoAsync(
         string folio, string fechaRegistro, string fechaManto, string operador,
         string unidad, string lugar, string taller, string tipo, string piezas,
-        string km, string costo, string aceite, string frenos, string linkDrive)
+        string km, string linkDrive)
     {
+        string formula = $"=HYPERLINK(\"{linkDrive}\"; \"VER EVIDENCIA\")";
+
         var range = "Mantenimiento!A:N";
         var valueRange = new ValueRange { Values = new List<IList<object>>() };
 
-        var nuevaFila = new List<object> { folio, fechaRegistro, fechaManto, operador, unidad, lugar, taller, tipo, piezas, km, costo, aceite, frenos, linkDrive };
+        var nuevaFila = new List<object> { folio, fechaRegistro, fechaManto, operador, unidad, lugar, taller, tipo, piezas, km, formula };
         valueRange.Values.Add(nuevaFila);
 
         var appendRequest = _service.Spreadsheets.Values.Append(valueRange, _spreadsheetId, range);

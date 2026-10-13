@@ -46,9 +46,17 @@ public partial class PaginaMantenimiento : ContentPage
         }
         catch (Exception ex)
         {
-            // Blindaje: Registra error de inicialización
             await GestorErrores.GuardarErrorAsync(ex, "InicializarDatos - Mantenimiento", Preferences.Get("UsuarioLogeado", "Desconocido"));
-            await DisplayAlert("Error", "No se pudo conectar con el servidor.", "OK");
+
+            string error = ex.Message.ToLower();
+            string msj = "Ocurrió un problema al conectar con el sistema. Intenta abrir la pantalla nuevamente.";
+
+            if (error.Contains("timedout") || error.Contains("network") || error.Contains("100"))
+            {
+                msj = "Error de conexión. Revisa tu acceso a internet e intenta de nuevo.";
+            }
+
+            await DisplayAlert("Problema de conexión", msj, "Entendido");
         }
     }
 
@@ -68,14 +76,22 @@ public partial class PaginaMantenimiento : ContentPage
             }
             else
             {
-                await DisplayAlert("Base de Datos", "No hay unidades registradas en Sheets.", "OK");
+                await DisplayAlert("Aviso", "No hay unidades registradas en el sistema por el momento.", "Entendido");
             }
         }
         catch (Exception ex)
         {
-            // Blindaje: Registra error de carga de unidades
             await GestorErrores.GuardarErrorAsync(ex, "CargarUnidades - Mantenimiento", Preferences.Get("UsuarioLogeado", "Desconocido"));
-            await DisplayAlert("Error", "No se pudieron cargar las unidades.", "OK");
+
+            string error = ex.Message.ToLower();
+            string msj = "No se pudieron cargar las unidades. Intenta salir y volver a entrar.";
+
+            if (error.Contains("timedout") || error.Contains("network") || error.Contains("100"))
+            {
+                msj = "Internet inestable. No se pudo cargar la lista de unidades.";
+            }
+
+            await DisplayAlert("Aviso", msj, "Entendido");
         }
         finally
         {
@@ -95,40 +111,38 @@ public partial class PaginaMantenimiento : ContentPage
 
         if (UnidadPicker.SelectedIndex == -1)
         {
-            await DisplayAlert("Atención", "Selecciona una unidad de la lista.", "OK");
+            await DisplayAlert("Falta Unidad", "Por favor, selecciona una unidad de la lista antes de continuar.", "Entendido");
             return;
         }
 
-        // 1. Primero validamos que no estén vacíos
         bool faltanDatos =
             string.IsNullOrWhiteSpace(LugarEntry.Text) ||
             string.IsNullOrWhiteSpace(EstablecimientoEntry.Text) ||
             string.IsNullOrWhiteSpace(TipoMantenimientoEntry.Text) ||
             string.IsNullOrWhiteSpace(PiezasCambiadasEntry.Text) ||
-            string.IsNullOrWhiteSpace(KilometrajeEntry.Text) ||
-            string.IsNullOrWhiteSpace(CostoEntry.Text);
+            string.IsNullOrWhiteSpace(KilometrajeEntry.Text);
 
         if (faltanDatos)
         {
-            await DisplayAlert("Campos Vacíos", "Por favor completa todos los detalles.", "OK");
+            await DisplayAlert("Datos incompletos", "Por favor, llena todos los campos de texto para poder guardar el reporte.", "Entendido");
             return;
         }
 
-        // 2. Aseguramos que kilometraje y costo sean números
-        if (!double.TryParse(KilometrajeEntry.Text, out _) || !double.TryParse(CostoEntry.Text, out _))
+        if (!double.TryParse(KilometrajeEntry.Text, out _))
         {
-            // Lanzamos un error controlado para que el Gestor de Errores lo capture
-            Exception exFormato = new Exception("Format: El kilometraje o costo contienen letras.");
+            Exception exFormato = new Exception("Format: El kilometraje contiene letras.");
             await GestorErrores.GuardarErrorAsync(exFormato, "ValidaciónMantenimiento", idOperador);
 
-            await DisplayAlert("Error de Formato", "El Kilometraje y el Costo deben ser números.", "OK");
+            await DisplayAlert("Verifica el Kilometraje", "El kilometraje solo debe contener números, sin letras ni símbolos.", "Entendido");
             return;
         }
 
         try
         {
+            // Bloqueamos el botón y mostramos la pantalla oscura con la ruedita
             BtnGuardarMantenimiento.IsEnabled = false;
-            BtnGuardarMantenimiento.Text = "SUBIENDO... ESPERE";
+            OverlayCarga.IsVisible = true;
+            CargandoGuardar.IsRunning = true;
 
             string nuevoFolio = await _sheets.GenerarFolioMantenimientoAsync();
             string unidadTexto = UnidadPicker.SelectedItem.ToString();
@@ -136,8 +150,12 @@ public partial class PaginaMantenimiento : ContentPage
 
             if (_rutasFotos.Count > 0)
             {
+                // Cambiamos el texto para que el operador sepa qué está haciendo la app
+                MensajeCarga.Text = "Subiendo fotos, por favor espera...";
                 linkCarpeta = await _driveService.SubirEvidenciasMantenimientoAsync(_rutasFotos, idOperador, nuevoFolio);
             }
+
+            MensajeCarga.Text = "Guardando reporte...";
 
             await _sheets.RegistrarMantenimientoAsync(
                 nuevoFolio,
@@ -150,28 +168,34 @@ public partial class PaginaMantenimiento : ContentPage
                 TipoMantenimientoEntry.Text,
                 PiezasCambiadasEntry.Text ?? "N/A",
                 KilometrajeEntry.Text,
-                CostoEntry.Text,
-                CheckAceite.IsChecked ? "OK" : "REVISAR",
-                CheckFrenos.IsChecked ? "OK" : "REVISAR",
                 linkCarpeta
             );
 
-            // Blindaje: Aprovechamos el éxito para sincronizar errores previos pendientes
             _ = GestorErrores.SincronizarLogsPendientesAsync(_sheets);
 
-            await DisplayAlert("Éxito", "Reporte guardado con link a evidencia.", "OK");
+            await DisplayAlert("Éxito", "El reporte se guardó correctamente.", "OK");
             Application.Current.MainPage = new NavigationPage(new PaginaMenu());
         }
         catch (Exception ex)
         {
-            // Blindaje: Registra error de guardado en base de datos local
             await GestorErrores.GuardarErrorAsync(ex, "GuardarMantenimiento", idOperador);
-            await DisplayAlert("Error", "No se pudo guardar el reporte. El error ha sido registrado.", "OK");
+
+            string error = ex.Message.ToLower();
+            string msj = "Ocurrió un problema al guardar el reporte. Intenta nuevamente.";
+
+            if (error.Contains("timedout") || error.Contains("network") || error.Contains("100"))
+            {
+                msj = "Error de conexión. Revisa tu acceso a internet para poder guardar el reporte y subir las fotos.";
+            }
+
+            await DisplayAlert("Revisa tu conexión", msj, "Entendido");
         }
         finally
         {
+            // Ocultamos la capa oscura si hay error (si hay éxito, la página cambia al Menú así que no importa)
             BtnGuardarMantenimiento.IsEnabled = true;
-            BtnGuardarMantenimiento.Text = "GUARDAR REPORTE";
+            OverlayCarga.IsVisible = false;
+            CargandoGuardar.IsRunning = false;
         }
     }
 
@@ -192,9 +216,8 @@ public partial class PaginaMantenimiento : ContentPage
         }
         catch (Exception ex)
         {
-            // Blindaje: Registra error de acceso a galería
             await GestorErrores.GuardarErrorAsync(ex, "AdjuntarEvidencia", Preferences.Get("UsuarioLogeado", "Desconocido"));
-            await DisplayAlert("Error", "No se pudo cargar la imagen.", "OK");
+            await DisplayAlert("Error al cargar", "No se pudo cargar la imagen desde tu galería. Intenta elegir otra.", "Entendido");
         }
     }
 

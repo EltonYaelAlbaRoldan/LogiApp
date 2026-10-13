@@ -149,9 +149,9 @@ public partial class PaginaRegistro : ContentPage
             return;
         }
 
-        if (NumLicenciaEntry.Text.Length != 14)
+        if (NumLicenciaEntry.Text.Length != 0)
         {
-            await DisplayAlert("Error de Formato", "El número de licencia debe tener exactamente 14 caracteres.", "OK");
+            await DisplayAlert("Error de Formato", "El número de licencia debe tener menos de 15 caracteres.", "OK");
             return;
         }
 
