@@ -7,27 +7,28 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="25" Spacing="15">
-            <Frame
-                BackgroundColor="#F0F8FF"
-                BorderColor="#2196F3"
-                CornerRadius="10">
-                <VerticalStackLayout Spacing="5">
-                    <Label
-                        FontAttributes="Bold"
-                        HorizontalOptions="Center"
-                        Text="VIAJE ACTIVO"
-                        TextColor="#2196F3" />
-                    <Label
-                        x:Name="LblFolio"
-                        FontSize="18"
-                        HorizontalOptions="Center"
-                        Text="Folio: Cargando..." />
-                    <Label
-                        x:Name="LblDestino"
-                        HorizontalOptions="Center"
-                        Text="Destino: ---"
-                        TextColor="Gray" />
-                </VerticalStackLayout>
+            <Frame x:Name="PanelMonitoreo" BackgroundColor="#1E293B" CornerRadius="12" Padding="18" BorderColor="Transparent" HasShadow="True">
+                <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
+
+                    <!-- Indicador de Red (Esto se queda igual) -->
+                    <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="8" Margin="0,0,0,10">
+                        <BoxView x:Name="IndicadorRed" Color="#10B981" WidthRequest="10" HeightRequest="10" CornerRadius="5" VerticalOptions="Center"/>
+                        <Label x:Name="LblEstadoRed" Text="Conectado (GPS Sincronizando)" TextColor="#94A3B8" FontSize="12" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Datos del Viaje -->
+                    <!-- Asegúrate de que los Labels tengan nombre -->
+                    <Label x:Name="LblFolio" Grid.Row="1" Grid.Column="0" Text="Folio: Cargando..." TextColor="White" FontAttributes="Bold" FontSize="18"/>
+                    <Label x:Name="LblDestino" Grid.Row="2" Grid.Column="0" Text="Destino: ---" TextColor="#CBD5E1" FontSize="14" Margin="0,2,0,0"/>
+
+                    <!-- Cronómetro en Vivo -->
+                    <VerticalStackLayout Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End">
+                        <!-- Le agregamos x:Name="LblTituloTiempo" -->
+                        <Label x:Name="LblTituloTiempo" Text="TIEMPO EN RUTA" TextColor="#94A3B8" FontSize="10" HorizontalOptions="Center" FontAttributes="Bold"/>
+                        <Label x:Name="LblCronometro" Text="00:00" TextColor="#38BDF8" FontAttributes="Bold" FontSize="32" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+
+                </Grid>
             </Frame>
 
             <Label

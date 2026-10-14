@@ -24,6 +24,7 @@ public partial class PaginaTerminarViaje : ContentPage
     private bool _isTrackingRunning = false;
     private readonly BaseDeDatosLocal _dbLocal = new();
     private readonly SemaphoreSlim _semaforoTracking = new(1, 1);
+    private IDispatcherTimer _timerViaje;
     #endregion
 
     public PaginaTerminarViaje(string folio)
@@ -68,17 +69,64 @@ public partial class PaginaTerminarViaje : ContentPage
 
         Connectivity.Current.ConnectivityChanged += OnConnectivityChanged;
         _ = IntentarSincronizarDatosEnVivoAsync();
+
+        // Iniciar Cronómetro leyendo la fecha de salida exacta
+        string inicioStr = Preferences.Default.Get("Inicio_" + _folioActual, "");
+        if (DateTime.TryParseExact(inicioStr, "dd/MM/yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime fechaInicio))
+        {
+            _timerViaje = Dispatcher.CreateTimer();
+            _timerViaje.Interval = TimeSpan.FromMinutes(1); // Se actualiza cada minuto para ahorrar batería
+            _timerViaje.Tick += (s, e) =>
+            {
+                var tiempoTranscurrido = DateTime.Now - fechaInicio;
+                // Muestra formato Horas:Minutos (ej. 02:45)
+                LblCronometro.Text = $"{(int)tiempoTranscurrido.TotalHours:D2}:{tiempoTranscurrido.Minutes:D2}";
+                ActualizarTemaPorHora();
+            };
+
+            // Ejecutar el primer tick manualmente para que no tarde 1 min en aparecer
+            var tiempoInicial = DateTime.Now - fechaInicio;
+            LblCronometro.Text = $"{(int)tiempoInicial.TotalHours:D2}:{tiempoInicial.Minutes:D2}";
+
+            _timerViaje.Start();
+        }
+
+        ActualizarTemaPorHora();
+
+        // Forzar el estado de red actual al abrir la pantalla
+        ActualizarIndicadorRed(Connectivity.Current.NetworkAccess);
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
         Connectivity.Current.ConnectivityChanged -= OnConnectivityChanged;
+        if (_timerViaje != null && _timerViaje.IsRunning)
+            _timerViaje.Stop();
     }
 
     private async void OnConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
     {
-        if (e.NetworkAccess == NetworkAccess.Internet) await IntentarSincronizarDatosEnVivoAsync();
+        ActualizarIndicadorRed(e.NetworkAccess);
+        if (e.NetworkAccess == NetworkAccess.Internet)
+            await IntentarSincronizarDatosEnVivoAsync();
+    }
+
+    private void ActualizarIndicadorRed(NetworkAccess estado)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (estado == NetworkAccess.Internet)
+            {
+                IndicadorRed.Color = Color.FromArgb("#10B981"); // Verde esmeralda
+                LblEstadoRed.Text = "Conectado (GPS Sincronizando)";
+            }
+            else
+            {
+                IndicadorRed.Color = Color.FromArgb("#EF4444"); // Rojo
+                LblEstadoRed.Text = "Sin Señal (Guardando local)";
+            }
+        });
     }
 
     private async Task InicializarServicio()
@@ -513,5 +561,44 @@ public partial class PaginaTerminarViaje : ContentPage
         {
             CombustibleRecargaEntry.Text = "0";
         }
+    }
+
+    private void ActualizarTemaPorHora()
+    {
+        // Obtenemos la hora actual del dispositivo (0 a 23)
+        int horaActual = DateTime.Now.Hour;
+
+        // Consideramos "Noche" desde las 19:00 (7 PM) hasta las 06:59 (6 AM)
+        bool esDeNoche = (horaActual >= 19 || horaActual < 7);
+
+        // Asegurarnos de que el cambio se haga en el hilo principal de la UI
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            if (esDeNoche)
+            {
+                // TEMA NOCHE (Oscuro profundo, textos atenuados)
+                PanelMonitoreo.BackgroundColor = Color.FromArgb("#0F172A"); // Azul muy oscuro (Casi negro)
+
+                LblFolio.TextColor = Color.FromArgb("#F8FAFC"); // Blanco suave
+                LblDestino.TextColor = Color.FromArgb("#94A3B8"); // Gris azulado
+                LblTituloTiempo.TextColor = Color.FromArgb("#64748B"); // Gris oscuro
+                LblCronometro.TextColor = Color.FromArgb("#38BDF8"); // Azul neón para resaltar los números
+                LblEstadoRed.TextColor = Color.FromArgb("#64748B");
+            }
+            else
+            {
+                // TEMA DÍA (Claro, textos legibles bajo el sol)
+                PanelMonitoreo.BackgroundColor = Color.FromArgb("#F1F5F9"); // Gris muy claro (Casi blanco)
+
+                LblFolio.TextColor = Color.FromArgb("#0F172A"); // Azul oscuro (Casi negro)
+                LblDestino.TextColor = Color.FromArgb("#475569"); // Gris medio
+                LblTituloTiempo.TextColor = Color.FromArgb("#64748B"); // Gris oscuro
+                LblCronometro.TextColor = Color.FromArgb("#0284C7"); // Azul fuerte
+                LblEstadoRed.TextColor = Color.FromArgb("#64748B");
+
+                // Le ponemos un borde sutil para el modo día
+                PanelMonitoreo.BorderColor = Color.FromArgb("#E2E8F0");
+            }
+        });
     }
 }
