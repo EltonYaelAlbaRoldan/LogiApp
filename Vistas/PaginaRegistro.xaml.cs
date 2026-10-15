@@ -149,7 +149,7 @@ public partial class PaginaRegistro : ContentPage
             return;
         }
 
-        if (NumLicenciaEntry.Text.Length != 0)
+        if (NumLicenciaEntry.Text.Length > 15)
         {
             await DisplayAlert("Error de Formato", "El número de licencia debe tener menos de 15 caracteres.", "OK");
             return;
@@ -180,7 +180,8 @@ public partial class PaginaRegistro : ContentPage
             // Generación de identidad y estructura en nube
             _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
             _folderIdDestino = await _drive.CrearEstructuraOperadorAsync($"{_idOperadorGenerado} - {NombreEntry.Text}");
-            string linkCarpeta = $"https://drive.google.com/drive/folders/{_folderIdDestino}";
+            string url = $"https://drive.google.com/drive/folders/{_folderIdDestino}";
+            string linkCarpeta = $"=HYPERLINK(\"{url}\"; \"VER DOCUMENTOS\")";
 
             // Registro en Base de Datos (Sheets)
             await _sheets.RegistrarOperadorAsync(

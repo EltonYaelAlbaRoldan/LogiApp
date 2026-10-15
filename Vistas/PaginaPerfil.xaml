@@ -160,6 +160,7 @@
                         HeightRequest="50"
                         Text="ACTUALIZAR CONTRASEÑA"
                         TextColor="White" />
+
                 </VerticalStackLayout>
             </ScrollView>
         </Grid>
@@ -183,6 +184,8 @@
                     HorizontalOptions="Center"
                     Text="Validando fechas y subiendo archivos..."
                     TextColor="Gray" />
+
+                
             </VerticalStackLayout>
         </Grid>
     </Grid>

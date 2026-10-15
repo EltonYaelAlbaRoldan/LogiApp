@@ -1,15 +1,43 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<Application
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application 
     x:Class="LogiApp.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:LogiApp">
+    xmlns:local="clr-namespace:LogiApp"
+    xmlns:servicios="clr-namespace:LogiApp.Servicios">
+
     <Application.Resources>
         <ResourceDictionary>
+
+            <!-- 1. DICCIONARIOS ORIGINALES DE MAUI (Colores y Estilos) -->
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <ControlTemplate x:Key="TemplateConCreditos">
+                <Grid RowDefinitions="*, Auto">
+
+                    <ContentPresenter Grid.Row="0" />
+
+                    <Grid Grid.Row="1" BackgroundColor="#0F172A" Padding="15,10">
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="2">
+
+                            <Label Text="Sistema de Control para la Optimización de Ciclos de Viaje" 
+                                   TextColor="#94A3B8" FontSize="10" HorizontalOptions="Center" />
+
+                            <Label Text="{x:Static servicios:SeguridadApp.CreditosDesarrollador}" 
+                                   TextColor="White" FontAttributes="Bold" FontSize="11" HorizontalOptions="Center" />
+
+                            <Label Text="Proyecto de Educación Dual ITESA 2026 - TLB Transportes" 
+                                   TextColor="#64748B" FontSize="10" HorizontalOptions="Center" />
+
+                        </VerticalStackLayout>
+                    </Grid>
+
+                </Grid>
+            </ControlTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

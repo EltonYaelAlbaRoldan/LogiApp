@@ -19,6 +19,7 @@ public class ConexionGoogleAuth
     #region MÉTODOS DE SERVICIO
     public async Task<(SheetsService, DriveService)> ObtenerServiciosAsync()
     {
+        SeguridadApp.VerificarIntegridad();
         // 1. Configuración del flujo de autorización (Scopes para Drive y Sheets)
         var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
         {

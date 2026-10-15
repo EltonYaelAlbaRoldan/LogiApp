@@ -5,7 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Menú Principal"
     Padding="0"
-    NavigationPage.HasNavigationBar="False">
+    NavigationPage.HasNavigationBar="False"
+    ControlTemplate="{StaticResource TemplateConCreditos}">
 
     <RefreshView
         x:Name="RefreshMenu"

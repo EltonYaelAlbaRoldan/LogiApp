@@ -36,7 +36,6 @@ public class ConsultasGoogleSheets
             // 2. Preparar los datos (Aseguramos 13 columnas para llegar a la M)
             var listaDatos = new List<object>(datos);
 
-            // CORRECCIÓN DEL ERROR CS0019: Relleno simple hasta la columna L (índice 11)
             while (listaDatos.Count < 12)
             {
                 listaDatos.Add("");
@@ -81,8 +80,14 @@ public class ConsultasGoogleSheets
                     Rows = new List<RowData>
                 {
                     new RowData {
-                        Values = listaDatos.Select(d => new CellData {
-                            UserEnteredValue = new ExtendedValue { StringValue = d?.ToString() ?? "" }
+                        Values = listaDatos.Select(d => {
+                            string valor = d?.ToString() ?? "";
+                            return new CellData {
+                                // Si el texto empieza con "=" lo inyecta como fórmula, sino como texto normal.
+                                UserEnteredValue = valor.StartsWith("=")
+                                    ? new ExtendedValue { FormulaValue = valor }
+                                    : new ExtendedValue { StringValue = valor }
+                            };
                         }).ToList()
                     }
                 },
