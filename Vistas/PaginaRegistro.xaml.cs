@@ -171,11 +171,11 @@ public partial class PaginaRegistro : ContentPage
 
         if (_estaProcesando) return;
 
+
         try
         {
             _estaProcesando = true;
-            IsBusy = true;
-            OnPropertyChanged(nameof(IsNotBusy));
+            MostrarCargador(true, "Creando perfil...");
 
             // Generación de identidad y estructura en nube
             _idOperadorGenerado = await _sheets.GenerarIdUnicoFormateadoAsync();
@@ -206,18 +206,15 @@ public partial class PaginaRegistro : ContentPage
         }
         catch (Exception ex)
         {
-            // Registra el error técnico sin importar la sesión
             await GestorErrores.GuardarErrorAsync(ex, "ProcesoRegistro-Fase1", NombreEntry.Text);
             await DisplayAlert("Error Crítico", "Fallo al crear el registro. El error ha sido registrado.", "OK");
         }
         finally
         {
-            IsBusy = false;
+            MostrarCargador(false);
             _estaProcesando = false;
-            OnPropertyChanged(nameof(IsNotBusy));
         }
     }
-
     // PASO 2: Sube los archivos PDF a Drive y envía credenciales por correo electrónico.
     private async void OnSubirArchivosClicked(object sender, EventArgs e)
     {
@@ -236,10 +233,9 @@ public partial class PaginaRegistro : ContentPage
         try
         {
             _estaProcesando = true;
-            IsBusy = true;
+            MostrarCargador(true, "Subiendo expedientes...");
             BtnSubirArchivos.IsEnabled = false;
 
-            // Subida individual con trazabilidad de errores
             foreach (var item in _rutasArchivos)
             {
                 try
@@ -248,13 +244,11 @@ public partial class PaginaRegistro : ContentPage
                 }
                 catch (Exception ex)
                 {
-                    // Registramos qué archivo específico falló
                     await GestorErrores.GuardarErrorAsync(ex, $"FalloSubida-{item.Key}", _idOperadorGenerado);
-                    throw; // Lanzamos la excepción para detener el proceso y capturarla en el catch principal
+                    throw;
                 }
             }
 
-            // Envío de credenciales con registro de error si falla
             string correo = Preferences.Get("CorreoPendiente", CorreoEntry.Text);
             string nombre = Preferences.Get("NombrePendiente", NombreEntry.Text);
 
@@ -262,17 +256,15 @@ public partial class PaginaRegistro : ContentPage
             if (!correoEnviado)
                 await GestorErrores.GuardarErrorAsync(new Exception("No fue posible enviar el correo de registro."), "EnvioEmailCredenciales", _idOperadorGenerado);
 
-            bool avisoAdministradorEnviado = await _emailService.EnviarAvisoNuevoOperadorAsync(
-                _idOperadorGenerado, nombre, correo);
+            bool avisoAdministradorEnviado = await _emailService.EnviarAvisoNuevoOperadorAsync(_idOperadorGenerado, nombre, correo);
             if (!avisoAdministradorEnviado)
-                await GestorErrores.GuardarErrorAsync(
-                    new Exception("No fue posible notificar al administrador."),
-                    "AvisoAdministradorNuevoOperador",
-                    _idOperadorGenerado);
+                await GestorErrores.GuardarErrorAsync(new Exception("No fue posible notificar al administrador."), "AvisoAdministradorNuevoOperador", _idOperadorGenerado);
 
             string mensaje = correoEnviado && avisoAdministradorEnviado
                 ? "Expediente completo. Se notificó al operador y al administrador."
                 : "Expediente completo, pero uno o más correos no pudieron enviarse.";
+
+            MostrarCargador(false);
             await DisplayAlert("Éxito", mensaje, "Finalizar");
 
             Preferences.Remove("IdPendiente");
@@ -285,15 +277,15 @@ public partial class PaginaRegistro : ContentPage
         }
         catch (Exception ex)
         {
-            // El catch principal gestiona errores de conexión graves durante la subida
+            MostrarCargador(false);
             await GestorErrores.GuardarErrorAsync(ex, "ProcesoRegistro-Fase2", _idOperadorGenerado);
             await DisplayAlert("Error", "Fallo durante la subida de documentos. El error ha sido registrado.", "OK");
             BtnSubirArchivos.IsEnabled = true;
         }
         finally
         {
+            MostrarCargador(false);
             _estaProcesando = false;
-            IsBusy = false;
         }
     }
 
@@ -371,6 +363,18 @@ public partial class PaginaRegistro : ContentPage
         VigenciaLicenciaPicker.IsEnabled = estado;
         VigenciaMedicoPicker.IsEnabled = estado;
         ContrasenaOperadorEntry.IsEnabled = estado;
+    }
+
+    #endregion
+
+    #region Control de Carga (Overlay Centrado)
+
+    // Muestra u oculta la capa sobrepuesta de carga en el centro de la pantalla
+    private void MostrarCargador(bool mostrar, string mensaje = "Procesando en la nube...")
+    {
+        LblTextoCarga.Text = mensaje;
+        OverlayCarga.IsVisible = mostrar;
+        IsBusy = mostrar;
     }
 
     #endregion

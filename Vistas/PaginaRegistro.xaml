@@ -7,303 +7,330 @@
     Title="LogiApp - Registro"
     NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid>
+        <!--  CONTENIDO PRINCIPAL DE LA PÁGINA  -->
+        <Grid RowDefinitions="Auto,*">
 
-        <Grid
-            Grid.Row="0"
-            Padding="20,15"
-            BackgroundColor="White"
-            ColumnDefinitions="60,*"
-            VerticalOptions="Center">
-            <Border
-                Grid.Column="0"
+            <Grid
+                Grid.Row="0"
+                Padding="20,15"
                 BackgroundColor="White"
-                HeightRequest="40"
-                Stroke="#E0E0E0"
-                StrokeThickness="1"
-                WidthRequest="40">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="20" />
-                </Border.StrokeShape>
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnVolverClicked" />
-                </Border.GestureRecognizers>
+                ColumnDefinitions="60,*"
+                VerticalOptions="Center">
+                <Border
+                    Grid.Column="0"
+                    BackgroundColor="White"
+                    HeightRequest="40"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="1"
+                    WidthRequest="40">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20" />
+                    </Border.StrokeShape>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnVolverClicked" />
+                    </Border.GestureRecognizers>
+                    <Label
+                        Margin="0,0,4,8"
+                        FontAttributes="Bold"
+                        FontSize="26"
+                        HorizontalOptions="Center"
+                        Text="‹"
+                        TextColor="#0A0A33"
+                        VerticalOptions="Center" />
+                </Border>
                 <Label
-                    Margin="0,0,4,8"
+                    Grid.Column="1"
                     FontAttributes="Bold"
-                    FontSize="26"
-                    HorizontalOptions="Center"
-                    Text="‹"
+                    FontSize="20"
+                    Text="Registro de Operador"
                     TextColor="#0A0A33"
                     VerticalOptions="Center" />
-            </Border>
-            <Label
-                Grid.Column="1"
-                FontAttributes="Bold"
-                FontSize="20"
-                Text="Registro de Operador"
-                TextColor="#0A0A33"
-                VerticalOptions="Center" />
-        </Grid>
+            </Grid>
 
-        <ScrollView Grid.Row="1" Padding="20">
-            <VerticalStackLayout Spacing="15">
+            <ScrollView Grid.Row="1" Padding="20">
+                <VerticalStackLayout Spacing="15">
 
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="18"
-                    Text="1. Información Personal"
-                    TextColor="#2196F3" />
-
-                <VerticalStackLayout Spacing="10">
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Nombre Completo " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Entry x:Name="NombreEntry" Placeholder="Nombre y Apellidos" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Edad " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Entry
-                        x:Name="EdadEntry"
-                        Keyboard="Numeric"
-                        MaxLength="2"
-                        Placeholder="00" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Correo " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Entry
-                        x:Name="CorreoEntry"
-                        Keyboard="Email"
-                        Placeholder="ejemplo@correo.com" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Telefono " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Entry
-                        x:Name="Tel1Entry"
-                        Keyboard="Telephone"
-                        MaxLength="10"
-                        Placeholder="10 dígitos" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Telefono 2" TextColor="Black" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Entry
-                        x:Name="Tel2Entry"
-                        Keyboard="Telephone"
-                        MaxLength="10"
-                        Placeholder="10 dígitos" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Clave interbancaria " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Entry
-                        x:Name="ClaveInterbancariaEntry"
-                        Keyboard="Numeric"
-                        MaxLength="18"
-                        Placeholder="18 dígitos" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Número de Licencia " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Entry
-                        x:Name="NumLicenciaEntry"
-                        MaxLength="14"
-                        Placeholder="Dígitos de licencia" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Vigencia licencia " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <DatePicker
-                        x:Name="VigenciaLicenciaPicker"
-                        DateSelected="OnDateSelected"
-                        Format="dd/MM/yyyy" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Vigencia apto medico " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <DatePicker
-                        x:Name="VigenciaMedicoPicker"
-                        DateSelected="OnDateSelected"
-                        Format="dd/MM/yyyy" />
-
-                    <Label FontAttributes="Bold">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Crea una Contraseña " TextColor="Black" />
-                                <Span Text="*" TextColor="Red" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Grid ColumnDefinitions="*, Auto">
-                        <Entry
-                            x:Name="ContrasenaOperadorEntry"
-                            Grid.Column="0"
-                            IsPassword="True"
-                            Placeholder="Mínimo 6 caracteres" />
-                        <Button
-                            x:Name="BtnTogglePass"
-                            Grid.Column="1"
-                            BackgroundColor="Transparent"
-                            Clicked="OnTogglePasswordClicked"
-                            FontSize="10"
-                            HeightRequest="35"
-                            Text="Ver"
-                            TextColor="#2196F3"
-                            WidthRequest="50" />
-                    </Grid>
-                </VerticalStackLayout>
-
-                <Button
-                    x:Name="BtnRegistrarDatos"
-                    BackgroundColor="#2196F3"
-                    Clicked="OnProbarRegistroClicked"
-                    CornerRadius="10"
-                    HeightRequest="50"
-                    Text="1. VALIDAR Y CREAR PERFIL"
-                    TextColor="White" />
-
-                <BoxView
-                    Margin="0,10"
-                    HeightRequest="1"
-                    Color="#E0E0E0" />
-
-                <VerticalStackLayout
-                    x:Name="SeccionDocumentos"
-                    IsEnabled="False"
-                    Opacity="0.5"
-                    Spacing="10">
                     <Label
                         FontAttributes="Bold"
                         FontSize="18"
-                        Text="2. Expediente Digital (PDF)"
+                        Text="1. Información Personal"
                         TextColor="#2196F3" />
 
-                    <Button
-                        x:Name="BtnPdfLicencia"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirLicenciaClicked"
-                        Text="Licencia Federal (PDF)"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfMedico"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirMedicoClicked"
-                        Text="Apto Médico (PDF)"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfIne"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirIneClicked"
-                        Text="INE"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfActa"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirActaClicked"
-                        Text="Acta de Nacimiento"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfNss"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirNssClicked"
-                        Text="NSS"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfCurp"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirCurpClicked"
-                        Text="CURP"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfRfc"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirRfcClicked"
-                        Text="RFC / Cédula Fiscal"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfDom"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirDomClicked"
-                        Text="Comprobante Domicilio"
-                        TextColor="#0A0A33" />
-                    <Button
-                        x:Name="BtnPdfCv"
-                        BackgroundColor="#F5F5F5"
-                        Clicked="OnSubirCvClicked"
-                        Text="CV"
-                        TextColor="#0A0A33" />
+                    <VerticalStackLayout Spacing="10">
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Nombre Completo " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry x:Name="NombreEntry" Placeholder="Nombre y Apellidos" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Edad " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry
+                            x:Name="EdadEntry"
+                            Keyboard="Numeric"
+                            MaxLength="2"
+                            Placeholder="00" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Correo " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry
+                            x:Name="CorreoEntry"
+                            Keyboard="Email"
+                            Placeholder="ejemplo@correo.com" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Telefono " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry
+                            x:Name="Tel1Entry"
+                            Keyboard="Telephone"
+                            MaxLength="10"
+                            Placeholder="10 dígitos" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Telefono 2" TextColor="Black" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry
+                            x:Name="Tel2Entry"
+                            Keyboard="Telephone"
+                            MaxLength="10"
+                            Placeholder="10 dígitos" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Clave interbancaria " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry
+                            x:Name="ClaveInterbancariaEntry"
+                            Keyboard="Numeric"
+                            MaxLength="18"
+                            Placeholder="18 dígitos" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Número de Licencia " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry
+                            x:Name="NumLicenciaEntry"
+                            MaxLength="14"
+                            Placeholder="Dígitos de licencia" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Vigencia licencia " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <DatePicker
+                            x:Name="VigenciaLicenciaPicker"
+                            DateSelected="OnDateSelected"
+                            Format="dd/MM/yyyy" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Vigencia apto medico " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <DatePicker
+                            x:Name="VigenciaMedicoPicker"
+                            DateSelected="OnDateSelected"
+                            Format="dd/MM/yyyy" />
+
+                        <Label FontAttributes="Bold">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Crea una Contraseña " TextColor="Black" />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Entry
+                                x:Name="ContrasenaOperadorEntry"
+                                Grid.Column="0"
+                                IsPassword="True"
+                                Placeholder="Mínimo 6 caracteres" />
+                            <Button
+                                x:Name="BtnTogglePass"
+                                Grid.Column="1"
+                                BackgroundColor="Transparent"
+                                Clicked="OnTogglePasswordClicked"
+                                FontSize="10"
+                                HeightRequest="35"
+                                Text="Ver"
+                                TextColor="#2196F3"
+                                WidthRequest="50" />
+                        </Grid>
+                    </VerticalStackLayout>
 
                     <Button
-                        x:Name="BtnSubirArchivos"
-                        Margin="0,15,0,0"
-                        BackgroundColor="#0A0A33"
-                        Clicked="OnSubirArchivosClicked"
+                        x:Name="BtnRegistrarDatos"
+                        BackgroundColor="#2196F3"
+                        Clicked="OnProbarRegistroClicked"
                         CornerRadius="10"
-                        HeightRequest="55"
-                        IsEnabled="False"
-                        Text="2. FINALIZAR EXPEDIENTE"
+                        HeightRequest="50"
+                        Text="1. VALIDAR Y CREAR PERFIL"
                         TextColor="White" />
-                </VerticalStackLayout>
 
-                <VerticalStackLayout
-                    Margin="0,10"
-                    HorizontalOptions="Center"
-                    IsVisible="{Binding IsBusy, Source={x:Reference this}}">
-                    <ActivityIndicator IsRunning="True" Color="#2196F3" />
+                    <BoxView
+                        Margin="0,10"
+                        HeightRequest="1"
+                        Color="#E0E0E0" />
+
+                    <VerticalStackLayout
+                        x:Name="SeccionDocumentos"
+                        IsEnabled="False"
+                        Opacity="0.5"
+                        Spacing="10">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="18"
+                            Text="2. Expediente Digital (PDF)"
+                            TextColor="#2196F3" />
+
+                        <Button
+                            x:Name="BtnPdfLicencia"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirLicenciaClicked"
+                            Text="Licencia Federal (PDF)"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfMedico"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirMedicoClicked"
+                            Text="Apto Médico (PDF)"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfIne"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirIneClicked"
+                            Text="INE"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfActa"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirActaClicked"
+                            Text="Acta de Nacimiento"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfNss"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirNssClicked"
+                            Text="NSS"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfCurp"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirCurpClicked"
+                            Text="CURP"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfRfc"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirRfcClicked"
+                            Text="RFC / Cédula Fiscal"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfDom"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirDomClicked"
+                            Text="Comprobante Domicilio"
+                            TextColor="#0A0A33" />
+                        <Button
+                            x:Name="BtnPdfCv"
+                            BackgroundColor="#F5F5F5"
+                            Clicked="OnSubirCvClicked"
+                            Text="CV"
+                            TextColor="#0A0A33" />
+
+                        <Button
+                            x:Name="BtnSubirArchivos"
+                            Margin="0,15,0,0"
+                            BackgroundColor="#0A0A33"
+                            Clicked="OnSubirArchivosClicked"
+                            CornerRadius="10"
+                            HeightRequest="55"
+                            IsEnabled="False"
+                            Text="2. FINALIZAR EXPEDIENTE"
+                            TextColor="White" />
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
+
+        <!--  CAPA SOBREPUESTA DE CARGA GENERAL  -->
+        <Grid
+            x:Name="OverlayCarga"
+            BackgroundColor="#80000000"
+            HorizontalOptions="Fill"
+            IsVisible="False"
+            VerticalOptions="Fill">
+
+            <Border
+                Padding="25,20"
+                BackgroundColor="White"
+                HorizontalOptions="Center"
+                StrokeShape="RoundRectangle 15"
+                StrokeThickness="0"
+                VerticalOptions="Center"
+                WidthRequest="280">
+
+                <VerticalStackLayout Spacing="15">
+                    <ActivityIndicator
+                        HeightRequest="45"
+                        IsRunning="True"
+                        WidthRequest="45"
+                        Color="#2196F3" />
+
                     <Label
-                        FontSize="12"
+                        x:Name="LblTextoCarga"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        HorizontalTextAlignment="Center"
                         Text="Procesando en la nube..."
-                        TextColor="#2196F3" />
+                        TextColor="#0A0A33" />
                 </VerticalStackLayout>
-
-            </VerticalStackLayout>
-        </ScrollView>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>
