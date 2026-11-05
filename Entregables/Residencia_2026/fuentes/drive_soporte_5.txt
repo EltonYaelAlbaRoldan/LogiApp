@@ -1,0 +1,244 @@
+ID 
+Prueba
+Tipo de 
+prueba
+Componente 
+evaluado
+Objetivo de 
+la prueba
+Procedimiento / 
+Pasos
+Resultado 
+esperado Evidencia
+Numero 
+de 
+pruebas 
+(mínimo 
+5)
+Pruebas 
+exitosas/ 
+Pruebas 
+no 
+exitosas
+Comentarios/ 
+Observaciones
+1 HW / 
+Sensores
+Sensor GPS 
+del 
+dispositivo 
+móvil
+Validar la 
+precisión y 
+disponibilida
+d de la 
+telemetría en 
+movimiento.
+1. Iniciar viaje.
+2. Realizar 
+recorrido real de 
+5km.
+3. Verificar 
+captura de 
+coordenadas 
+cada 10 min.
+Captura de 
+Latitud/Longitu
+d con precisión 
+de 5 decimales 
+sin 
+interrupciones 
+por bloqueo de 
+pantalla.
+Captura de 
+pantalla de la 
+App y log de 
+Sheets.
+5 5/0
+Prueba crítica para 
+garantizar que la 
+telemetría no se 
+suspenda por la gestión 
+de energía de Android. 
+Se validó la precisión de 
+~1 metro requerida 
+para el monitoreo 
+logístico en tiempo real.
+2 SW / 
+Persistenci
+a
+Base de 
+Datos Local 
+(SQLite)
+Verificar la 
+resiliencia del 
+sistema ante 
+la pérdida 
+total de señal 
+de internet.
+1. Activar Modo 
+Avión.
+2. Presionar 
+"Reportar 
+Ubicación".
+3. Verificar 
+mensaje de la 
+App.
+El sistema 
+detecta la falta 
+de red y guarda 
+el objeto 
+UbicacionViaje 
+en el archivo 
+local 
+LogiAppLocal.d
+b3.
+Captura de 
+alerta: 
+"GUARDADO 
+LOCAL".
+5 5/0
+Mitigación directa del 
+Riesgo #7 del Análisis de 
+Riesgos. El motor de 
+persistencia local 
+(SQLite) asegura que no 
+exista "ceguera" 
+informativa durante 
+trayectos en zonas de 
+sombra de red.3 Integración
+API Google 
+Sheets / 
+Drive
+Asegurar la 
+sincronizació
+n correcta 
+del 
+expediente 
+digital y el 
+historial de 
+viajes.
+1. Finalizar viaje.
+2. Tomar foto de 
+evidencia.
+3. Clic en 
+"Terminar Viaje" 
+con red activa.
+La foto se 
+almacena en la 
+carpeta del 
+operador en 
+Drive y los 
+datos de 
+rendimiento se 
+insertan en la 
+fila 
+correspondient
+e en Sheets.
+URL del 
+archivo en 
+Drive y fila 
+actualizada 
+en Sheets.
+5 5/0
+Validación de la 
+arquitectura Edge-toCloud. Se confirmó que 
+el uso de APIs no 
+genera cuellos de 
+botella en la subida de 
+evidencias pesadas 
+(fotos) y que la 
+organización de 
+carpetas en Drive es 
+automática.
+4 Rendimient
+o básico
+Lógica de 
+auto-creación 
+de columnas
+Validar que 
+el sistema no 
+"truene" al 
+llegar al 
+límite de 
+columnas (Z) 
+en el 
+historial.
+1. Llenar 
+columnas hasta 
+la 'Z'.
+2. Ejecutar un 
+nuevo reporte de 
+ubicación.
+3. Observar 
+comportamiento 
+de la hoja.
+El sistema 
+intercepta el 
+error "exceeds 
+grid limits", 
+expande la hoja 
+automáticamen
+te (AA, AB...) y 
+reintenta el 
+envío.
+Pestaña de 
+historial con 
+columnas 
+expandidas 
+más allá de la 
+'Z'.
+5 5/0
+Asegura la escalabilidad 
+del sistema a largo 
+plazo. La lógica de 
+expansión dinámica de 
+columnas previene 
+errores de la API de 
+Google al saturar el 
+rango inicial (columna 
+Z) de la hoja de cálculo 
+operativa.5 Usabilidad
+Formulario 
+de Cierre de 
+Viaje
+Validar las 
+reglas de 
+negocio y 
+validaciones 
+de datos 
+(Kilometraje 
+y 
+Combustible) .
+1. Ingresar KM de 
+llegada menor al 
+de salida.
+2. Intentar 
+finalizar viaje.
+3. Repetir con 
+datos lógicos.
+El sistema 
+bloquea el 
+envío si los 
+datos son 
+ilógicos y 
+muestra una 
+alerta 
+informativa al 
+operador.
+Captura de 
+pantalla de la 
+alerta: "Datos 
+no lógicos".
+5 5/0
+Control de calidad en 
+origen. Esta validación 
+garantiza que el área 
+administrativa de TLB 
+Transportes reciba 
+datos limpios, 
+eliminando errores 
+humanos de 
+transcripción o ingresos 
+accidentales de 
+kilometraje ilógico.

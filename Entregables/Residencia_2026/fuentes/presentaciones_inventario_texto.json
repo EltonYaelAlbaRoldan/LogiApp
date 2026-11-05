@@ -1,0 +1,395 @@
+[
+  {
+    "archivo": "Presentacion_LogiApp.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP | Una app que acompaña cada viaje | Desarrollada en equipo para hacer más claro el trabajo diario del transporte | Proyecto de dos integrantes"
+      },
+      {
+        "slide": 2,
+        "texto": "El problema no era la falta de información, sino tenerla dispersa | ANTES | Datos del operador\nDocumentos por separado\nReportes y evidencias\nSeguimiento del viaje | LA OPORTUNIDAD | Un recorrido más ordenado, fácil de entender y accesible desde el teléfono. | 02"
+      },
+      {
+        "slide": 3,
+        "texto": "La app sigue la misma lógica que un viaje real | 1 | Prepararse | 2 | Viajar | 3 | Cerrar | Perfil y expediente\nlistos antes de salir | Ruta, unidad y ubicación\ncon información clara | Kilometraje, notas y fotos\ncomo evidencia | 03"
+      },
+      {
+        "slide": 4,
+        "texto": "Diseñamos para personas ocupadas, no para expertos | Claridad | Acciones directas y pasos reconocibles. | Confianza | Confirmaciones, estados e historial visible. | Acompañamiento | La app indica qué falta y qué sigue. | 04"
+      },
+      {
+        "slide": 5,
+        "texto": "Nuestro primer aprendizaje: escuchar cambia el resultado | Escuchar | Entender el recorrido completo antes de proponer pantallas. | Ajustar | Aceptar que una idea puede mejorar cuando la otra persona la cuestiona. | Una buena solución se construye con preguntas, no con suposiciones. | 05"
+      },
+      {
+        "slide": 6,
+        "texto": "Dos personas, una misma responsabilidad | Compartir | Ideas, avances y dudas antes de que se convirtieran en problemas. | Coordinar | Dividir tareas sin perder de vista el recorrido completo. | Respaldar | Revisar el trabajo de la otra persona y resolver juntas. | 06"
+      },
+      {
+        "slide": 7,
+        "texto": "Los retos nos obligaron a comunicarnos mejor | Reto | Respuesta del equipo | Muchos pasos | Ordenarlos según el momento real del viaje | Datos sensibles | Tratar el registro y los documentos con cuidado | Cambios e imprevistos | Ajustar prioridades y mantenernos informadas | 07"
+      },
+      {
+        "slide": 8,
+        "texto": "Cada función representa una habilidad humana | Perfil y expediente | Responsabilidad y cuidado de la información | Viaje y ubicación | Comunicación y seguimiento oportuno | Mantenimiento | Prevención y atención a los detalles | Historial y evidencias | Transparencia y rendición de cuentas | 08"
+      },
+      {
+        "slide": 9,
+        "texto": "Lo que nos llevamos va más allá de la aplicación | 01 | Explicar ideas con sencillez | 02 | Escuchar antes de decidir | 03 | Adaptarnos sin perder el objetivo | 04 | Confiar y responder como equipo | 09"
+      },
+      {
+        "slide": 10,
+        "texto": "LOGIAPP | Un viaje mejor organizado empieza con personas que saben colaborar | Gracias por acompañarnos | Preguntas"
+      }
+    ],
+    "imagenes": []
+  },
+  {
+    "archivo": "Presentacion_LogiApp_Evolucion_v1_a_v2.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP | Evolución de la | versión 1.0 a la 2.2 | Mejoras orientadas a la operación, la seguridad y la continuidad de los viajes | Presentación de actualización"
+      },
+      {
+        "slide": 2,
+        "texto": "EL COMIENZO | La versión 1.0 inició la digitalización | 02 | El primer paso fue reunir en una sola aplicación las tareas esenciales del operador. | Registro del operador y acceso personal. | Captura de viajes, unidades y destinos. | Cierre con kilometraje, combustible y evidencia. | La base ya estaba lista; la versión 2.0 amplió el control y la seguridad."
+      },
+      {
+        "slide": 3,
+        "texto": "EL SALTO DE VERSIÓN | La versión 2.0 convirtió el registro en seguimiento | 03 | Versión 1.0 | Versión 2.0 | Información del operador |  | Registro de salida y cierre |  | Una evidencia por proceso | Ruta visible en Google Maps |  | Varias fotos por viaje |  | Carpetas separadas y acceso más seguro | La aplicación pasó de capturar datos a acompañar el viaje completo."
+      },
+      {
+        "slide": 4,
+        "texto": "EVOLUCIÓN | Cada actualización respondió a una situación real | 04 | 1.0 | Digitalización | 2.0 | Operación completa | 2.1 | Rutas más claras | 2.2 | Seguimiento confiable | Actual | Cierre preciso | La mejora ha sido continua y guiada por lo que ocurre durante los viajes reales."
+      },
+      {
+        "slide": 5,
+        "texto": "SEGURIDAD DESDE LA VERSIÓN 2.0 | Las contraseñas ya no se guardan de forma legible | 05 | Protección mediante hash | La contraseña se transforma antes de guardarse. | No puede leerse directamente desde la base de datos. | Al iniciar sesión se comprueba sin mostrar el valor original. | En palabras sencillas: la app confirma la contraseña sin almacenarla tal como fue escrita."
+      },
+      {
+        "slide": 6,
+        "texto": "PRIMERA MEJORA IMPORTANTE | El error de almacenamiento quedó resuelto | 06 | ¿Qué ocurría? | La hoja alcanzaba su límite al colocar cada ubicación de forma horizontal. | El operador recibía un mensaje que no podía resolver por sí mismo. | Solución | Ahora el recorrido se concentra y continúa en la siguiente columna solo cuando es necesario."
+      },
+      {
+        "slide": 7,
+        "texto": "SEGUIMIENTO ORGANIZADO | La ruta ahora es más fácil de leer | 07 | Inicio | Recorrido | Llegada | Todas las ubicaciones quedan ordenadas por fecha y hora para reconstruir el trayecto."
+      },
+      {
+        "slide": 8,
+        "texto": "CONSULTA VISUAL | La ruta completa puede abrirse en Google Maps | 08 | Origen | Destino | VER RUTA | El enlace reúne el inicio, la llegada y puntos intermedios. | Lee todas las columnas utilizadas por el viaje. | Selecciona puntos intermedios para mostrar el recorrido. | Permite revisar la ruta desde un mapa conocido."
+      },
+      {
+        "slide": 9,
+        "texto": "TRABAJO SIN CONEXIÓN | Sin internet, el registro del viaje continúa | 09 | 1 | Captura | La app obtiene la ubicación. | 2 | Resguarda | Se guarda primero en el teléfono. | 3 | Espera | Permanece segura sin conexión. | 4 | Sincroniza | Se envía al recuperar internet. | Resultado: el operador puede continuar su viaje aunque apague los datos móviles."
+      },
+      {
+        "slide": 10,
+        "texto": "PANTALLA APAGADA | El seguimiento continúa sin mantener la app abierta | 10 | LogiApp — viaje en curso | Registrando la ruta aun con la pantalla apagada | La notificación permanece durante el viaje y desaparece al marcar la llegada. | El operador puede: | Usar otras aplicaciones del dispositivo. | Apagar la pantalla durante el trayecto. | Conservar las ubicaciones aunque no tenga internet."
+      },
+      {
+        "slide": 11,
+        "texto": "EVIDENCIAS ORGANIZADAS | Cada viaje puede guardar varias fotos de evidencia | 11 | El operador agrega todas las fotografías necesarias antes de cerrar el viaje. | FOTO 01 | FOTO 02 | FOTO 03 | Operador | Evidencias | Folio del viaje | Fotos del viaje | Las fotos se conservan juntas por folio y separadas de otros viajes y operadores."
+      },
+      {
+        "slide": 12,
+        "texto": "ACCESO Y SEGURIDAD | También simplificamos el registro del operador | 12 | Antes | Ahora | La licencia podía rechazarse por la cantidad de caracteres. |  | La contraseña tenía menos protección. | El campo de licencia acepta la extensión necesaria. |  | Las contraseñas se guardan de forma más segura. | Menos obstáculos para registrarse y mayor confianza en el acceso."
+      },
+      {
+        "slide": 13,
+        "texto": "CIERRE DEL VIAJE | La llegada siempre conserva su hora real | 13 | Durante el recorrido | Al marcar la llegada | Las coordenadas prácticamente iguales se omiten para evitar repeticiones innecesarias. | La ubicación final se registra siempre, aunque el vehículo no se haya movido desde el último punto. | Así, la última línea roja representa realmente el momento de llegada."
+      },
+      {
+        "slide": 14,
+        "texto": "EXPERIENCIA DIARIA | Para el operador, el proceso sigue siendo sencillo | 14 | 01 | Inicia | Registra los datos y comienza el viaje. | 02 | Conduce | La app acompaña el recorrido en segundo plano. | 03 | Llega | Marca la llegada y guarda la hora final. | 04 | Cierra | Agrega evidencia y completa el viaje."
+      },
+      {
+        "slide": 15,
+        "texto": "LOGIAPP | Una actualización pensada | para la operación real | Más continuidad. Menos errores. Mejor visibilidad del viaje. | Resultado de la evolución | Una aplicación más segura, preparada para trabajar sin conexión, conservar varias evidencias y mostrar el recorrido completo."
+      }
+    ],
+    "imagenes": [
+      {
+        "media": "ppt/media/image.png",
+        "slides": [
+          1
+        ],
+        "dimensiones": [
+          1120,
+          928
+        ],
+        "archivo_inspeccion": "C:\\Users\\elton\\source\\repos\\EltonYaelAlbaRoldan\\LogiApp\\.tmp\\inspeccion_evidencias\\Presentacion_LogiApp_Evolucion_v1_a_v2_image.png"
+      },
+      {
+        "media": "ppt/media/image2.png",
+        "slides": [
+          2
+        ],
+        "dimensiones": [
+          1120,
+          928
+        ],
+        "archivo_inspeccion": "C:\\Users\\elton\\source\\repos\\EltonYaelAlbaRoldan\\LogiApp\\.tmp\\inspeccion_evidencias\\Presentacion_LogiApp_Evolucion_v1_a_v2_image2.png"
+      },
+      {
+        "media": "ppt/media/image3.png",
+        "slides": [
+          5
+        ],
+        "dimensiones": [
+          500,
+          426
+        ],
+        "archivo_inspeccion": "C:\\Users\\elton\\source\\repos\\EltonYaelAlbaRoldan\\LogiApp\\.tmp\\inspeccion_evidencias\\Presentacion_LogiApp_Evolucion_v1_a_v2_image3.png"
+      },
+      {
+        "media": "ppt/media/image4.png",
+        "slides": [
+          6
+        ],
+        "dimensiones": [
+          716,
+          1600
+        ],
+        "archivo_inspeccion": "C:\\Users\\elton\\source\\repos\\EltonYaelAlbaRoldan\\LogiApp\\.tmp\\inspeccion_evidencias\\Presentacion_LogiApp_Evolucion_v1_a_v2_image4.png"
+      },
+      {
+        "media": "ppt/media/image5.png",
+        "slides": [
+          7
+        ],
+        "dimensiones": [
+          772,
+          59
+        ],
+        "archivo_inspeccion": "C:\\Users\\elton\\source\\repos\\EltonYaelAlbaRoldan\\LogiApp\\.tmp\\inspeccion_evidencias\\Presentacion_LogiApp_Evolucion_v1_a_v2_image5.png"
+      }
+    ]
+  },
+  {
+    "archivo": "Presentacion_LogiApp_Evolucion_v2.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP | Evolución de la | versión 2.0 a la 2.2 | Mejoras orientadas a la operación, la seguridad y la continuidad de los viajes | Presentación de actualización"
+      },
+      {
+        "slide": 2,
+        "texto": "PUNTO DE PARTIDA | La versión 2.0 puso en marcha la operación | 02 | La aplicación nació para acompañar al operador durante todo el viaje, con un proceso sencillo y visible. | 01 | Registrar | Salida, unidad, destino y datos del viaje. | 02 | Acompañar | Ubicaciones durante el recorrido. | 03 | Cerrar | Llegada, evidencias y datos finales."
+      },
+      {
+        "slide": 3,
+        "texto": "EVOLUCIÓN | Cada actualización respondió a una situación real | 03 | 2.0 | Operación completa | 2.1 | Rutas más claras | 2.2 | Seguimiento confiable | Actual | Cierre más preciso | Del registro básico a una solución preparada para trabajar con o sin conexión y con la pantalla apagada."
+      },
+      {
+        "slide": 4,
+        "texto": "PRIMERA MEJORA IMPORTANTE | El error de almacenamiento quedó resuelto | 04 | ¿Qué ocurría? | La hoja alcanzaba su límite al colocar cada ubicación de forma horizontal. | El operador recibía un mensaje que no podía resolver por sí mismo. | Solución | Ahora el recorrido se concentra y continúa en la siguiente columna solo cuando es necesario."
+      },
+      {
+        "slide": 5,
+        "texto": "SEGUIMIENTO ORGANIZADO | La ruta ahora es más fácil de leer | 05 | Inicio | Recorrido | Llegada | Google Maps considera todas las ubicaciones guardadas, incluso cuando el recorrido continúa en otra columna."
+      },
+      {
+        "slide": 6,
+        "texto": "TRABAJO SIN CONEXIÓN | Sin internet, el registro del viaje continúa | 06 | 1 | Captura | La app obtiene la ubicación. | 2 | Resguarda | Se guarda primero en el teléfono. | 3 | Espera | Permanece segura sin conexión. | 4 | Sincroniza | Se envía al recuperar internet. | Resultado: el operador puede continuar su viaje aunque apague los datos móviles."
+      },
+      {
+        "slide": 7,
+        "texto": "PANTALLA APAGADA | El seguimiento continúa sin mantener la app abierta | 07 | LogiApp — viaje en curso | Registrando la ruta aun con la pantalla apagada | La notificación permanece durante el viaje y desaparece al marcar la llegada. | El operador puede: | Usar otras aplicaciones del dispositivo. | Apagar la pantalla durante el trayecto. | Conservar las ubicaciones aunque no tenga internet."
+      },
+      {
+        "slide": 8,
+        "texto": "ACCESO Y SEGURIDAD | También simplificamos el registro del operador | 08 | Antes | Ahora | La licencia podía rechazarse por la cantidad de caracteres. |  | La contraseña tenía menos protección. | El campo de licencia acepta la extensión necesaria. |  | Las contraseñas se guardan de forma más segura. | Menos obstáculos para registrarse y mayor confianza en el acceso."
+      },
+      {
+        "slide": 9,
+        "texto": "CIERRE DEL VIAJE | La llegada siempre conserva su hora real | 09 | Durante el recorrido | Al marcar la llegada | Las coordenadas prácticamente iguales se omiten para evitar repeticiones innecesarias. | La ubicación final se registra siempre, aunque el vehículo no se haya movido desde el último punto. | Así, la última línea roja representa realmente el momento de llegada."
+      },
+      {
+        "slide": 10,
+        "texto": "EXPERIENCIA DIARIA | Para el operador, el proceso sigue siendo sencillo | 10 | 01 | Inicia | Registra los datos y comienza el viaje. | 02 | Conduce | La app acompaña el recorrido en segundo plano. | 03 | Llega | Marca la llegada y guarda la hora final. | 04 | Cierra | Agrega evidencia y completa el viaje."
+      },
+      {
+        "slide": 11,
+        "texto": "LOGIAPP | Una actualización pensada | para la operación real | Más continuidad. Menos errores. Mejor visibilidad del viaje. | Siguiente paso recomendado | Realizar una prueba controlada con pantalla apagada y sin datos móviles; después recuperar la conexión y validar la ruta completa."
+      }
+    ],
+    "imagenes": [
+      {
+        "media": "ppt/media/image.png",
+        "slides": [
+          4
+        ],
+        "dimensiones": [
+          716,
+          1600
+        ],
+        "archivo_inspeccion": "C:\\Users\\elton\\source\\repos\\EltonYaelAlbaRoldan\\LogiApp\\.tmp\\inspeccion_evidencias\\Presentacion_LogiApp_Evolucion_v2_image.png"
+      },
+      {
+        "media": "ppt/media/image2.png",
+        "slides": [
+          5
+        ],
+        "dimensiones": [
+          772,
+          59
+        ],
+        "archivo_inspeccion": "C:\\Users\\elton\\source\\repos\\EltonYaelAlbaRoldan\\LogiApp\\.tmp\\inspeccion_evidencias\\Presentacion_LogiApp_Evolucion_v2_image2.png"
+      }
+    ]
+  },
+  {
+    "archivo": "Entregables\\LogiApp_Cambios_Octubre_2026.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP | Cambios realizados | en octubre | Resumen de commits del 13 al 15 de octubre de 2026 | 3 commits revisados"
+      },
+      {
+        "slide": 2,
+        "texto": "LOGIAPP | OPERACIÓN Y MANTENIMIENTO | El registro de mantenimiento ahora guía el proceso | 02 | El operador recibe indicaciones durante el envío y avisos más claros cuando falta información o conexión. | DURANTE EL GUARDADO | Indicador de carga y texto de estado para la subida de fotos y el registro del reporte. | REGISTRO Y AVISOS | La evidencia se presenta como enlace en Sheets. Los mensajes distinguen problemas de conexión y datos incompletos. | 13 oct · 8a4b230 · mantenimiento, viajes y mensajes"
+      },
+      {
+        "slide": 3,
+        "texto": "LOGIAPP | SEGUIMIENTO DEL VIAJE | La pantalla de viaje activo muestra tiempo y conexión | 03 | El operador consulta el tiempo transcurrido y sabe si el teléfono está conectado o guardando localmente. | TIEMPO EN RUTA | Cronómetro visible con actualización cada minuto. | ESTADO DE RED | Indicador de conexión disponible o ausencia de señal; al recuperar internet intenta sincronizar. | El panel adapta colores para lectura de día y de noche. | 14 oct · 47bb9ff · diseño y monitoreo del viaje"
+      },
+      {
+        "slide": 4,
+        "texto": "LOGIAPP | CUENTA Y TRANSPARENCIA | Créditos y enlaces quedan integrados en la app | 04 | Los cambios conectan el reconocimiento de autoría con la navegación a documentos y evidencias. | INTEGRIDAD DE CRÉDITOS | Nueva verificación para detectar cambios en la firma original y presencia del pie de créditos. | ACCESO A DOCUMENTOS | Enlaces desde perfil y registro; acceso a carpetas de Drive y evidencia de mantenimiento desde Sheets. | 15 oct · 54ef6a3 · créditos, perfil y enlaces"
+      },
+      {
+        "slide": 5,
+        "texto": "LOGIAPP | RESUMEN DEL PERIODO | Tres commits tocaron operación, seguimiento y cuenta | 05 | FECHA | COMMIT | CAMBIOS PRINCIPALES | 13 oct | 8a4b230 | Mantenimiento, viajes y mensajes | 14 oct | 47bb9ff | Diseño y monitoreo del viaje activo | 15 oct | 54ef6a3 | Créditos, perfil y enlaces | Corte del historial: 16 de octubre de 2026"
+      }
+    ],
+    "imagenes": []
+  },
+  {
+    "archivo": "Entregables\\LogiApp_Cambios_Octubre_2026_v2.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP | ACTUALIZACIONES · OCTUBRE 2026 | Inteligencia Operativa: | Monitoreo Global y Dinámico de Eficiencia | 01 | Consumo total de combustible y eficiencia global de la flota, agrupados por periodos seleccionables. | SINCRONIZACIÓN | Las métricas se actualizan desde la fuente de datos. | SELECCIÓN POR OPERADOR | Haz clic en una barra del gráfico: las tarjetas cambian al consumo y rendimiento individual. | RANGO DE FECHAS | Ajusta el periodo para recalcular el rendimiento. | Km/L | Kilómetros recorridos ÷ litros consumidos | Cálculo dinámico según operador y periodo"
+      },
+      {
+        "slide": 2,
+        "texto": "LOGIAPP | ACTUALIZACIONES · OCTUBRE 2026 | Nivel de Detalle: | Bitácora Analítica y Filtros Multidimensionales | 02 | Una vista táctica para analizar viajes y localizar servicios que requieren revisión. | FILTROS COMBINABLES | Operador     ·     Estatus     ·     Cliente | Combina criterios para acotar la bitácora a un grupo específico de viajes. | MAPA DE CALOR DE CONSUMO | BAJO | ALTO | Los tonos ayudan a detectar consumos atípicos de un vistazo. | TRAZABILIDAD DEL SERVICIO | Folio · inicio y llegada · operador y cliente · origen y destino · consumo"
+      },
+      {
+        "slide": 3,
+        "texto": "LOGIAPP | SEGUIMIENTO DEL VIAJE | La pantalla de viaje activo muestra tiempo y conexión | 03 | El operador consulta el tiempo transcurrido y sabe si el teléfono está conectado o guardando localmente. | TIEMPO EN RUTA | Cronómetro visible con actualización cada minuto. | ESTADO DE RED | Indicador de conexión disponible o ausencia de señal; al recuperar internet intenta sincronizar. | El panel adapta colores para lectura de día y de noche. | 14 oct · 47bb9ff · diseño y monitoreo del viaje"
+      },
+      {
+        "slide": 4,
+        "texto": "LOGIAPP | OPERACIÓN Y MANTENIMIENTO | Mantenimiento más simple y evidencia accesible | 04 | El formulario pide los datos importantes y acompaña el envío del reporte. | DATOS DEL REPORTE | Unidad · lugar · taller | Tipo de mantenimiento · piezas | Kilometraje | AVISOS Y CARGA | Mensajes claros para datos incompletos y problemas de conexión. Indicador visible mientras se suben fotos y se guarda el reporte. | ACCESO A EVIDENCIA | Los enlaces aparecen con etiquetas de texto: “VER EVIDENCIA”."
+      }
+    ],
+    "imagenes": []
+  },
+  {
+    "archivo": "Entregables\\LogiApp_Cambios_Octubre_2026_v3.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP | ACTUALIZACIONES · OCTUBRE 2026 | Inteligencia Operativa: | Monitoreo Global y Dinámico de Eficiencia | 01 | Consumo total de combustible y eficiencia global de la flota, agrupados por periodos seleccionables. | SINCRONIZACIÓN | Las métricas se actualizan desde la fuente de datos. | SELECCIÓN POR OPERADOR | Haz clic en una barra del gráfico: las tarjetas cambian al consumo y rendimiento individual. | RANGO DE FECHAS | Ajusta el periodo para recalcular el rendimiento. | Km/L | Kilómetros recorridos ÷ litros consumidos | Cálculo dinámico según operador y periodo"
+      },
+      {
+        "slide": 2,
+        "texto": "LOGIAPP | ACTUALIZACIONES · OCTUBRE 2026 | Nivel de Detalle: | Bitácora Analítica y Filtros Multidimensionales | 02 | Una vista táctica para analizar viajes y localizar servicios que requieren revisión. | FILTROS COMBINABLES | Operador     ·     Estatus     ·     Cliente | Combina criterios para acotar la bitácora a un grupo específico de viajes. | MAPA DE CALOR DE CONSUMO | BAJO | ALTO | Los tonos ayudan a detectar consumos atípicos de un vistazo. | TRAZABILIDAD DEL SERVICIO | Folio · fecha/hora de inicio y llegada · operador · cliente · estatus · origen/destino · consumo"
+      },
+      {
+        "slide": 3,
+        "texto": "LOGIAPP | SEGUIMIENTO DEL VIAJE | La pantalla de viaje activo muestra tiempo y conexión | 03 | El operador consulta el tiempo transcurrido y sabe si el teléfono está conectado o guardando localmente. | TIEMPO EN RUTA | Cronómetro visible con actualización cada minuto. | ESTADO DE RED | Indicador de conexión disponible o ausencia de señal; al recuperar internet intenta sincronizar. | El panel adapta colores para lectura de día y de noche. | 14 oct · 47bb9ff · diseño y monitoreo del viaje"
+      },
+      {
+        "slide": 4,
+        "texto": "LOGIAPP | OPERACIÓN Y MANTENIMIENTO | Mantenimiento más simple y evidencia accesible | 04 | El formulario pide los datos importantes y acompaña el envío del reporte. | DATOS DEL REPORTE | Unidad · lugar · taller | Tipo de mantenimiento · piezas | Kilometraje | AVISOS Y CARGA | Mensajes claros para datos incompletos y problemas de conexión. Indicador visible mientras se suben fotos y se guarda el reporte. | ACCESO A EVIDENCIA | Los enlaces aparecen con etiquetas de texto: “VER EVIDENCIA”."
+      }
+    ],
+    "imagenes": []
+  },
+  {
+    "archivo": "Entregables\\LogiApp_Estado_Tecnico_Octubre_2026.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP | Estado técnico | y siguientes pasos | Base disponible para una nueva versión | Revisión para octubre de 2026"
+      },
+      {
+        "slide": 2,
+        "texto": "LOGIAPP | ESTADO DE LA VERSIÓN | La versión 2.2.1 ya cubre el ciclo del viaje | 02 | El trabajo reciente se concentró en procesos internos que sostienen el registro y seguimiento. | 01  SEGUIMIENTO | Registro periódico de ubicación mientras el viaje está activo. | 02  CONTINUIDAD | Datos pendientes guardados localmente y sincronizados al volver la conexión. | 03  CIERRE | Recargas de combustible y evidencias incorporadas al cierre del viaje. | Referencia: versión 2.2.1 · 9 sep 2026"
+      },
+      {
+        "slide": 3,
+        "texto": "LOGIAPP | CONTINUIDAD OPERATIVA | El seguimiento puede continuar en segundo plano | 03 | El operador puede cambiar de pantalla durante el recorrido y la app conserva el proceso de captura. | QUÉ OCURRE INTERNAMENTE | La ubicación se captura durante el viaje. |  | Cada punto se guarda localmente antes de intentar enviarlo. |  | Una notificación indica que el seguimiento está activo. | CONDICIONES | Celular encendido | Ubicación activada | No cerrar LogiApp a la fuerza"
+      },
+      {
+        "slide": 4,
+        "texto": "LOGIAPP | DATOS Y SINCRONIZACIÓN | La operación tolera cortes temporales de internet | 04 | La app conserva información pendiente en el dispositivo y la sincroniza cuando vuelve la conexión. | FLUJO DE DATOS | Captura local   →   Conexión disponible   →   Envío a la nube | Este mecanismo reduce la dependencia de una conexión estable durante el trabajo. El resultado operativo debe medirse en una prueba de desconexión y recuperación."
+      },
+      {
+        "slide": 5,
+        "texto": "LOGIAPP | CALIDAD DEL REGISTRO | Los ajustes mejoran la precisión del historial | 05 | COORDENADAS | Se filtran puntos repetidos durante la ruta y se conserva la ubicación de llegada. | COMBUSTIBLE | La recarga reportada durante el viaje entra en el cálculo de consumo al cerrar. | Efecto esperado: un historial más útil para revisar el recorrido y el consumo."
+      },
+      {
+        "slide": 6,
+        "texto": "LOGIAPP | VALIDACIÓN PENDIENTE | El siguiente paso es medir el comportamiento real | 06 | Hay mejoras internas implementadas; su impacto todavía necesita medición. | INDICADORES PARA LA SIGUIENTE PRUEBA | 01   Puntos GPS recibidos frente a puntos esperados | 02   Sincronizaciones completadas después de perder conexión | 03   Tiempo de apertura y cierre del viaje | 04   Batería y datos consumidos por hora de seguimiento | No hay resultados comparativos registrados todavía."
+      }
+    ],
+    "imagenes": []
+  },
+  {
+    "archivo": "Entregables\\LogiApp_Trabajo_Septiembre_2026_v2.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP     /     INFORME DE AVANCE | SEPTIEMBRE | 2026 | Cambios internos | en LogiApp | Versión 2.2.1 · cambios registrados el 7 y 9 de septiembre"
+      },
+      {
+        "slide": 2,
+        "texto": "01 | La app puede seguir registrando | la ruta en segundo plano | Servicio de ubicación en Android | Puntos GPS periódicos durante el viaje | Notificación visible mientras el seguimiento está activo | Requiere celular encendido y ubicación habilitada. No forzar el cierre de la app. | 02 / 05"
+      },
+      {
+        "slide": 3,
+        "texto": "02 | Si se pierde internet, | la captura puede continuar | Los datos pendientes se conservan en el teléfono y quedan listos para sincronizar al volver la conexión. | GUARDAR | Puntos y datos del viaje | → | RECUPERAR CONEXIÓN | Sincronizar lo pendiente | 03 / 05"
+      },
+      {
+        "slide": 4,
+        "texto": "03 | También se ajustó | la información del viaje | 07 SEP | Recargas de combustible | Los litros cargados durante el trayecto se incluyen al calcular el consumo del viaje. | 09 SEP | Historial GPS | Se evita repetir coordenadas durante una detención y se conserva el punto final de llegada. | 04 / 05"
+      },
+      {
+        "slide": 5,
+        "texto": "SIGUIENTE PERIODO | NOVIEMBRE | Mejorar lo relacionado con mantenimientos. | Continuar con las pruebas de la aplicación. | Plan de trabajo | 05 / 05"
+      }
+    ],
+    "imagenes": []
+  },
+  {
+    "archivo": "Entregables\\LogiApp_Trabajo_Septiembre_2026_v3.pptx",
+    "slides": [
+      {
+        "slide": 1,
+        "texto": "LOGIAPP     /     INFORME DE AVANCE | SEPTIEMBRE | 2026 | Cambios internos | en LogiApp | Versión 2.2.1 · cambios registrados el 7 y 9 de septiembre"
+      },
+      {
+        "slide": 2,
+        "texto": "01 | La app puede seguir registrando | la ruta en segundo plano | Servicio de ubicación en Android | Puntos GPS periódicos durante el viaje | Notificación visible mientras el seguimiento está activo | Requiere celular encendido y ubicación habilitada. No forzar el cierre de la app. | 02 / 05"
+      },
+      {
+        "slide": 3,
+        "texto": "02 | Si se pierde internet, | la captura puede continuar | Los datos pendientes se conservan en el teléfono y quedan listos para sincronizar al volver la conexión. | GUARDAR | Puntos y datos del viaje | → | RECUPERAR CONEXIÓN | Sincronizar lo pendiente | 03 / 05"
+      },
+      {
+        "slide": 4,
+        "texto": "03 | También se ajustó | la información del viaje | 07 SEP | Recargas de combustible | Los litros cargados durante el trayecto se incluyen al calcular el consumo del viaje. | 09 SEP | Historial y evidencias | Se alinearon los datos de kilometraje y consumo del historial y se añadió un acceso a las evidencias del viaje. | 04 / 05"
+      },
+      {
+        "slide": 5,
+        "texto": "SIGUIENTE PERIODO | NOVIEMBRE | Mejorar lo relacionado con mantenimientos. | Continuar con las pruebas de la aplicación. | Plan de trabajo | 05 / 05"
+      }
+    ],
+    "imagenes": []
+  }
+]

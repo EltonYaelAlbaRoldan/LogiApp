@@ -1,0 +1,74 @@
+TEST CARDS
+LogiApp
+Validación de Hipótesis Tecnológicas
+TLB Transportes · Transformación Digital 2024
+Edge Computing · GPS Cloud · Drive API Cloud · Sheets API
+Nili Estefanía López Gutiérrez · Elton Yael Alba Roldan01 Solución a la Ceguera en Ruta
+Edge Computing · GPS
+01
+D O L O R I D E N T I F I C A D O
+Incertidumbre sobre el estatus y ubicación de las unidades en zonas sin 
+cobertura de red.
+T E C N O L O G Í A H A B I L I T A D O R A
+Edge Computing (SQLite) + Sensores (GPS).
+N O S O T R O S C R E E M O S
+Que implementando una arquitectura de Edge Computing mediante 
+SQLite, se puede garantizar el rastreo GPS continuo incluso en zonas sin 
+señal.
+P A R A V E R I F I C A R L O
+Desarrollaremos un motor de persistencia asíncrona en LogiApp que 
+detecte la pérdida de red y almacene automáticamente las coordenadas 
+en el dispositivo móvil.
+M E D I R E M O S
+La cantidad de registros GPS recuperados y sincronizados exitosamente 
+una vez que el dispositivo recupere la conexión.
+C O R R E C T O S I
+El 100% de los datos de ubicación generados durante la «ceguera de red» 
+se integran correctamente en la base de datos maestra en la nube sin 
+pérdida.
+TLB Transportes · LogiApp · Transformación Digital 2024 Test Card 1 / 302 Solución al Caos Administrativo
+Cloud Computing · Google Drive API
+02
+D O L O R I D E N T I F I C A D O
+Proceso de alta de choferes lento y desorganizado por el uso de 
+documentos físicos y escaneo manual.
+T E C N O L O G Í A H A B I L I T A D O R A
+Cloud Computing (Google Drive API).
+N O S O T R O S C R E E M O S
+Que utilizando Cloud Computing con la API de Google Drive se puede 
+automatizar la creación de expedientes digitales y reducir drásticamente 
+el tiempo de gestión de RRHH.
+P A R A V E R I F I C A R L O
+Crearemos un módulo de registro móvil en LogiApp que permita al 
+operador subir fotos de su licencia y examen médico directamente a 
+carpetas organizadas en la nube.
+M E D I R E M O S
+El tiempo total (en minutos) para dar de alta a un operador, comparado 
+con el proceso tradicional de recepción física y escaneo.
+C O R R E C T O S I
+El tiempo de gestión administrativa se reduce en al menos un 70% y se 
+elimina el extravío de documentos físicos durante el proceso de alta.
+TLB Transportes · LogiApp · Transformación Digital 2024 Test Card 2 / 303 Solución a la Falta de Información Estratégica
+Cloud Computing · Google Sheets API
+03
+D O L O R I D E N T I F I C A D O
+Imposibilidad de tomar decisiones sobre rentabilidad por falta de métricas 
+claras de combustible y rendimientos.
+T E C N O L O G Í A H A B I L I T A D O R A
+Cloud Computing (Google Sheets API / Dashboards).
+N O S O T R O S C R E E M O S
+Que mediante la centralización de datos en la nube con Google Sheets, se 
+pueden generar KPIs en tiempo real para optimizar costos de combustible 
+y mantenimiento.
+P A R A V E R I F I C A R L O
+Implementaremos un formulario de cierre de viaje con validación de datos 
+técnicos (odómetro y combustible) que alimente un Dashboard interactivo 
+de forma inmediata.
+M E D I R E M O S
+La disponibilidad y precisión de los reportes de rendimiento de 
+combustible al cierre de cada jornada operativa.
+C O R R E C T O S I
+La gerencia puede visualizar el rendimiento exacto de cada unidad 
+diariamente, con un margen de error menor al 2% vs. registros manuales 
+de carga de combustible.
+TLB Transportes · LogiApp · Transformación Digital 2024 Test Card 3 / 3

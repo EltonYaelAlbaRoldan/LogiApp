@@ -1,0 +1,102 @@
+PROYECTO EXPO
+LogiApp
+Sistema Logístico Inteligente
+Metodología de Desarrollo · TLB Transportes
+Elton Yael Alba Roldan · Nili (QA) · 2025¿Qué es LogiApp?
+Multiplataforma
+Android
+Registro GPS de trayectos
+Seguimiento de ubicación en tiempo real durante cada viaje operativo.
+Control de Combustible y KM
+Captura de kilometraje y consumo de combustible por operador.
+Expedientes Digitales
+Almacenamiento de fotos y documentos en Google Drive de forma automática.
+Funciona sin internet · Sincronización automática · TRL 5Enfoque Metodológico
+Scrum
+Marco de trabajo
+▸ Sprints iterativos
+▸ Product Backlog
+▸ Entregas incrementales
+▸ Revisión continua
+Kanban
+Gestión visual
+▸ Diagrama de Gatt
+▸ To Do → Done
+▸ Flujo transparente
+▸ Cuellos de botella visibles
+Ágil
+Por qué lo elegimos
+▸ Reqs. cambiantes
+▸ Modo Offline surgió mid-proyecto
+▸ Ciclos cortos de valor
+▸ Adaptabilidad
+La metodología fue seleccionada por la naturaleza dinámica del sector logístico, permitiendo adaptar la arquitectura sobre la marcha.Equipo de Desarrollo
+Elton Yael Alba Roldan
+PM · Ing. Backend · Ing. Base de Datos
+· Levantamiento de reqs. y asignación de tareas
+· Conexión BD, catálogos y Google APIs
+· Estructura BD local (SQLite) y nube (Sheets)
+· Arquitectura Edge-to-Cloud y decisiones técnicas
+Nili E. López Gutiérrez
+Ing. Frontend · Ing. IoT
+· Interfaz HCI móvil para el operador (XAML)
+· Integración sensores GPS y telemetría
+· Captura de datos y validación en frontend
+· Pruebas QA y documentación técnicaArquitectura Edge-to-Cloud
+Edge Computing
+(Local)
+SQLite guarda datos y coordenadas GPS cuando no 
+hay red. Sin pérdida de información.
+Cloud Computing
+(Nube)
+Google Sheets API + Google Drive API para 
+centralización de datos y expedientes.
+Frontend Mobile
+.NET MAUI
+C# + XAML para despliegue multiplataforma. APK 
+listo para equipos Android de operadores.
+Sincronización Asíncrona Inteligente
+Al recuperar la conexión, los datos guardados localmente en SQLite se sincronizan automáticamente con la nube sin intervención del operador.Ciclo de Desarrollo · 5 Fases
+1
+Requerimientos
+Levantamiento de requerimientos con Diagrama de Gantt. Identificación de dolores operativos → Historias de Usuario priorizadas.
+2
+Arquitectura
+Stack tecnológico: .NET MAUI, SQLite, Google APIs. Diseño Edge-to-Cloud.
+3
+Sprint 1–3
+UI/Login → Google APIs → Motor Offline SQLite + sincronización asíncrona (Sprint crítico).
+4
+QA & Pruebas
+Caja negra, estrés de red, manejo de excepciones. Alcance: TRL 7.
+5
+Deployment
+APK para operadores. Capacitación in-situ. Documentación técnica y manuales.Aseguramiento de Calidad · QA
+TRL
+7
+Validado
+Caja Negra
+Validación de captura de datos: kilometraje, combustible y registro de operadores.
+Estrés de Red
+Desconexión deliberada de Wi-Fi/Datos para forzar guardado en SQLite (bloque catch).
+Excepciones
+Manejo de 'Index out of range' y 'Exceeds grid limits' con auto-creación de columnas en Sheets.Stack Tecnológico & Herramientas
+Gestión
+✓ Diagrama de Gantt
+✓ Metodología Ágil
+Desarrollo
+✓ Visual Studio 2022
+✓ .NET MAUI (C# / XAML)
+Base de Datos
+✓ SQLite-net-pcl
+✓ Google Cloud Console
+✓ OAuth 2.0
+APIs Nube
+✓ Google Sheets API
+✓ Google Drive API
+Deploy
+✓ APK Android
+✓ Capacitación in-situLogiApp
+Solución logística real · Metodología ágil · Código que funciona en carretera
+¡Gracias!
+Elton Yael Alba Roldan · Nili Estefanía López Gutiérrez

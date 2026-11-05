@@ -1,0 +1,191 @@
+{
+  "blocks": 302,
+  "words": 18018,
+  "figures": 5,
+  "tables": 18,
+  "references": 23,
+  "headings": [
+    "I GENERALIDADES DEL PROYECTO",
+    "1.1 Introducción",
+    "1.2 Descripción de la unidad económica",
+    "1.2.1 Descripción del puesto o área de trabajo del estudiante",
+    "1.3 Descripción del Proyecto de Educación Dual y periodos",
+    "1.4 Problemas a resolver, priorizados",
+    "1.5 Objetivos",
+    "1.5.1 Objetivo general",
+    "1.5.2 Objetivos específicos",
+    "1.6 Justificación",
+    "1.7 Alcance y delimitaciones del proyecto",
+    "II MARCO TEÓRICO",
+    "2.1 Digitalización de los procesos de transporte",
+    "2.2 Desarrollo móvil con C sharp y XAML",
+    "2.3 Separación de responsabilidades y servicios remotos",
+    "2.4 Persistencia local y transacciones",
+    "2.5 Sincronización y recuperación de fallos",
+    "2.6 Repositorios tabulares y gestión de archivos",
+    "2.7 Geolocalización y condiciones de Android",
+    "2.8 Autenticación y protección de información",
+    "2.9 Desarrollo iterativo y administración del trabajo",
+    "2.10 Calidad de datos y evaluación de resultados",
+    "2.11 Usabilidad y comunicación de estados",
+    "III DESARROLLO",
+    "3.1 Delimitación del trabajo y criterio de evidencia",
+    "3.2 Requerimientos y organización del desarrollo",
+    "3.3 Arquitectura implementada y tecnologías",
+    "3.4 Modelos de información y esquema de almacenamiento",
+    "3.5 Registro y expediente digital del operador",
+    "3.6 Acceso, recuperación y control de vigencias",
+    "3.7 Apertura y continuidad del viaje",
+    "3.8 Seguimiento GPS y registro de llegada",
+    "3.9 Cierre del viaje, indicadores y evidencias",
+    "3.10 Sincronización y consulta de antecedentes",
+    "3.11 Registro de mantenimiento y administración de operadores",
+    "3.12 Diagnóstico, distribución y evolución",
+    "IV RESULTADOS",
+    "4.1 Productos obtenidos al corte de la revisión",
+    "4.2 Verificación automatizada realizada",
+    "4.3 Verificación funcional requerida para consolidar resultados",
+    "4.4 Beneficios esperados y medición de impacto",
+    "4.5 Limitaciones, mantenimiento y continuidad anual",
+    "4.6 Vinculación social y transferencia del conocimiento",
+    "V CONCLUSIONES",
+    "5.1 Conclusiones del proyecto",
+    "5.2 Recomendaciones para la unidad económica",
+    "5.3 Experiencia profesional y aprendizajes técnicos derivados del proyecto",
+    "VI COMPETENCIAS DESARROLLADAS",
+    "6.1 Competencias desarrolladas y aplicadas",
+    "VII FUENTES DE INFORMACIÓN",
+    "VIII ANEXOS",
+    "Anexo A Matriz de correspondencia con el Anexo VIII",
+    "A.1 Correspondencia entre actividades y evidencia",
+    "Anexo B Protocolo propuesto de prueba de continuidad sin conexión",
+    "B.1 Preparación y condiciones de la sesión",
+    "B.2 Secuencia de ejecución",
+    "B.3 Evidencia incidencias e interpretación",
+    "Anexo C Plan propuesto de capacitación y mantenimiento",
+    "C.1 Capacitación por funciones",
+    "C.2 Materiales y seguimiento de aprendizaje",
+    "C.3 Mantenimiento preventivo y atención de incidencias",
+    "Anexo D Inventario y estado documental del producto",
+    "D.1 Inventario técnico y académico",
+    "D.2 Ficha de identificación del producto",
+    "D.3 Registros de productos y autorizaciones"
+  ],
+  "captions": [
+    {
+      "label": "Figura",
+      "number": 1,
+      "text": "Relación funcional de las áreas vinculadas con LogiApp"
+    },
+    {
+      "label": "Cuadro",
+      "number": 1,
+      "text": "Objetivos específicos y criterios de verificación"
+    },
+    {
+      "label": "Cuadro",
+      "number": 2,
+      "text": "Conceptos técnicos y aplicación en LogiApp"
+    },
+    {
+      "label": "Cuadro",
+      "number": 3,
+      "text": "Trazabilidad funcional de los requerimientos"
+    },
+    {
+      "label": "Figura",
+      "number": 2,
+      "text": "Arquitectura de componentes de LogiApp"
+    },
+    {
+      "label": "Figura",
+      "number": 3,
+      "text": "Relaciones lógicas entre entidades y archivos"
+    },
+    {
+      "label": "Cuadro",
+      "number": 4,
+      "text": "Distribución de los datos entre almacenamiento local y nube"
+    },
+    {
+      "label": "Figura",
+      "number": 4,
+      "text": "Secuencia operativa y cierre del viaje"
+    },
+    {
+      "label": "Figura",
+      "number": 5,
+      "text": "Conservación y confirmación de información pendiente"
+    },
+    {
+      "label": "Cuadro",
+      "number": 5,
+      "text": "Correspondencia entre objetivos, productos y límites observados"
+    },
+    {
+      "label": "Cuadro",
+      "number": 6,
+      "text": "Comprobaciones del programa local de contraseñas"
+    },
+    {
+      "label": "Cuadro",
+      "number": 7,
+      "text": "Matriz propuesta de verificación funcional"
+    },
+    {
+      "label": "Cuadro",
+      "number": 8,
+      "text": "Relación entre competencias disciplinares y aplicación en el proyecto"
+    },
+    {
+      "label": "Cuadro",
+      "number": 9,
+      "text": "Correspondencia de los diecinueve apartados del Anexo VIII"
+    },
+    {
+      "label": "Cuadro",
+      "number": 10,
+      "text": "Identificación de la sesión de prueba"
+    },
+    {
+      "label": "Cuadro",
+      "number": 11,
+      "text": "Pasos propuestos para desconexión y recuperación"
+    },
+    {
+      "label": "Cuadro",
+      "number": 12,
+      "text": "Registro propuesto de incidencias"
+    },
+    {
+      "label": "Cuadro",
+      "number": 13,
+      "text": "Sesiones propuestas de capacitación"
+    },
+    {
+      "label": "Cuadro",
+      "number": 14,
+      "text": "Registro propuesto de capacitación"
+    },
+    {
+      "label": "Cuadro",
+      "number": 15,
+      "text": "Actividades propuestas de continuidad técnica"
+    },
+    {
+      "label": "Cuadro",
+      "number": 16,
+      "text": "Componentes documentados al 23 de octubre de 2026"
+    },
+    {
+      "label": "Cuadro",
+      "number": 17,
+      "text": "Identificación documental de LogiApp"
+    },
+    {
+      "label": "Cuadro",
+      "number": 18,
+      "text": "Estado documental de autorizaciones y registros"
+    }
+  ]
+}

@@ -1,0 +1,419 @@
+Índice
+1. Introducción al sistema 4
+1.1. ¿Qué es LogiApp y para qué sirve? 4
+1.2. Requisitos mínimos del teléfono y permisos necesarios 5
+2. Primeros pasos y acceso 6
+2.1. Registro de nuevo operador paso a paso 6
+2.2. La regla de vigencia de 90 días para documentos obligatorios 7
+2.3. Inicio de sesión del sistema 8
+2.4. Recuperación de contraseña y verificación de dos pasos 9
+2.5. Estatus de la cuenta: activo, inactivo y en validación 9
+3. Conociendo tu pantalla principal 10
+3.1. El semáforo de documentos: qué significa cada color 10
+3.2. ¿Por qué mi botón de viajes aparece bloqueado? 11
+4. Gestión de tu perfil y expediente 12
+4.1. Revisión de perfil y actualización de documentos 12
+4.2. Guía para actualizar tu licencia federal o apto médico 12
+4.3. Cambio de contraseña de seguridad 12
+5. Módulo de viajes: operación en ruta 13
+5.1. Apertura de viaje: asignación de unidad, remolque y captura inicial 13
+5.2. Monitoreo en ruta: cómo reportar tu ubicación gps 14
+5.3. Operación en zonas sin señal: cómo funciona el guardado automático 15
+5.4. Cierre de viaje: captura de llegadas, rendimientos y fotografía de evidencia obligatoria 16
+6. Módulo de mantenimiento y taller 17
+6.1. Cuándo y cómo generar un reporte de mantenimiento preventivo 17
+6.2. Captura de costos, piezas reemplazadas y toma de fotografía de comprobantes 18
+7. Historial de operaciones 19
+27.1. Cómo consultar tus viajes terminados y rendimientos de combustible 19
+8. Solución de problemas frecuentes 20
+8.1. Qué hacer si la aplicación no me deja tomar la foto de evidencia 20
+8.2. Qué hacer si mis datos no se envían por falta prolongada de internet 21
+8.3. Contacto de soporte técnico administrativo 22
+31. Introducción al sistema
+1.1. ¿Qué es LogiApp y para qué sirve?
+LogiApp es la principal herramienta de trabajo en ruta para los operadores. Es una aplicación
+móvil diseñada para facilitar las labores diarias, eliminando el papeleoy los reportes telefónicos
+constantes. A través de esta plataforma, el operador se mantiene conectado directamente con la
+administración y el área de despacho, llevando el control total de su viaje desde un dispositivo
+móvil. Funciones principales de la aplicación en el día a día:
+● Gestión de expedientes: Permite llevar el control de los documentos obligatorios, además
+de generar alertas preventivas cuando se acerca la fecha de renovación, asegurando que el
+personal siempre cuente con su documentación en regla para operar.
+● Control de viajes: Facilita el registro del inicio y fin de las rutas. El sistema permite indicar la
+unidad y el remolque asignado, así como capturar de manera ágil los niveles de kilometraje
+y combustible en cada trayecto.
+● Reporte de ubicación: Mediante un solo botón, es posible enviar el reporte de ubicación
+GPS durante el traslado.
+● Operación sin conexión a internet: Si el dispositivo se queda sin señal en la sierra o en
+tramos largos, la aplicación guarda la información, fotografías y reportes de llegada de
+forma segura en la memoria interna del teléfono. Posteriormente, envía todos los datos
+automáticamente a la oficina en cuanto se recupera la conexión.
+● Reportes de mantenimiento: En caso de que la unidad requiera ingresar al taller o necesite
+un cambio de piezas, el sistema permite registrar los costos y subir la evidencia fotográfica
+de la factura directamente desde la plataforma.
+LogiApp funciona como un asistente de viaje digital. Su objetivo principal es permitir que el
+operador se concentre en manejar con seguridad, mientras el sistema se encarga de automatizar
+y facilitar todo el trabajo administrativo.
+41.2. Requisitos mínimos del teléfono y permisos necesarios
+Para garantizar el correcto funcionamiento de LogiApp durante las rutas, el dispositivo móvil del operador debe cumplir con
+características técnicas básicas y tener habilitados los permisos de seguridad correspondientes al momento de su instalación.
+Requisitos del dispositivo móvil:
+● Sistema operativo Android compatible y actualizado.
+● Conexión a internet (datos móviles o red wi-fi) para el registro y la sincronización de información con la oficina.
+● Cámara funcional para la captura obligatoria de evidencias físicas.
+● Sensor gps activo para el registro preciso de las coordenadas en ruta.
+Permisos que el sistema solicitará al abrir la aplicación: Al iniciar LogiApp por primera vez, el teléfono mostrará algunas ventanas
+de advertencia solicitando acceso a ciertas funciones del equipo. Es estrictamente necesario presionar "Permitir mientras la app
+está en uso" en todas ellas para que el sistema funcione:
+● Acceso a la cámara: Indispensable para tomar fotografías de los comprobantes al
+marcar la llegada de un viaje o al registrar una factura en el módulo de mantenimiento. Si
+se niega este permiso, el sistema no permitirá cerrar el viaje.
+● Acceso a la ubicación (gps): Requerido para enviar los reportes de ruta. Este permiso
+también permite que la aplicación guarde las coordenadas de seguridad en la memoria
+interna si el operador se queda sin señal.
+● Acceso al almacenamiento y archivos: Necesario para que el operador pueda buscar y
+subir sus documentos personales en formato pdf (licencia federal, apto médico, etc.)
+desde su teléfono hacia su expediente digital.
+● Acceso al estado de la red: Permite que la aplicación detecte de forma automática si el
+teléfono tiene internet o no. Gracias a este permiso, el sistema activa su "modo
+carretera", guardando los datos cuando se pierde la señal y enviándolos solos cuando la
+conexión regresa.
+Es importante destacar que LogiApp utiliza estos permisos de manera exclusiva para la operación logística. El sistema no tiene
+acceso a galerías personales, mensajes ni a ningún otro tipo de información privada del operador.
+52. Primeros pasos y acceso
+2.1. Registro de nuevo operador paso a paso
+El proceso de alta está diseñado para que el personal pueda registrarse en el sistema directamente desde su propio dispositivo
+móvil, sin necesidad de asistencia administrativa presencial. Para crear una cuenta operativa, se deben seguir los siguientes
+pasos:
+● Ingreso de datos generales: Al abrir la aplicación por primera vez y seleccionar la opción
+de registro, el sistema presentará un formulario inicial. En esta sección es obligatorio capturar la
+información personal, incluyendo nombre completo, número de teléfono a 10 dígitos y una
+dirección de correo electrónico válida.
+● Carga de expediente digital: Una vez que el sistema valida que los datos escritos estén
+completos (botón de “1. Validar y crear perfil”), se habilitará la segunda fase del registro. Aquí,
+el operador deberá explorar la memoria de su teléfono para subir sus documentos obligatorios
+en formato pdf (tales como la licencia federal, el dictamen de aptitud médica, INE, etc.).
+● Procesamiento de la información: Al presionar el botón
+para finalizar el registro, la aplicación se conectará con la oficina
+para crear de forma automática una carpeta personal a nombre
+del operador y guardará sus documentos de manera segura en
+la nube.
+● Recepción de credenciales de acceso: Si la información es correcta y los documentos
+cumplen con los requisitos mínimos de la empresa, el registro concluirá de manera exitosa.
+El sistema enviará inmediatamente un mensaje al correo electrónico proporcionado, en el
+cual se incluirá el usuario y la contraseña oficial para poder iniciar sesión en la aplicación.
+Nota de seguridad: En caso de olvido o extravío de la contraseña, el sistema permite ahora
+restablecerla directamente desde la pantalla de inicio. Para ello, el operador deberá ingresar
+su id y completar un proceso de verificación de dos pasos mediante un código enviado a su
+correo electrónico.
+62.2. La regla de vigencia de 90 días para documentos obligatorios
+Para garantizar que la operación cumpla siempre con las normativas de tránsito y seguridad, la aplicación cuenta con un candado
+automático conocido como la "regla de los 90 días". Este sistema de prevención está diseñado para proteger al operador de
+posibles multas o contratiempos en carretera por portar documentación vencida.
+¿Cómo funciona esta validación?
+● Revisión automática: Al momento de subir documentos oficiales, como la licencia federal o el dictamen de aptitud médica, el
+sistema solicitará ingresar la fecha de vencimiento exacta que marca el documento físico.
+● Bloqueo preventivo en el registro: Si la fecha ingresada indica que el
+documento perderá su validez en menos de 90 días (tres meses), la
+aplicación detendrá el proceso y no permitirá concluir el registro. El
+operador deberá renovar su documento en las instancias
+correspondientes antes de poder darse de alta en el sistema.
+● Alertas para usuarios activos: Para los operadores que ya se encuentran
+laborando, el sistema monitorea las fechas de sus expedientes todos los
+días. Cuando un documento entra en este periodo crítico de 90 días, la
+aplicación generará una advertencia visual para que se inicie el trámite de
+renovación con tiempo de sobra, evitando así que la cuenta sea
+bloqueada posteriormente por tener papeles vencidos.
+72.3. Inicio de sesión del sistema
+Una vez que el operador ha concluido su registro exitosamente y cuenta con la contraseña que recibió en su correo electrónico,
+podrá acceder a la plataforma operativa desde la pantalla inicial de LogiApp.
+Proceso de acceso:
+● Ingreso de credenciales: En la pantalla principal, el
+operador deberá escribir la dirección de correo electrónico
+(exactamente la misma que utilizó durante su registro) y la
+contraseña oficial asignada.
+● Validación del sistema: Al presionar el botón de inicio
+de sesión, la aplicación se conectará con la base de datos
+para verificar la identidad del usuario.
+● Acceso al menú principal: Si los datos ingresados son
+correctos, el sistema dará acceso inmediato al panel de
+control del operador, donde podrá comenzar a gestionar sus
+rutas, revisar el estado de su expediente y utilizar todas las
+herramientas operativas.
+● Recomendación de escritura: En caso de que el
+sistema muestre un error de credenciales incorrectas, se
+recomienda al operador verificar que está escribiendo las
+letras mayúsculas y minúsculas tal como vienen en su
+correo, y asegurarse de no dejar espacios en blanco al final
+del texto.
+82.4. Recuperación de contraseña y verificación de dos pasos
+En caso de que el operador olvide sus credenciales, el sistema permite restablecer la clave de
+manera autónoma desde la pantalla de inicio de sesión (login) siguiendo estos pasos:
+● Solicitud de acceso: El operador debe ingresar su id de trabajador en el campo
+correspondiente.
+● Código de verificación: El sistema enviará un código de seguridad único al correo
+electrónico registrado en la cuenta.
+● Validación en la aplicación: Se debe ingresar dicho código dentro de LogiApp para
+confirmar la identidad del usuario.
+● Nueva contraseña: Una vez validado el código, la aplicación permitirá capturar una
+nueva contraseña para ingresar al sistema de inmediato.
+2.5. Estatus de la cuenta: activo, inactivo y en validación
+El acceso a la plataforma depende del estado administrativo del operador, el cual se gestiona
+directamente desde la base de datos central:
+● Cuenta activa: Permite el uso total de todas las funciones de la aplicación.
+● Cuenta en proceso de validación: Este estado aparece tras el registro inicial o al
+actualizar documentos. El sistema mostrará un mensaje indicando que el personal
+administrativo está verificando la validez de los archivos pdf subidos.
+● Cuenta inactiva: Si una cuenta es desactivada por la administración, el sistema cerrará
+la sesión automáticamente. Si el operador intenta ingresar de nuevo, recibirá un
+mensaje notificando que su cuenta está inactiva o en proceso de validación.
+93. Conociendo tu pantalla principal
+3.1. El semáforo de documentos: qué significa cada color
+Al ingresar a la pantalla principal de la aplicación, el operador visualizará un panel de estado
+conocido como el "semáforo de documentos". Este sistema de colores tiene como objetivo
+informar de manera rápida y directa la situación legal y operativa del expediente digital del
+usuario.
+El sistema evalúa diariamente las fechas de vencimiento de los documentos obligatorios (como
+la licencia federal y el dictamen de aptitud médica) y asigna uno de los siguientes colores de
+alerta:
+● Color verde (Estado óptimo): Indica que toda la documentación se encuentra en regla y su
+fecha de vencimiento es superior a 90 días. El operador tiene autorización completa para
+iniciar y gestionar sus viajes sin ninguna restricción.
+● Color amarillo (Alerta preventiva): Señala que uno o más documentos están próximos a
+caducar (tienen menos de 90 días de vigencia). Aunque el operador todavía puede
+realizar viajes con normalidad, esta es una advertencia oficial para que inicie sus trámites
+de renovación correspondientes a la brevedad posible.
+● Color rojo (Bloqueo operativo): Significa que al menos un documento obligatorio ha
+expirado por completo. Por medidas de seguridad y estricto cumplimiento normativo, el
+sistema entra en modo de restricción y deshabilita la opción de generar nuevas rutas de
+trabajo.
+103.2. ¿Por qué mi botón de viajes aparece bloqueado?
+El botón para iniciar un nuevo viaje es el acceso principal a la
+operación diaria. Sin embargo, el sistema cuenta con candados
+de seguridad que pueden deshabilitar esta función
+temporalmente para proteger la integridad de la operación.
+Si el operador nota que el botón de viajes aparece atenuado (en
+color rojo) o no responde al presionarlo, se debe estrictamente a
+una de las siguientes dos razones:
+● Documentación vencida (alerta roja): Como se explicó en
+la sección del semáforo, si la licencia federal, el dictamen de
+aptitud médica o cualquier otro archivo obligatorio ha superado
+su fecha de vigencia, el sistema restringe automáticamente la
+creación de nuevas rutas. Para desbloquear el acceso, el
+operador debe subir el documento renovado desde el apartado
+de su perfil.
+● Viaje activo sin finalizar: LogiApp lleva un control exacto
+de cada movimiento. El sistema tiene una restricción que impide
+iniciar un segundo viaje si detecta que el operador mantiene una
+ruta en curso. Si al llegar a su destino el operador olvidó marcar
+la llegada y tomar la fotografía de evidencia, el sistema asumirá
+que sigue en tránsito. Para liberar el botón, es necesario abrir el
+viaje pendiente, registrar los datos de cierre y finalizarlo
+correctamente.
+114. Gestión de tu perfil y expediente
+4.1. Revisión de perfil y actualización de documentos
+Dentro de la aplicación, cada operador cuenta con el apartado de "Mi perfil", diseñado para
+consultar sus datos operativos y mantener su expediente al corriente de manera autónoma.
+Estructura y funciones del perfil:
+Datos de identificación: En la parte superior de la pantalla, el sistema muestra el nombre
+completo del operador y su número de ID oficial asignado por la empresa.
+4.2. Guía para actualizar tu licencia federal o apto médico
+Estado y renovación de licencias: Debajo de los datos de identificación, se encuentra el
+apartado de licencias, el cual muestra únicamente la fecha de vencimiento del documento
+actual. En esta misma sección, el operador tiene la opción de ingresar una nueva fecha y subir
+un archivo pdf actualizado.
+Importante: Al intentar guardar el cambio, el sistema evaluará la nueva fecha aplicando la
+regla preventiva de los 90 días; si no cumple con la vigencia mínima requerida, la
+actualización no procederá.
+4.3. Cambio de contraseña de seguridad
+Seguridad de la cuenta: En la parte inferior de la pantalla se ubica la sección de seguridad.
+Desde este apartado, el operador tiene la libertad de cambiar su contraseña de acceso en
+cualquier momento, garantizando la privacidad y protección de su cuenta.
+125. Módulo de viajes: operación en ruta
+5.1. Apertura de viaje: asignación de unidad, remolque y captura inicial
+El módulo de viajes es el núcleo operativo de LogiApp. Para registrar el inicio de una nueva
+ruta, el operador debe ingresar a la sección de "Viajes" desde el menú principal. Es
+fundamental que la captura de esta información se realice justo en el momento de arrancar la
+unidad para garantizar la precisión de los datos.
+Pasos para el registro inicial:
+● Asignación de equipo: El primer paso en el formulario consiste en seleccionar la unidad
+motriz (tractocamión o camión) que se va a operar y, en caso de aplicar, elegir el número
+de remolque asignado para el traslado.
+● Datos de la ruta: A continuación, el sistema solicitará especificar el punto de origen de la
+carga, el destino final y el nombre del cliente al que se le brindará el servicio.
+● Captura de métricas de salida: Este es el paso más crítico del proceso. El operador debe
+ingresar el kilometraje exacto que marca el odómetro del tablero en ese preciso instante,
+así como el nivel de combustible con el que arranca la unidad. Esta información es vital,
+ya que el sistema la utilizará más adelante para calcular el rendimiento del viaje.
+● Generación de folio: Una vez verificados los datos, se debe presionar el botón para
+guardar o iniciar el viaje. En ese momento, la plataforma creará un número de folio único
+y el viaje pasará a estado "en curso". Como medida de seguridad, la aplicación no
+permitirá iniciar otro viaje simultáneo hasta que este sea cerrado correctamente.
+135.2. Monitoreo en ruta: cómo reportar tu ubicación gps
+Durante el desarrollo del viaje, es vital mantener la comunicación con el área de despacho. Para
+garantizar la seguridad del operador y tener un seguimiento preciso de la carga, LogiApp incluye
+una función de reporte de ubicación simplificada y directa.
+Uso del reporte de ubicación:
+● Envío de coordenadas: Dentro de la pantalla del viaje que se encuentra "en curso", el
+operador visualizará un botón dedicado exclusivamente a “reportar su posición actual”. Al
+presionarlo, el sistema captura automáticamente las coordenadas gps del dispositivo
+móvil.
+● Frecuencia de reporte: Se recomienda utilizar esta función periódicamente a lo largo de la
+ruta, especialmente al pasar por los puntos de control o casetas establecidas por la
+empresa, para mantener el historial de tránsito actualizado en la oficina.
+● Transparencia y privacidad: Es importante destacar que la aplicación está diseñada para
+respetar la privacidad del personal. LogiApp únicamente lee y envía la ubicación en el
+momento exacto en que el operador presiona el botón de reporte. El sistema no realiza
+ningún tipo de rastreo oculto ni monitorea el teléfono cuando no hay un viaje activo.
+145.3. Operación en zonas sin señal: cómo funciona el guardado automático
+LogiApp está diseñada entendiendo la realidad de las rutas de transporte. Es común que
+durante los trayectos en carretera, sierras o zonas alejadas, los dispositivos móviles pierdan la
+conexión a internet. Para evitar la pérdida de información y asegurar la continuidad del
+trabajo, el sistema cuenta con un "modo carretera" inteligente.
+Manejo de información sin conexión:
+● Uso normal del sistema: Si el dispositivo se queda sin señal (datos móviles o wi-fi), el
+operador puede continuar utilizando la aplicación con total normalidad. Es posible seguir
+presionando el botón de ubicación gps, o incluso finalizar el viaje y tomar la fotografía de
+evidencia requerida.
+● Bóveda de seguridad interna: Toda la información que se capture mientras no haya
+internet no se perderá. La aplicación almacenará automáticamente las coordenadas, los datos
+del cierre de viaje y las fotografías en una bóveda segura dentro de la memoria del teléfono.
+● Sincronización automática: El operador no necesita realizar ningún proceso adicional
+para enviar esta información retenida. LogiApp monitorea constantemente el estado de la red;
+en el instante en que el dispositivo recupera la señal de internet, el sistema enviará
+silenciosamente todos los datos guardados directamente a la oficina.
+Esta función garantiza que la administración reciba el historial completo del viaje, incluso si
+gran parte del trayecto se realizó por zonas sin cobertura.
+155.4. Cierre de viaje: captura de llegadas, rendimientos y fotografía de evidencia obligatoria
+Para concluir satisfactoriamente una ruta y liberar la aplicación para futuras asignaciones, el operador debe registrar la finalización
+del trayecto en el sistema tan pronto como llegue a su destino y entregue la carga.
+Proceso de finalización:
+● Captura de datos finales: Dentro del viaje "en curso", se
+debe presionar el botón para finalizar o “marcar llegada a destino”.
+El sistema habilitará la sección de “datos de cierre y evidencias”,
+por lo que solicitará ingresar el nivel de combustible actual y el
+kilometraje final que marca el odómetro.
+● Validación anti-errores: Es importante capturar estos
+números con cuidado. LogiApp cuenta con una validación lógica
+que revisa automáticamente la información; por ejemplo, no
+permitirá cerrar el viaje si el kilometraje de llegada que se escribe
+es menor o igual al kilometraje de salida.
+● Evidencia fotográfica: Como último paso obligatorio, el
+sistema exigirá activar la cámara del dispositivo para tomar una
+fotografía clara (ya sea del comprobante de entrega, el estado de la
+carga o la unidad). Sin esta fotografía, el viaje no podrá ser cerrado
+en el sistema, quedando como pendiente y bloqueando la creación
+de nuevas rutas.
+● Cálculo automático: Una vez guardada la información y la
+fotografía, la aplicación hará el trabajo administrativo por el
+operador. Calculará de manera automática la duración total del
+viaje y el rendimiento de combustible obtenido, enviando el reporte
+completo y la imagen directamente al expediente en la oficina.
+166. Módulo de mantenimiento y taller
+6.1. Cuándo y cómo generar un reporte de mantenimiento preventivo
+El módulo de mantenimiento es la herramienta que permite a la empresa llevar un control
+exacto e historial del estado mecánico de la flota. A través de esta sección, el operador
+informa a la administración sobre cualquier servicio, reparación o revisión que reciba el
+vehículo.
+¿Cuándo se debe crear un reporte? Este registro debe realizarse cada vez que la unidad
+motriz o el remolque ingresen al taller, ya sea por un servicio preventivo de rutina (como un
+cambio de aceite, ajuste de frenos o revisión general) o por un mantenimiento correctivo
+derivado de una falla mecánica. Es fundamental que el operador registre esta información el
+mismo día en que se concluye el servicio para mantener la bitácora digital siempre
+actualizada.
+Pasos iniciales para generar el reporte:
+● Acceso al módulo: Desde el menú principal de LogiApp, el operador debe localizar y
+presionar la opción de "Mantenimiento".
+● Selección del vehículo: Al abrirse el formulario de registro, el primer paso consiste en
+indicar a qué unidad o remolque específico se le realizó el servicio.
+● Registro del kilometraje: El sistema solicitará capturar el kilometraje exacto que marca
+el tablero en el momento de la reparación. Este dato es estrictamente necesario, ya
+que permite a la oficina llevar el control de desgaste y programar de manera automática
+los futuros mantenimientos preventivos.
+176.2. Captura de costos, piezas reemplazadas y toma de fotografía de comprobantes
+Una vez seleccionada la unidad y registrado el kilometraje inicial, el operador debe detallar en
+el formulario el trabajo realizado en el taller para completar el reporte de mantenimiento de
+manera exitosa.
+Detalles del servicio y validación:
+● Descripción del servicio: En el campo de texto habilitado, se debe redactar de forma
+clara y breve qué tipo de trabajo mecánico se le realizó al vehículo. Es importante listar las
+piezas específicas que fueron reparadas o reemplazadas (por ejemplo: cambio de aceite,
+reemplazo de balatas delanteras, reparación de marcha, etc.).
+● Captura del costo total: El sistema requiere que se ingrese el monto económico total que
+se pagó por el servicio y las refacciones. Esta información es fundamental para que la
+administración lleve un control preciso de los gastos operativos y la rentabilidad de cada unidad
+en la flota.
+● Evidencia fotográfica: LogiApp solicita un respaldo visual para dar por válido el
+mantenimiento. El operador puede utilizar el botón de la cámara integrado en la aplicación para
+tomar una fotografía clara y legible de la factura, el comprobante de pago o la nota del taller.
+● Envío de la información: Al confirmar y guardar los datos, el reporte completo, junto con
+la fotografía adjunta, se enviará automáticamente al expediente del vehículo en la oficina. Esto
+permite que la bitácora de mantenimiento se actualice en tiempo real sin necesidad de entregar
+papeles físicos.
+187. Historial de operaciones
+7.1. Cómo consultar tus viajes terminados y rendimientos de combustible
+Para brindar total transparencia y permitir que el personal lleve un control personal de su trabajo,
+LogiApp cuenta con un módulo de historial. En esta sección, el operador puede revisar en
+cualquier momento el resumen de las rutas que ha finalizado exitosamente.
+Revisión del historial operativo:
+● Acceso al historial: Desde la pantalla principal de la aplicación, el operador debe dirigirse a
+la sección correspondiente para consultar sus rutas previas.
+● Lista de viajes finalizados: Al ingresar, el sistema mostrará una lista ordenada de los viajes
+recientes que ya fueron cerrados. Como se observa en la pantalla de la aplicación, por
+cada ruta se podrá visualizar el número de folio asignado, la unidad específica utilizada y
+la fecha y hora exacta de la operación. Además, cada tarjeta cuenta con un indicador
+visual.
+● Consulta de detalles y rendimiento: Para revisar la información a profundidad de cada
+trayecto, el operador debe presionar el botón "VER DETALLES DEL VIAJE" que aparece
+debajo de cada folio. Al ingresar a esta vista detallada, el sistema mostrará el desglose
+completo de la ruta y el cálculo automático de su rendimiento de combustible, obtenido a
+partir de los datos capturados en la salida y la llegada.
+● Confirmación de cierre: Esta pantalla funciona como un comprobante de tranquilidad para
+el operador. Si un viaje aparece listado aquí con su etiqueta verde, significa que toda la
+información de cierre y la evidencia fotográfica ya fueron recibidas y guardadas
+correctamente en la base de datos de la administración.
+198. Solución de problemas frecuentes
+8.1. Qué hacer si la aplicación no me deja tomar la foto de evidencia
+La captura fotográfica es un requisito obligatorio del sistema para poder finalizar viajes y registrar mantenimientos. Si al presionar
+el botón de la cámara la aplicación no responde, se cierra inesperadamente o muestra un mensaje de error, el operador debe
+realizar las siguientes revisiones:
+Pasos para solucionar problemas con la cámara:
+● Verificar los permisos del teléfono: Esta es la causa más común. Al instalar la aplicación por primera vez, el sistema solicita
+permiso para usar la cámara, y en ocasiones este se deniega por accidente. Para solucionarlo, el operador debe ir a la
+configuración (o ajustes) de su teléfono, buscar "LogiApp" en la lista de aplicaciones, entrar al apartado de "Permisos" y
+confirmar que el acceso a la cámara esté marcado como "Permitir".
+● Liberar espacio de almacenamiento: Si la memoria del teléfono está completamente llena, el dispositivo no será capaz de
+procesar ni guardar una nueva fotografía. Se recomienda borrar algunos videos, fotos personales antiguas o aplicaciones
+que ya no se utilicen para liberar espacio y volver a intentarlo.
+● Reinicio de la aplicación: En ocasiones, la cámara del teléfono se "traba" si se estuvo usando previamente en otras
+aplicaciones (como WhatsApp). El operador debe cerrar LogiApp por completo (deslizándola hacia arriba o cerrándola
+desde las aplicaciones recientes) y volver a abrirla.
+208.2. Qué hacer si mis datos no se envían por falta prolongada de internet
+Como se explicó en el módulo de viajes, LogiApp cuenta con un modo carretera inteligente que guarda la información en una
+bóveda segura dentro del teléfono cuando no hay señal. Sin embargo, si el operador atraviesa zonas sin cobertura durante
+muchas horas o días, debe asegurarse de que los datos logren sincronizarse correctamente al recuperar el internet.
+Acciones recomendadas para asegurar el envío de datos:
+● No desinstalar la aplicación ni cerrar sesión: Esta es la regla de oro. Mientras los datos no se hayan enviado a la oficina, la
+información vive únicamente en la memoria de ese celular. Si el operador borra la aplicación o presiona "Cerrar sesión" en
+su perfil, todo el historial no sincronizado se perderá de forma permanente.
+● Buscar una conexión estable: Al llegar a un poblado, paradero o a las instalaciones de la empresa, se recomienda conectar
+el equipo a una red wi-fi o confirmar que la señal de datos móviles sea fuerte.
+● Mantener la aplicación abierta en pantalla: Algunos teléfonos bloquean el uso de internet en segundo plano para ahorrar
+batería. Para asegurar el envío, el operador simplemente debe abrir LogiApp, dejarla en la pantalla principal y esperar unos
+minutos. El sistema detectará la red y enviará todo de forma silenciosa.
+● Actualizar la pantalla: Si el teléfono ya tiene internet pero el botón de viajes sigue en color gris bloqueado, basta con
+deslizar el dedo desde la parte superior hacia abajo en la pantalla principal para forzar al sistema a recargar y destrabar la
+conexión.
+218.3. Contacto de soporte técnico administrativo
+Si el operador ha revisado las soluciones de los puntos anteriores y la aplicación sigue presentando fallas, bloqueos inesperados o
+errores en la pantalla que impiden por completo continuar con el trabajo operativo, será necesario reportarlo al área de
+administración.
+¿Qué información tener a la mano antes de reportar?
+Para que el equipo de soporte pueda rastrear y solucionar el problema en el sistema de manera rápida, es muy importante
+proporcionar la siguiente información al momento de comunicarse:
+● Identificación: Número de id de operador y nombre completo.
+● Evidencia del error: De ser posible, tomar una captura de pantalla del mensaje de alerta que muestra la aplicación o del
+botón que aparece bloqueado.
+● Descripción detallada: Explicar brevemente qué acción se estaba intentando realizar justo antes del fallo (por ejemplo:
+"Intenté cerrar el viaje VJ-015 pero la pantalla se quedó cargando" o "Quise actualizar mi licencia y la app se cerró").
+22

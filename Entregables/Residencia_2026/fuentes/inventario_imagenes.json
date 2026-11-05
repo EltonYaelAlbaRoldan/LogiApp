@@ -1,0 +1,119 @@
+{
+  "criterio": "Se inspeccionaron los PPTX originales y recursos PNG existentes. No se generaron, alteraron ni reconstruyeron capturas. Las presentaciones de Entregables no contienen imágenes raster incorporadas. Las diapositivas ya renderizadas pueden corresponder a revisiones anteriores y no se toman como fuente de versión actual.",
+  "seleccion": [
+    {
+      "archivo": "tlb_identidad_appicon.png",
+      "fuente": "Resources/AppIcon/appicon.png",
+      "clasificacion": "identidad",
+      "dimensiones_px": [
+        360,
+        360
+      ],
+      "sha256": "dc58832bcdc6fa936ff446611ec9d9b8eb749cb50799afd791d6b2b23086e3d1",
+      "descripcion": "Identidad gráfica de TLB Transportes utilizada por la aplicación. Logo sobre fondo blanco; no es una captura del sistema ni evidencia del desempeño.",
+      "uso": "Solo identidad o recurso visual existente; no evidencia operativa",
+      "transformacion": "Ninguna; copia binaria del archivo original"
+    },
+    {
+      "archivo": "tlb_ilustracion_principal.png",
+      "fuente": "Resources/Images/principal.png",
+      "clasificacion": "ilustracion",
+      "dimensiones_px": [
+        1120,
+        928
+      ],
+      "sha256": "5a707c64f41a5ce709cfbbb93185297edc2113578bfbcb6dfbfa6c942f25a8b2",
+      "descripcion": "Ilustración promocional de tractocamión, paisaje y marca TLB. Aparece también en diapositivas 1 y 2 de Presentacion_LogiApp_Evolucion_v1_a_v2.pptx. Su procedencia creativa no está acreditada; no debe presentarse como fotografía de instalaciones, unidad real o trabajo de campo.",
+      "uso": "Solo identidad o recurso visual existente; no evidencia operativa",
+      "transformacion": "Ninguna; copia binaria del archivo original"
+    }
+  ],
+  "capturas_excluidas_y_recursos_no_seleccionados": [
+    {
+      "fuente": "Presentacion_LogiApp_Evolucion_v1_a_v2.pptx",
+      "slide": 5,
+      "media": "ppt/media/image3.png",
+      "dimensiones_px": [
+        500,
+        426
+      ],
+      "descripcion": "Icono ilustrado de acceso de usuario",
+      "motivo": "Decorativo y redundante para el informe técnico; no demuestra funcionamiento"
+    },
+    {
+      "fuente": "Presentacion_LogiApp_Evolucion_v1_a_v2.pptx",
+      "slide": 6,
+      "media": "ppt/media/image4.png",
+      "dimensiones_px": [
+        716,
+        1600
+      ],
+      "descripcion": "Captura real de pantalla de Registro de viaje con diálogo de error de límite de columnas de Sheets",
+      "motivo": "Contiene información de cliente y unidad sin anonimizar. No se incorpora al informe ni a la selección reutilizable"
+    },
+    {
+      "fuente": "Presentacion_LogiApp_Evolucion_v1_a_v2.pptx",
+      "slide": 7,
+      "media": "ppt/media/image5.png",
+      "dimensiones_px": [
+        772,
+        59
+      ],
+      "descripcion": "Captura real de celdas de historial GPS con fechas, horas, folio y coordenadas",
+      "motivo": "Contiene localización y datos operativos sin anonimizar. No se incorpora al informe ni a la selección reutilizable"
+    },
+    {
+      "fuente": "Presentacion_LogiApp_Evolucion_v2.pptx",
+      "slide": 4,
+      "media": "ppt/media/image.png",
+      "dimensiones_px": [
+        716,
+        1600
+      ],
+      "descripcion": "Duplicado de captura de error de registro de viaje",
+      "motivo": "Mismo contenido operativo sin anonimizar que en diapositiva 6 de Evolución v1 a v2"
+    },
+    {
+      "fuente": "Presentacion_LogiApp_Evolucion_v2.pptx",
+      "slide": 5,
+      "media": "ppt/media/image2.png",
+      "dimensiones_px": [
+        772,
+        59
+      ],
+      "descripcion": "Duplicado de captura de historial GPS",
+      "motivo": "Mismo contenido geográfico sin anonimizar que en diapositiva 7 de Evolución v1 a v2"
+    }
+  ],
+  "datos_textuales": [
+    {
+      "dato": "Proyecto de Educación Dual ITESA 2026 - TLB Transportes",
+      "fuente": "App.xaml",
+      "linea": 32
+    },
+    {
+      "dato": "Trabajo presentado como proyecto de dos integrantes",
+      "fuente": "Presentacion_LogiApp.pptx",
+      "slide": 1
+    },
+    {
+      "dato": "Los cambios de octubre se presentan como commits del 13 al 15 de octubre de 2026",
+      "fuente": "Entregables/LogiApp_Cambios_Octubre_2026.pptx",
+      "slides": [
+        1,
+        5
+      ]
+    },
+    {
+      "dato": "El estado técnico señala que no había resultados comparativos registrados todavía",
+      "fuente": "Entregables/LogiApp_Estado_Tecnico_Octubre_2026.pptx",
+      "slide": 6
+    }
+  ],
+  "datos_no_encontrados_en_presentaciones": [
+    "Nombre completo de escuela",
+    "Nombre de asesores",
+    "Periodo formal de residencia completo",
+    "Título académico definitivo de residencia"
+  ]
+}

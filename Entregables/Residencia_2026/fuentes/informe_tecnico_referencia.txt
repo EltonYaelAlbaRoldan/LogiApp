@@ -1,0 +1,500 @@
+=== PÁGINA 1 ===
+ 
+En los siguientes apartados se presenta una explicación del contenido metodológico de cada uno delos 
+elementos anteriores, que sirvan como guía para explicar a los alumnos asesorados la manera de 
+redactar el reporte final de residencia profesional. 
+CAPÍTULO ESTRUCTURA DEL REPORTE DE RESIDENCIA PROFESIONAL. 
+ Portada. 
+i Agradecimientos.  
+ii Resumen. 
+iii   Índice(s). 
+I. Generalidades del 
+proyecto 
+1.1. Introducción. 
+1.2. Descripción de la empresa u organización. 
+1 . 2. 1. Descripción del puesto o área del trabajo del estudiante. 
+1.3. Problemas a resolver. 
+1.4. Objetivos. 
+1 . 4. 1. General. 
+1 . 4. 2. Específicos. 
+1.5. Justificación. 
+II. Marco teórico 
+2.1 Tema 1 
+     2.1.1      Subtema 1 
+     2.1.2      Subtema 2 
+2.2 Tema 2 
+    2.2.1       Subtema 1 
+    2.2.2       Subtema 2 
+III. Desarrollo      3.1 Procedimiento y descripción de las actividades realizadas. 
+ 
+ 
+IV. Resultados 
+4.1 Resultados, planos, gráficas, prototipos, manuales, programas, 
+análisis estadísticos, modelos matemáticos, simulaciones, normatividades, 
+regulaciones y restricciones, entre otros. Solo para proyectos que por su 
+naturaleza lo requieran: estudio de mercado, estudi o técnico y estudio 
+económico. 
+4.2 Actividades Sociales realizadas en la empresa u organización (si es el 
+caso). 
+ 
+V. Conclusiones 
+5.1 Conclusiones del Proyecto. 
+5.2 Recomendaciones. 
+5.3 Experiencia personal profesional adquirida. 
+VI. Competencias 
+desarrolladas      6.1 Competencias desarrolladas y/o aplicadas. 
+VII. Fuentes de 
+información      Fuentes de información. 
+VIII Anexos 
+Anexos (Instrumentos utilizados, carta de autorización por parte de la 
+empresa u organización para la titulación y otros si son necesario). 
+ 
+Registros de Productos (patentes, derechos de autor, compra- venta del 
+proyecto, etc.). 
+
+=== PÁGINA 2 ===
+CONTENIDO DEL REPORTE 
+ 
+a). PORTADA (ANEXO I) 
+Es la primera Página de un trabajo escrito o entrada de la obra y permite la identificación del 
+documento. Es el primer contacto del lector con el trabajo que se le presenta y debe contener la 
+información necesaria y suficiente para dejar en claro a que se refiere el texto e interesarlo en 
+la lectura. 
+ 
+La portada debe contener: 
+• Logotipos (secretaria, TecNM e institución) 
+• Nombre de la institución, deberá ir en la parte superior de la hoja centrada y en 
+mayúscula 
+• Informe Técnico de Residencia Profesional 
+• Título del proyecto* 
+• Nombre del alumno(s) que realizó la residencia.  Debe escribirse inmediatamente debajo 
+del título del trabajo. Si son varios los autores sus nombr es se escribirán en orden 
+alfabético. 
+• Carrera 
+• Nombre del asesor interno. 
+• Ciudad y fecha en que se terminó el proyecto, mes y año en el margen inferior 
+derecho.  
+ 
+* El título de proyecto de residencia 
+El título es la primera impresión del lector; por lo tanto, debe ser atractivo, pero a la vez informa 
+acerca del contenido del trabajo. Debe ser lo más brev e y conciso posible ( máximo 20 
+palabras), sin sacrificar claridad. Encontrar el título requ iere de concentración, empiece a 
+pensar en él desde el inicio de su trabajo; de esta forma, cuando lo termine, ya habrá analizado 
+suficientes títulos para escoger el más adecuado. Lo anterior implica que el título del 
+anteproyecto puede ser sujeto a modificaciones. 
+ 
+La primera palabra del título es determinante para atraer la atención del potencial lector y 
+advertir sobre el tema a desarrollar. Algunas sugerencias para escoger el título: 
+ 
+1. La oración que define el tema del trabajo. 
+2. Por preguntas, si la pregunta tiene suficiente dinamismo despertará el interés y motivará 
+al lector. 
+3. Elementos en el contenido del trabajo , la primera palabra del título es definitivamente 
+la más importante.  Por tanto, es importante determinar cuál es la palabra clave en el 
+trabajo y con esta iniciar el título. No se recomienda iniciar con artículos, preposiciones o 
+adjetivos. 
+ 
+No se utilizarán abreviaturas, paréntesis o guiones y se escribirá en el centro de la hoja, 
+solo con mayúscula la letra inicial. 
+
+=== PÁGINA 3 ===
+b) AGRADECIMIENTOS 
+ 
+En esta página se hace reconocimiento a las personas que han contribuido al desarrollo del 
+trabajo. Los primeros agradecimientos deben estar dir igidos a quienes aportaron 
+académicamente al contenido del trabajo (asesores, revisores, compañeros que ayudaron con 
+alguna parte de la investigación). Otros de los agradecimientos son personales, incluyendo 
+posiblemente cónyuges, familiares, amigos cercanos,  Dios…  La clave para tener 
+agradecimientos exitosos es ser breve. (máximo una cuartilla). 
+ 
+Lo que sí debe incluirse, generalmente al final, es el ag radecimiento a las fuentes de 
+financiamiento para el proyecto.  Esta parte es muy importante, por lo que hay que consultar 
+con el asesor interno y el asesor externo (si lo hay). 
+ 
+(Nota: El alumno tendrá libertad de redactar este apartado, solo se revisa ortografía)  
+c). RESUMEN 
+Es una descripción breve, pero general del proyecto completo. Debe ser informativo; es decir, 
+debe dar una síntesis del proyecto, de manera que el lector pueda interesarse o no en la lectura 
+del documento completo. Se indica el propósito del proyecto, los métodos y el alcance del 
+mismo, así como la descripción de los resultados obtenidos y las conclusiones. Este resumen 
+indicará al lector: 
+• ¿Qué se realizó? 
+• ¿Por qué se realizó? 
+• ¿Cómo se realizó? 
+• ¿Que se encontró? 
+• ¿Qué significa lo encontrado? 
+ 
+Si el proyecto es acerca de un nuevo producto, un prototipo, o aparato; en lugar de los 
+últimos dos aspectos, el resumen deberá contener: 
+• Cuáles son las ventajas del nuevo producto, prototipo o aparato. 
+• Que tan bien funciona con respecto a lo que ya existe. 
+ 
+El resumen es descriptivo y conciso, solo se dice lo que es esencial usando las palabras 
+necesarias para establecer el significado. Este deberá consistir en una cuartilla como máximo.  
+ 
+Deberá ser redactado en tiempo pasado y de manera impersonal. 
+ 
+d). INDICE 
+ 
+Es un listado breve, global y ordenado del contenido del trabajo.  Donde se indica la ubicación 
+exacta (páginas) de cada parte de la obra (capítulos, temas y subtemas), y presenta una visión 
+general de los temas tratados. Permite al lector identificar cada una de las secciones del informe 
+
+=== PÁGINA 4 ===
+Técnico de Residencia Profesional y relacionarlas entre sí. 
+ 
+El índice se escribe una vez que se ha terminado el informe y después de numerar las 
+páginas. 
+ 
+El encabezado, puede escribirse como: ÍNDICE, se escribe centrado en la parte superior de 
+la hoja y siempre en mayúsculas. 
+ 
+• Escribir del lado inferior derecho la numeración. 
+• Paginar a partir de la introducción, en arábigos, (1,2,3….) 
+ 
+Ver ejemplo de índice en Anexo 2 
+ 
+Se debe considerar la existencia de un índice de figuras, cuadros; si el trabajo lo requiere. 
+ 
+Las imágenes se enumeran en consecutivo hasta finalizar el trabajo, con números arábigos, deben 
+de registrarse con Figura. Número nombre  (el nombre escrito en tipo oración tamaño 10, 
+centrada y sin punto final) 
+ 
+Los cuadros se enumeran en consecutivo hasta finalizar el trabajo, con números arábigos, deben 
+de registrarse con Cuadro. Número nombre  (el nombre escrito en tipo oración tamaño 10, 
+centrada y sin punto final) 
+ 
+Cuando se muestra la figura o cuadro el nombre debe escribirse centrado con 
+interlineado simple y conservando el mismo espacio entre figura y el título y pie de 
+figura en todo el documento.  
+ 
+Para imágenes o cuadros que ocupen el espacio de una hoja, referenciarlas y colocarlas en el 
+apartado de anexos. 
+ 
+Las imágenes y cuadros deberán ser completamente legibles. 
+ 
+ 
+Figura 1. Tipos de maíz en México 
+Año No. 
+Alumnos 
+2015 1124 
+2016 1100 
+2017 1050 
+2018 1145 
+2019 1181 
+Cuadro 1. Ingreso de alumnos por año 
+ 
+ 
+ 
+ 
+
+
+=== PÁGINA 5 ===
+e). INTRODUCCIÓN 
+ 
+En la introducción se realiza un planteamiento claro y ordenado del proyecto de residencia, de 
+su importancia de sus implicaciones, así como la manera como se ha desarrollado. 
+ 
+PROPUESTA: 
+ 
+Los elementos implícitos de una introducción y el orden bajo el cual deben escribirse son: 
+antecedentes, justificación, objetivos, área, descripción del problema, alcance, limitaciones 
+y reseña de las partes integrantes del trabajo. Incluye la metodología o procedimientos que 
+se utilizarán, pero sin adelantar resultados ni llegar a concluir. 
+ 
+Se pueden incluir al principio, aspectos sobre la empresa en donde se realizó la residencia 
+profesional. Sin ser demasiado extenso. (Máximo 2 cuartillas) 
+ 
+ 
+f). DESCRIPCIÓN DE LA EMPRESA U ORGANIZACIÓN Y DEL PUESTO O 
+ÁREA DE TRABAJO DEL ESTUDIANTE. 
+ 
+Es importante determinar el área en que el problema está involucrado.  Sirve para orientar en 
+donde se desarrolló el proyecto dentro de la carrera que cursa el alumno. Las carreras tienen 
+diversas áreas en las cuales se puede realizar el proyecto. Se debe incluir: 
+ 
+• Datos generales (Nombre, giro, dirección, teléfono, página Web, correo electrónico) 
+• Misión, visión, políticas, valores, etc. 
+• Organigrama de la empresa señalando el departamento o área donde realizó el proyecto. 
+• Descripción o funciones del departamento o área donde se realizó el proyecto. 
+ 
+g). PROBLEMAS A RESOLVER 
+ 
+Este apartado es el punto de partida de cualquier proyecto, es en donde se debe hacer mención 
+del problema que se va a resolver y que da origen al proyecto. Se debe redactar en forma 
+de lista las diferentes problemáticas por orden de prioridad que se van a resolver o a abordar, 
+deben ir de mayor a menor importancia y se debe redactar de manera clara lo que se pretende 
+resolver durante el proyecto. 
+ 
+Plantear un problema es expresar de manera descriptiva y específica las características que se 
+observan actualmente en el problema, tales como hechos relevantes, factores causales, efectos, 
+propiedades etc. dentro de los límites de espacio, tiempo y temática. 
+ 
+ 
+ 
+ 
+
+=== PÁGINA 6 ===
+h). OBJETIVOS 
+Los objetivos son los propósitos del estudio o trabajo e xpresan de manera clara el fin que 
+pretende alcanzarse y por lo tanto todo el trabajo se orientará a lograr estos objetivos en donde 
+se incluya el qué, cómo y para qué. Los objetivos que se especifiquen han de ser congruentes 
+entre sí. 
+ 
+La formulación del objetivo debe comenzarse con un verbo en infinitivo, los objetivos deben ser 
+alcanzables, pues ellos constituyen el criterio de evaluación de efectividad del trabajo realizado.  
+ 
+TIPOS DE OBJETIVOS 
+ 
+1) Objetivo general. 
+Es el enunciado claro y preciso de lo que se pretende alcanzar con el proyecto de residencias. 
+Precisa la finalidad del trabajo o del proyecto, permite mantener una constante de referencia del 
+trabajo a realizarse, representa el logro final. 
+ 
+2) Objetivos específicos 
+Se refieren a los aspectos que se desea estudiar, o a los resultados intermedios que se espera 
+obtener para dar respuesta final al problema. Están má s delimitados y propician el 
+cumplimiento del objetivo general. 
+ 
+Criterios para redactarlos. 
+• Deben estar dirigidos a los elementos básicos del problema 
+• Deben ser medibles y observables 
+• Deben ser claros y precisos 
+• Deben expresarse por medio de un verbo en infinitivo (ej. Implementar) 
+ 
+Fines de los objetivos 
+• Sirven de guía para el estudio 
+• Determinan los límites y la amplitud del estudio 
+• Orientan sobre los resultados que se espera obtener 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+=== PÁGINA 7 ===
+A continuación, se presenta una serie de verbos sugeridos por la profesora Mirian Balestrini 
+Acuña, en su libro "Como se elabora un proyecto de investigación" 
+ 
+ 
+i ) . JUSTIFICACIÓN 
+Todo proyecto de residencia está orientado a la solución de un problema, o por lo menos, 
+propone estrategias que de aplicarlas contribuirían a resolverlo, por lo consiguiente es necesario 
+exhibir los motivos que merecen el trabajo a realizar. 
+ 
+Explica la importancia del estudio exponiendo las razones por las que se realizará y su impacto 
+en el producto, en el costo o en la calidad, explicándolos en forma suficientemente detallada, 
+pero sin abundar en demasía, beneficios y utilidad en la empresa en que se lleva a cabo 
+principalmente y para el área de estudio que representa, aportaciones de la práctica a la teoría. 
+ 
+Esta sección incluye plantearse preguntas importantes: 
+a) ¿Por qué es tan conveniente realizar este estudio? 
+b) ¿Para qué sirve o cuáles serán sus aportes? 
+c) ¿Quiénes y de qué modo se beneficiarán con los resultados? 
+d) ¿Qué implicaciones pueden tener los resultados, cualesquiera que estos sean? 
+e) ¿Ayudará a resolver algún problema? 
+f) ¿Puede sugerir ideas, recomendaciones o hipótesis a futuros proyectos? 
+g) ¿Puede lograrse mejores formas de resolver un problema? 
+ 
+Y con ellas desarrollar un texto fluido donde se incluyan las respuestas a estas 
+interrogantes. 
+
+
+=== PÁGINA 8 ===
+j ) . MARCO TEÓRICO. 
+Se realiza apoyado de una revisión de literatura a fin al tema del proyecto de residencia. Es la 
+descripción, explicación y análisis, en un marco teór ico, del problema general que trata la 
+investigación. Todo proyecto requiere un conocimiento presente de la teoría que explica el tema, 
+área o fenómeno que se estudia.  
+ 
+Que hace. 
+• Respalda el desarrollo del proyecto 
+• Amplia la descripción y análisis del tema de estudio planteado. 
+• Orienta hacia la organización de datos o hechos signifi cativos para descubrir las 
+relaciones de un problema con las teorías existentes. 
+• Integra la teoría con la investigación 
+• Ayuda a precisar y organizar los elementos contenidos en el proyecto para convertirlos 
+en acciones concretas. 
+ 
+Elementos del marco teórico 
+• Conocimientos   sobre el tema.  (conceptos, pasos, técnicas, definiciones, etc.) 
+• Teorías sobre el tema.  (Que piensan algunos   investigadores, que opinan etc.) 
+• Antecedentes sobre el tema. (Estudios que se han hecho, resultados, intentos.) 
+• Datos estadísticos. (porcentuales, numéricos.) 
+ 
+Es importante hacer mención en el marco teórico, de la referencia bibliográfica de donde se tomó 
+lo escrito, siguiendo el formato APA. Las fuentes de r evisión deben ser citas de revistas 
+científicas, tesis, libros especializados, bases de datos científicas, página web y deben incluir un 
+mínimo de 10 autores y por lo menos el 30% de las fuentes no rebasen 5 años de anterioridad.  
+ 
+Es sumamente importante para este capítulo leer varias fuentes de información, no está 
+permitido el plagio. Está permitido realizar citas textuales y parafraseadas, para ello deben de 
+estudiar la metodología APA, y revisar la manera de cómo hacer una cita. 
+ 
+Cita textual 
+Se considera que una cita es textual cuando el material o texto es literalmente copiado tal cual lo 
+escribió otro autor, sin corregir, sin mejorar la sintaxis, respetando el idioma, incluso si hay faltas 
+ortográficas, de sintaxis o de redacción. Si usas las palabras exactas de alguien en tu texto, 
+debes usar las comillas y dar crédito a la fuente dentro del mismo texto. 
+ 
+Tipos de citas textuales 
+• Menos de 40 palabras: el texto citado se incluye entre comillas.  Se cita el autor, el 
+año y el número de página (p.) o páginas (pp.), o número de párrafo de donde se tomó 
+el fragmento citado literalmente. 
+• Más de 40 palabras: se incluye en un bloque independiente a una distancia de 5 
+espacios desde el margen izquierdo (doble sangría), a doble espacio del texto, sin 
+comillas. 
+
+=== PÁGINA 9 ===
+Ejemplo de cita textual  
+ 
+ 
+i ) . PROCEDIMIENTOS Y DESCRIPCION DE LAS ACTIVIDADES REALIZADAS 
+ 
+En este apartado se describen las actividades que conforman el desarrollo del proyecto, en 
+orden lógico y congruente. Se recomienda incluir su cronograma de actividades y en función de 
+este ir describiendo cada una de ellas. 
+ 
+Se plantea la metodología o procedimiento ordenado que se seguirá para realizar el 
+proyecto. 
+ 
+Ejemplo: 
+ 
+Nombre de la actividad 
+  Si aplica incluir diagramas 
+Descripción de la actividad 
+        Cronograma 
+ 
+Nota: Describir las actividades realizadas de acuerdo al cronograma, planteando los aspectos 
+mencionados anteriormente sin que esto implique una descripción detallada secuencial de cada 
+uno de ellos. 
+ 
+Para la descripción de las actividades se detallan cada uno de los pasos o etapas que requiere 
+el estudio. Si es una técnica, describir, explicar cómo se  aplicará, así como los 
+instrumentos, equipo y bajo qué condiciones se utiliza. 
+ 
+ 
+
+
+=== PÁGINA 10 ===
+ 
+k) . RESULTADOS 
+Después de haber reunido la información es necesario describir los hallazgos o resultados 
+obtenidos; estos se muestran generalmente por medio de tablas, planos, prototipos, gráficas o 
+programas y se incluyen en el cuerpo del trabajo solo los de mayor importancia, los demás se 
+incluyen en el anexo. 
+ 
+Van acompañados de una descripción analítica y explicativa de los hallazgos, para destacar los 
+aspectos de mayor importancia y facilitar la comprensión de los resultados en forma gráfica. 
+ 
+En este punto se pretende dar una explicación por medio del análisis e interpretación de la 
+información obtenida. 
+• El análisis. Se refiere a la descripción o lectura de los datos obtenidos y que se han presentado 
+en los cuadros. Este abarca análisis simple descriptivo. 
+• La interpretación. Es la explicación del significado de los datos encontrados.  
+ 
+l ) . CONCLUSIONES 
+Constituyen la presentación de los hallazgos y suge rencias sobresalientes del proyecto de 
+Residencia Profesional.  Deben ser específicos, concretos, sencillos y relacionados con el 
+problema y los objetivos planteados. 
+ 
+De acuerdo a las conclusiones, se hace una serie de recomendaciones para mejorar lo 
+encontrado o evitar que se repita. 
+ 
+Exprese la experiencia profesional adquirida durante su estancia en la empresa en el 
+desarrollo del proyecto realizado. 
+ 
+m) . COMPETENCIAS DESARROLLADAS Y/O APLICADAS 
+ 
+Para el desarrollo de este apartado, se sugiere que el residente considere lo siguiente: 
+• Asignaturas que se aplicaron y sus competencias respectivas, de acuerdo a sus planes de 
+estudio. 
+• Identificar aquellas competencias que se desarrollaron durante el transcurso de la 
+residencia.  
+ 
+Entendiéndose las competencias desarrolladas como aquellas que se ampliaron y perfeccionaron 
+durante el desarrollo de la residencia profesional y las competencias aplicadas son las que se 
+utilizaron en el proyecto de acuerdo a su formación profesional. 
+ 
+Se sugiere que el residente elabore una tabla a doble columna en donde titulará a la primera como 
+“Competencia desarrollada y/o aplicada y en la segunda columna, será titulada como “¿Dónde se 
+aplicó? Ejemplo: 
+ 
+
+=== PÁGINA 11 ===
+ 
+ 
+COMPETENCIA DESARROLLADA Y 
+APLICADA 
+ 
+¿DÓNDE SE APLICÓ? 
+Capacidad de análisis y síntesis Cuando se consultó bibliografía para 
+justificar el proyecto. 
+ 
+n ) . FUENTES DE INFORMACION (en formato APA). 
+ 
+El formato de la American Psychological Association (APA) ha sido adoptado por numerosas 
+instituciones, revistas científicas, editoriales y universidades en los Estados Unidos.  Con el 
+tiempo, se ha extendido su uso en muchos otros países. El formato de la APA para citar fuentes 
+bibliográficas en el texto y para elaborar la lista de referencias es muy práctico. En esta guía usted 
+encontrará un resumen de los lineamientos más importantes, así como ejemplos concretos para 
+hacer sus citas. No obstante, tenga en cuenta que n i las explicaciones ni los ejemplos son 
+exhaustivos. Usted podrá encontrarse con casos en los que deberá consultar el manual original. 
+La APA cuenta con un Manual de Publicaciones (en inglés), que se puede consultar en su página 
+de Internet, en la dirección: http://www.apa.org.  
+ 
+Ver ejemplos en anexo III 
+ 
+o) ANEXOS.  
+ 
+Es un agregado que se coloca al final de la obra, está compuesto por gráficas, cuadros y todo lo 
+que puede ser importante para complementar el trabajo. 
+ 
+Se debe hacer mención de ellos en el cuerpo del trabajo.  (P. Ej. Ver anexo 1) de acuerdo al 
+orden en que fueron citados. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+=== PÁGINA 12 ===
+PRESENTACION DEL TRABAJO. 
+1 .  Utilizar la herramienta de Word para insertar el índice el cual deberá ser a interlineado 
+sencillo. 
+2 .  El interlineado se considera de 1.5 líneas en el desarrollo del trabajo, excepto en 
+numeraciones y viñetas que serán con interlineado sencillo. 
+3 .  El espaciado después de un párrafo es a doble espacio. 
+4 .  La escritura debe presentarse sin utilizar sangrías al inicio de párrafo. 
+5 .  Las viñetas autorizadas son las de tipo punto color negro. 
+6 .  Márgenes superior e izquierdo 3cms, derecho e inferior 2.5 cms 
+7 .  Tipo de letra arial. 
+8 .  Tamaño de letra 12. 
+9 .  Títulos en mayúscula, negrita, tamaño 14 centrados. 
+1 0 .  Espaciado sencillo en cuadros y figuras 
+1 1 .  Subtítulos negrita, tamaño 12, tipo oración en mayúsculas y minúsculas. 
+1 2 .  Omitir textos en encabezado y pie de página. 
+1 3 .  El número de página colocarlo en la parte inferior derecha sin incluir figuras 
+1 4 .  Citas y referencias en formato APA. 
+a) Utilizar la cita directa o textual y cita indirecta o paráfrasis en el marco 
+teórico. Nota: Utilizar la herramienta de Word para insertar bibliografía. 
+1 5 .  Se recomienda configurar el documento desde el inicio del trabajo utilizando la herramienta 
+<<estilos/nuevo estilo >> de Word.  

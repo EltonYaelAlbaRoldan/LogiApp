@@ -1,0 +1,256 @@
+Índice
+Arquitectura del sistema 3
+Modelo de comunicación 3
+Patrón de diseño: MVVM (Model-View-ViewModel) 3
+Componentes de hardware 4
+Terminales móviles 4
+Conectividad de datos 4
+Stack de software y dependencias 5
+Entorno de desarrollo y Framework 5
+Gestión de datos y persistencia 5
+Conectividad y APIs de Google 5
+Herramientas de integración y análisis 5
+Configuración de servicios en la nube 6
+Configuración en Google Cloud Console 6
+Estructura de almacenamiento en Google Drive 6
+Modelado de datos en Google Sheets 6
+Tablas de entidades 6
+Tablas operativas y de control 7
+Tablas de auditoría y diagnóstico (Logs) 7
+Flujos de automatización e integración 8
+Seguridad y persistencia 9
+Lógica de persistencia y sincronización (Offline-First) 9
+Seguridad de la información y accesos 9
+2Arquitectura del sistema
+Modelo de comunicación
+El flujo de datos del sistema está diseñado bajo un esquema de comunicación
+asíncrona que garantiza la integridad de la información desde el punto de origen
+hasta el almacenamiento final. El proceso se desglosa en las siguientes etapas:
+1. Captura y validación: El operador ingresa los datos (folios, GPS,
+mantenimientos) en la aplicación móvil. El sistema realiza una validación
+lógica inmediata para asegurar que los campos cumplan con el formato
+requerido.
+2. Capa de persistencia local: Antes de intentar la transmisión, los datos se
+almacenan en una base de datos local SQLite. Esto actúa como un búfer de
+seguridad que permite al sistema operar sin dependencia de una conexión
+activa a internet.
+3. Gestión de peticiones (Request Manager): Un servicio en segundo plano
+detecta la disponibilidad de red. Una vez confirmada la conexión, se disparan
+las peticiones autenticadas hacia las APIs de Google Cloud.
+4. Procesamiento y respuesta: Las evidencias fotográficas se envían a Google
+Drive, el cual devuelve una URL única, esta URL junto con los datos de texto
+se insertan en una fila específica de Google Sheets. El sistema recibe una
+confirmación de éxito (HTTP 200) y marca el registro local como
+"sincronizado".
+Patrón de diseño: MVVM (Model-View-ViewModel)
+Para el desarrollo en .NET MAUI, se implementó el patrón de arquitectura MVVM, el
+cual permite una separación estricta de responsabilidades, facilitando el
+mantenimiento y las pruebas del software:
+● Model (Modelo): Define la estructura de los datos (ej. Clase Viaje, Clase
+Operador). Es el encargado de interactuar con la base de datos local SQLite
+y los objetos de transferencia de datos (DTO) para las APIs.
+● View (Vista): Definida mediante archivos XAML. Su única responsabilidad es
+la presentación visual y la interacción con el usuario. No contiene lógica de
+negocio, lo que permite cambios estéticos sin afectar el funcionamiento del
+sistema.
+● ViewModel (Vista-Modelo): Actúa como el mediador entre la Vista y el
+Modelo. Utiliza el mecanismo de Data Binding para actualizar la interfaz en
+tiempo real y gestiona los comandos que ejecutan la lógica, como el envío de
+un reporte o el cálculo de un rendimiento antes de ser guardado.
+3Componentes de hardware
+Para garantizar el funcionamiento ininterrumpido del sistema de monitoreo y la
+captura de evidencias en tiempo real, se ha definido una configuración base de
+hardware que deben cumplir las unidades y los operadores:
+Terminales móviles
+● Sistema operativo: Android 10.0 o superior para asegurar la compatibilidad
+con las librerías de .NET MAUI y el manejo eficiente de permisos de
+geolocalización en segundo plano.
+● Sensores integrados: Se requiere un módulo GPS/GLONASS activo para el
+rastreo de rutas y una cámara con resolución mínima de 8MP para la
+legibilidad de los folios y evidencias fotográficas.
+● Memoria y procesamiento: Un mínimo de 3GB de memoria RAM para permitir
+la ejecución de la aplicación junto con servicios de sincronización en segundo
+plano sin degradación del rendimiento.
+Conectividad de datos
+Se requiere un plan de datos móviles con cobertura nacional. El sistema está
+optimizado para funcionar con tecnologías 4G/LTE, permitiendo el envío de
+paquetes de datos ligeros (coordenadas) y la compresión de imágenes antes de la
+subida a la nube.
+Infraestructura de energía en cabina
+● Sistemas de carga continua: Instalación de adaptadores de carga rápida
+(mínimo 2.4A) conectados directamente al sistema eléctrico de la unidad para
+evitar la suspensión del servicio por falta de batería durante trayectos largos.
+● Soportes industriales: Uso de monturas con sujeción mecánica para reducir la
+vibración del dispositivo, protegiendo los componentes internos y
+garantizando que la pantalla sea visible para el operador sin comprometer la
+seguridad vial.
+4Stack de software y dependencias
+Para la construcción del ecosistema digital, se seleccionaron tecnologías que
+permiten un alto rendimiento y una integración nativa con servicios en la nube. A
+continuación, se detallan los componentes de software utilizados:
+Entorno de desarrollo y Framework
+● .NET MAUI: Se utiliza la versión más reciente del framework para garantizar
+el soporte de largo plazo (LTS). Este permite la compilación de código nativo
+para Android, optimizando el uso de recursos del sistema y la respuesta de la
+interfaz de usuario.
+● Lenguajes: C# para la lógica de negocio y servicios, y XAML para la
+definición de la interfaz de usuario (UI).
+Gestión de datos y persistencia
+● SQLite-net-pcl: Librería principal para la implementación de la base de datos
+local. Permite el mapeo de objetos para almacenar viajes, mantenimientos y
+registros de operadores de forma estructurada dentro del dispositivo.
+● Newtonsoft.Json: Utilizado para la serialización y deserialización de objetos
+de datos, facilitando el intercambio de información entre la aplicación y los
+servicios de Google Cloud.
+Conectividad y APIs de Google
+● Google.Apis.Drive.v3: Cliente oficial de Google para la gestión de archivos.
+Se encarga de la creación automática de carpetas de operadores y la subida
+de evidencias fotográficas en formato binario.
+● Google.Apis.Sheets.v4: Librería dedicada a la manipulación de hojas de
+cálculo. Permite la inserción dinámica de filas y la consulta de datos en
+tiempo real para el monitoreo de la flota.
+● Google.Apis.Auth: Implementación de protocolos OAuth 2.0 y Service
+Accounts para garantizar una comunicación autenticada y segura entre la
+aplicación y la nube.
+Herramientas de integración y análisis
+● Pentaho Data Integration: Motor de integración encargado de los procesos
+ETL (Extracción, Transformación y Carga). Ejecuta los "Jobs" programados
+para validar fechas de vigencia y disparar alertas proactivas.
+● Looker Studio: Plataforma de visualización que consume directamente la
+base de datos de Sheets, procesando métricas mediante conectores de datos
+nativos para generar los tableros de control (Dashboards).
+5Configuración de servicios en la nube
+La arquitectura de soporte del sistema reside en Google Cloud Platform, configurada
+para actuar como un backend escalable y de bajo costo. La implementación técnica
+se divide en los siguientes pilares:
+Configuración en Google Cloud Console
+● Proyecto y APIs: Se habilitaron las APIs de Google Drive y Google Sheets
+dentro de un proyecto dedicado en la consola.
+● Credenciales de Service Account: Se generó una cuenta de servicio (JSON
+Key) para permitir que la aplicación móvil se autentique de forma
+programática. Esto elimina la necesidad de que cada operador inicie sesión
+manualmente, garantizando una comunicación directa y segura entre el
+cliente (.NET MAUI) y el servidor.
+● Gestión de alcances: Se configuraron permisos de lectura y escritura
+restringidos únicamente a las carpetas y hojas de cálculo necesarias,
+siguiendo el principio de "menor privilegio" para proteger la integridad de los
+datos.
+Estructura de almacenamiento en Google Drive
+El sistema organiza la información de manera jerárquica y automatizada para
+facilitar la auditoría administrativa:
+● Directorio raíz: Contiene las carpetas maestras del proyecto.
+● Carpeta de expedientes: Subdividida dinámicamente por el nombre del
+operador. Al completar un registro de nuevo ingreso, la aplicación dispara una
+función que crea la carpeta y sube documentos como INE, licencia y contrato.
+● Carpeta de evidencias de viaje: Organizada por fecha y folio de viaje. Cada
+fotografía tomada desde la app se renombra automáticamente con el formato
+[Folio]_[TipoEvidencia]_[Fecha].jpg para evitar duplicidad y facilitar la
+búsqueda manual.
+Modelado de datos en Google Sheets
+Modelado de datos en Google Sheets La arquitectura de datos se diseñó bajo un
+esquema relacional que utiliza hojas de cálculo como tablas maestras, permitiendo
+la integridad referencial entre la aplicación móvil y los procesos de automatización.
+La estructura se desglosa de la siguiente manera:
+Tablas de entidades
+● Usuarios / Operadores: Almacena la información de identidad, credenciales
+de acceso y estatus operativo (Activo/Inactivo). Es la tabla base para el
+control de sesiones y permisos dentro de la aplicación.
+6● Unidades: Registro técnico de los vehículos (tractocamiones o camiones).
+Incluye especificaciones, placas y números económicos necesarios para la
+asignación de viajes.
+● Remolques: Catálogo de equipo aliado, permitiendo la trazabilidad de qué
+unidad de carga está vinculada a cada vehículo motriz.
+● Clientes: Base de datos de las empresas asociadas y socios comerciales con
+los que se coordinan los servicios de transporte.
+● Destinos: Repositorio de ubicaciones geográficas y puntos de entrega
+frecuentes, utilizado para estandarizar las rutas y mejorar la precisión del
+monitoreo.
+Tablas operativas y de control
+● Viajes (Historial): Centraliza el registro dinámico de la operación. Contiene las
+coordenadas GPS, paradas intermedias, consumos de combustible y los
+enlaces directos a las evidencias fotográficas almacenadas en Google Drive.
+● Mantenimiento: Historial técnico detallado por unidad. Registra fechas de
+servicio, kilometraje acumulado, reportes de fallas y reparaciones realizadas
+para el control de la salud mecánica de la flota.
+● Reporte de vigencias: Hoja técnica vinculada directamente con Pentaho. En
+esta tabla se calculan y registran los estatus de documentos próximos a
+vencer (licencias, pólizas, verificaciones), sirviendo como disparador para el
+sistema de alertas automáticas.
+Tablas de auditoría y diagnóstico (Logs)
+● Logs de la aplicación: Registra los eventos internos de la app móvil, como
+errores de sincronización, inicios de sesión y telemetría de red, facilitando el
+soporte técnico y la resolución de errores en el lado del cliente.
+● Logs de Sheets: Funciona como un sistema de trazabilidad administrativa.
+Registra cualquier modificación manual o automática realizada en las hojas
+de cálculo, permitiendo detectar cambios no autorizados o errores de captura
+por parte del personal administrativo.
+7Flujos de automatización e integración
+La eficiencia del sistema radica en su capacidad para procesar información de
+manera autónoma, eliminando la intervención manual en la supervisión de vigencias
+y la creación de reportes.
+Procesos ETL y alertas automáticas (Pentaho) Para la gestión de eventos críticos,
+se implementó una arquitectura basada en Pentaho Data Integration (PDI), la cual
+ejecuta flujos de trabajo programados (Jobs) bajo la siguiente lógica:
+● Extracción y transformación (ETL): El sistema se conecta mediante
+protocolos de API a la hoja de "Reporte" en Google Sheets. Pentaho extrae
+los datos de vigencias (licencias, pólizas, verificaciones) y aplica reglas de
+negocio para calcular la diferencia de días respecto a la fecha actual.
+● Validación de estados: Los registros se clasifican automáticamente en tres
+categorías: vigente, próximo a vencer y vencido.
+● Disparadores de notificación: Cuando un registro cambia su estado a
+"próximo a vencer" o "vencido", el Job activa un servicio de mensajería o
+correo electrónico automatizado hacia los administradores. Esto permite que
+la empresa gestione renovaciones antes de que la unidad quede fuera de
+servicio por falta de documentación legal.
+Visualización de datos (Looker Studio) El procesamiento de métricas en tiempo real
+se realiza mediante la integración de Looker Studio, configurado para servir como el
+centro de mando visual de la empresa:
+● Conectividad dinámica: Se establecieron conectores nativos que vinculan las
+hojas de "Viajes", "Mantenimiento" y "Reporte" con el tablero de control. Esto
+garantiza que cualquier dato ingresado por el operador desde la app móvil se
+refleje en los gráficos de forma casi instantánea.
+● Procesamiento de KPI: La herramienta realiza cálculos avanzados sobre la
+marcha para presentar indicadores clave, tales como:
+○ Rendimiento de combustible: Comparativa de litros consumidos frente
+a kilómetros recorridos.
+● Interfaz ejecutiva: El diseño del Dashboard permite a los directivos aplicar
+filtros por unidad, fecha o cliente, facilitando la identificación de cuellos de
+botella y la optimización de recursos económicos.
+8Interacción de interfaces
+9Seguridad y persistencia
+El ecosistema digital implementa protocolos de seguridad y mecanismos de
+recuperación de datos para garantizar que la operación nunca se detenga y que la
+información sea veraz.
+Lógica de persistencia y sincronización
+Para mitigar la inestabilidad de las redes móviles en trayectos largos, se desarrolló
+un algoritmo de sincronización inteligente basado en SQLite y el servicio
+Connectivity de .NET MAUI:
+● Encolamiento local: Cada vez que el operador registra un evento (inicio de
+viaje, parada o mantenimiento), los datos se insertan primero en la base de
+datos local del dispositivo con un estado de "Pendiente".
+● Detección de red: El sistema monitorea constantemente el estado de la
+conexión. En el momento en que se detecta una señal estable (4G/LTE), el
+servicio de sincronización activa un hilo secundario que recorre la cola de
+datos pendientes.
+● Vaciado de caché: Los registros se envían uno a uno hacia Google Cloud.
+Solo tras recibir la confirmación de éxito (HTTP 200) de las APIs de Google,
+el registro local se marca como "Sincronizado" o se elimina de la cola,
+evitando la duplicidad de información en las hojas de cálculo.
+Seguridad de la información y accesos
+La protección de los activos digitales de TLB Transportes se gestiona mediante tres
+capas de seguridad:
+● Autenticación robusta: El acceso a la aplicación está restringido mediante
+credenciales encriptadas en la pestaña "Usuarios". Se utiliza un sistema de
+tokens temporales para evitar que las sesiones permanezcan abiertas
+indefinidamente en dispositivos no autorizados.
+● Protección de credenciales Cloud: Las llaves de acceso (API Keys) y el
+archivo JSON de la Service Account no están embebidos en el código fuente
+de forma plana. Se manejan mediante variables de entorno y archivos de
+configuración protegidos, asegurando que solo la aplicación autenticada
+pueda interactuar con Drive y Sheets.
+● Trazabilidad total (Auditoría): Gracias a las pestañas de Logs de la Aplicación
+y Logs de Sheets, el sistema mantiene un historial de "quién, cuándo y qué"
+se modificó. Esto es vital para identificar errores humanos o intentos de
+acceso no autorizados, permitiendo una recuperación de desastres rápida
+mediante el historial de versiones nativo de Google Workspace.
+10

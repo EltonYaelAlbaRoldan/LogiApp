@@ -1,0 +1,15 @@
+{
+  "fecha_corte": "2026-10-23",
+  "periodo_ped": "Enero a diciembre de 2026",
+  "paginas_pdf": 86,
+  "cuadros": 18,
+  "figuras": 5,
+  "referencias": 23,
+  "carpeta": "https://drive.google.com/drive/folders/1IC_xELDA137UY4ucKvuFzcCGqsSNWbqf",
+  "word": "https://docs.google.com/document/d/17lpkNPQHfcvS5VQJWqFZlyg3OujqP5wa/edit?usp=drivesdk&ouid=110115495492019941458&rtpof=true&sd=true",
+  "word_mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "pdf": "https://drive.google.com/file/d/194EutcHQUz0Sj8Z1kiIRhQCMmNhMvAtn/view?usp=drivesdk",
+  "verificacion": "Recibos de carga y lectura posterior de metadatos. Word listado dentro de carpeta destino. PDF con parent_id destino en recibo de carga.",
+  "pendientes_formales": ["Logotipos oficiales", "Carta de autorización para titulación", "Evidencia de cierre del periodo posterior al 23 de octubre de 2026"],
+  "originales": "Sin modificar PDF guía, libro de formatos ni código de LogiApp"
+}

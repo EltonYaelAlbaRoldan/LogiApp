@@ -1,0 +1,77 @@
+Día Actividad Descripción Responsable Entregable
+Día 1
+Revisión de 
+infraestructura
+Validación técnica de 
+dispositivos móviles Cliente + Equipo 
+Infraestructura 
+validada
+Día 1
+Preparación de 
+Infraestructura Cloud
+Configuración de la 
+cuenta comercial 
+@tlbtransportes.mx y Equipo 
+Entorno Cloud 
+activo
+Día 2
+Despliegue de base de 
+datos
+Creación de base de 
+datos en sheets y Equipo 
+Base de datos 
+operativa
+Día 2
+Integración de servicios 
+de almacenamiento
+Vinculación de la App 
+con las APIs de 
+Google Drive y Equipo
+Conexión Drive y 
+Sheets establecida
+Día 2
+Despliegue del sistema 
+software
+Instalación de 
+backend Equipo Sistema desplegado
+Día 3
+Pruebas de integridad 
+de datos
+Validación de 
+registros, carga de 
+archivos PDF y Equipo 
+Reporte de pruebas 
+funcionales
+Día 3
+Pruebas de estrés y 
+latencia
+Verificación de 
+tiempos de respuesta 
+en la subida de 
+expedientes digitales Equipo 
+Prueba de carga 
+aprobada
+Día 3
+Pruebas de operación 
+completa
+Simulación de 
+aplicación real del Equipo + Cliente Sistema validado
+Día 4
+Capacitación de 
+usuarios
+Capacitación sobre 
+monitoreo y uso del Equipo + Cliente
+Usuarios 
+capacitados
+Día 5
+Documentación de 
+instalación
+Entrega de manual 
+técnico y diagramas Equipo 
+Documentación 
+entregada
+Día 5 Liberación a operación
+Aprobación final del 
+cliente y puesta en Cliente + Equipo 
+Sistema en 
+operación

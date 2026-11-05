@@ -1,0 +1,658 @@
+[
+  {
+    "kind": "heading",
+    "level": 1,
+    "text": "III DESARROLLO"
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.1 Delimitación del trabajo y criterio de evidencia"
+  },
+  {
+    "kind": "p",
+    "text": "El desarrollo de LogiApp se estudió como una solución para organizar la captura y consulta de información operativa de TLB Transportes. El alcance comprende el alta de operadores, la administración de documentos de identificación y vigencia, el inicio y cierre de viajes, el registro periódico de posiciones geográficas, la conservación de información pendiente de envío y la documentación de mantenimientos. Estos procesos relacionan al operador que captura los datos desde un teléfono con el personal administrativo que consulta los registros y expedientes en la nube. La aplicación constituye un apoyo a la operación; las decisiones sobre autenticidad de documentos, autorización de cuentas y atención de incidencias permanecen bajo responsabilidad de la empresa."
+  },
+  {
+    "kind": "p",
+    "text": "El periodo enero-diciembre de 2026 se emplea como marco de planeación anual del proyecto. El corte de esta revisión es el 23 de octubre de 2026. Por tanto, los componentes comprobables a esa fecha se describen como implementación disponible, mientras que las actividades posteriores se presentan como seguimiento y trabajo previsto. Las fechas de los commits acreditan cambios en el repositorio, pero no sustituyen la constancia institucional de horas de formación, asistencia o liberación de residencia. Esta distinción permite integrar el desarrollo técnico al informe anual sin atribuir como ejecutadas las actividades de noviembre y diciembre ni asignar a 2026 fechas de antecedentes documentales."
+  },
+  {
+    "kind": "p",
+    "text": "La reconstrucción del trabajo combinó tres tipos de evidencia. Primero, se consultaron la documentación general, la documentación técnica y el manual del operador de TLB Transportes. Segundo, se revisaron los archivos fuente actuales y el historial de Git de LogiApp. Tercero, se identificaron los artefactos de distribución y las comprobaciones automatizadas disponibles. Las afirmaciones del presente capítulo se vinculan con el tipo de evidencia que las sustenta. La presencia de una función en el código demuestra su implementación, pero no acredita por sí sola su funcionamiento bajo todos los teléfonos, condiciones de cobertura y volúmenes posibles de información."
+  },
+  {
+    "kind": "p",
+    "text": "Los documentos de TLB aportan el contexto de dispersión de evidencias, transferencia manual de información y necesidad de consultar los datos de los viajes. Sin embargo, algunas descripciones corresponden a un diseño más amplio que el código revisado. El informe adopta la implementación comprobable para explicar el comportamiento actual y conserva las aspiraciones de automatización y análisis como elementos sujetos a validación independiente. Esta revisión evita presentar como resultados medidos la disponibilidad continua, la exactitud geográfica, la eliminación total de errores o los ahorros económicos mencionados en materiales anteriores (TLB Transportes, 2026a, 2026b)."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.2 Requerimientos y organización del desarrollo"
+  },
+  {
+    "kind": "p",
+    "text": "El análisis del problema se concentró en tres necesidades relacionadas. La primera fue contar con registros de salida y llegada asociados a un mismo folio. La segunda consistió en reunir documentos y fotografías en expedientes localizables. La tercera fue conservar información de ruta cuando la conectividad se interrumpe. Estas necesidades se tradujeron en formularios, reglas de captura, almacenamiento y vínculos entre la información tabular y los archivos. La solución se orientó a reducir pasos de organización manual y a facilitar la consulta posterior, manteniendo un flujo reconocible para el operador y para quien administra la información."
+  },
+  {
+    "kind": "p",
+    "text": "Los antecedentes incluyen un Product Backlog con historias de usuario priorizadas y un documento metodológico que menciona Scrum, Kanban, entregas incrementales y adaptación a requisitos cambiantes. El documento metodológico identifica en su portada a los autores y el año 2025, por lo que se utiliza como antecedente y no como constancia de ejecución del periodo anual de 2026 (Alba Roldan y López Gutiérrez, 2025). Se identificaron dos listados de historias dentro del material de backlog; ambos reutilizan identificadores como HU1 y HU2 para contenidos parcialmente distintos. Por ello, el identificador aislado no se consideró una referencia única. Para mantener trazabilidad se relacionó cada necesidad por su nombre funcional y por el listado de procedencia. Así se evita adjudicar a una historia el cumplimiento de otra que utiliza el mismo código (TLB Transportes, 2026d)."
+  },
+  {
+    "kind": "p",
+    "text": "El desarrollo se puede explicar como una sucesión de incrementos funcionales: conexión con Google, creación de expedientes, acceso de operadores, mantenimiento, gestión del viaje, historial, diagnóstico y seguimiento con persistencia local. El historial Git permite reconocer esa evolución sin inventar fechas de reuniones, duración de sprints o ceremonias que no cuentan con registro específico. La elección de un enfoque ágil documentado se interpreta como la capacidad de incorporar ajustes a partir de necesidades operativas y errores detectados. Las versiones sucesivas constituyen evidencias de cambios acumulados, aunque no certifican por sí mismas la aplicación completa de un marco formal."
+  },
+  {
+    "kind": "p",
+    "text": "La prioridad funcional se asignó a la continuidad del ciclo de viaje y a la identificación del operador. El registro de salida crea el contexto que necesitan las posiciones GPS, la llegada y los datos de cierre. A su vez, los documentos y el estado administrativo condicionan el acceso al módulo de viajes. La organización del trabajo alrededor de estas dependencias permitió explicar qué debía existir antes de desarrollar funciones posteriores. También ayuda a planear las verificaciones: un cierre requiere un viaje identificable, y la consulta de rendimientos requiere que ese cierre contenga valores consistentes de kilometraje y combustible."
+  },
+  {
+    "kind": "table",
+    "caption": "Trazabilidad funcional de los requerimientos",
+    "headers": [
+      "Necesidad",
+      "Componente implementado",
+      "Alcance comprobable"
+    ],
+    "rows": [
+      [
+        "Identificar al operador",
+        "InicioSesion y ConsultasGoogleSheets",
+        "Validación de ID, contraseña y estado administrativo"
+      ],
+      [
+        "Organizar expediente",
+        "PaginaRegistro y ConsultasGoogleDrive",
+        "Alta en dos fases, carpeta y nueve documentos PDF"
+      ],
+      [
+        "Prevenir operación con documentos vencidos",
+        "PaginaMenu y PaginaPerfil",
+        "Semáforo de licencia y apto médico al consultar las pantallas"
+      ],
+      [
+        "Registrar ciclo de viaje",
+        "PaginaViajes y PaginaTerminarViaje",
+        "Salida, puntos, llegada, cierre, datos de combustible y evidencias"
+      ],
+      [
+        "Conservar datos ante pérdida de red",
+        "BaseDeDatosLocal y SincronizadorGlobal",
+        "Cola de ubicaciones y cierre pendiente con fotografías"
+      ],
+      [
+        "Documentar servicios de unidad",
+        "PaginaMantenimiento",
+        "Datos técnicos del servicio y fotografías opcionales"
+      ],
+      [
+        "Consultar antecedentes del operador",
+        "PaginaHistorial",
+        "Hasta diez viajes recientes con detalles calculados"
+      ],
+      [
+        "Administrar bajas",
+        "GoogleAppsScriptAdministracion",
+        "Revisión, desactivación, eliminación condicionada y auditoría"
+      ]
+    ]
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.3 Arquitectura implementada y tecnologías"
+  },
+  {
+    "kind": "p",
+    "text": "La aplicación utiliza .NET MAUI como proyecto único y combina C# para el comportamiento con XAML para la presentación. El archivo LogiApp.csproj declara destinos .NET 9 para Android, iOS y Mac Catalyst, y añade Windows cuando se trabaja desde ese sistema. Esto expresa una configuración multiplataforma del proyecto. La revisión de operación específica se concentró en Android porque el servicio nativo de seguimiento en segundo plano disponible está implementado para esa plataforma. La declaración de varios destinos no se utiliza como evidencia de que cada una de esas versiones haya sido compilada, instalada y validada en dispositivos reales (Alba Roldan, 2026, LogiApp.csproj)."
+  },
+  {
+    "kind": "p",
+    "text": "La organización del repositorio separa Modelos, Servicios y Vistas. Los modelos representan estructuras de información; los servicios agrupan persistencia, acceso a Google, correo, contraseñas y sincronización; las vistas presentan los formularios y sus acciones. En la implementación actual las páginas XAML tienen archivos de código asociado que contienen validaciones, cálculos y llamadas a servicios. Por consiguiente, la arquitectura se describe mediante esa separación efectiva de responsabilidades. Aunque la documentación técnica menciona MVVM, no se encontró una capa de ViewModels que justifique atribuir ese patrón a la versión revisada (TLB Transportes, 2026b; Alba Roldan, 2026, Vistas)."
+  },
+  {
+    "kind": "p",
+    "text": "El arranque consulta preferencias locales para determinar la pantalla inicial. Si existe un operador identificado y un viaje pendiente, la aplicación abre la pantalla de terminación del viaje. Cuando existe sesión sin viaje activo, presenta el menú principal; si no hay sesión, muestra la bienvenida. Al mismo tiempo, registra la escucha de cambios de conectividad e intenta procesar la información pendiente. Este comportamiento atiende el caso de una aplicación cerrada durante la operación y permite recuperar el contexto almacenado en el mismo teléfono. No constituye una recuperación de dispositivo perdido ni una restauración automática desde una cuenta diferente (Alba Roldan, 2026, App.xaml.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "La comunicación remota se divide entre Google Sheets y Google Drive. Sheets concentra los valores de operadores, catálogos, viajes, mantenimientos y registros de diagnóstico. Drive almacena documentos y fotografías. La aplicación establece la relación entre ambos recursos mediante identificadores, folios y vínculos guardados en las celdas correspondientes. Esta combinación aprovecha herramientas conocidas para la consulta administrativa, pero exige conservar la estructura de columnas esperada por el código. La edición manual de una hoja puede alterar esas correspondencias, de modo que la facilidad de acceso debe acompañarse de procedimientos para administrar cambios de esquema."
+  },
+  {
+    "kind": "p",
+    "text": "Las dependencias declaradas incluyen los clientes Google.Apis.Drive.v3 y Google.Apis.Sheets.v4, sqlite-net-pcl y los componentes de MAUI. La base local contiene información estructurada de ubicación y errores; las preferencias conservan el estado de sesión y cierre; las fotografías pendientes se copian al directorio privado de datos de la aplicación. No se afirma que la totalidad de las operaciones funcione sin conexión. En particular, el alta de operadores, la apertura del viaje y el mantenimiento dependen de servicios remotos, mientras que el recorrido y el cierre disponen de mecanismos de continuidad local (Alba Roldan, 2026, LogiApp.csproj; Servicios)."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.4 Modelos de información y esquema de almacenamiento"
+  },
+  {
+    "kind": "p",
+    "text": "El modelo Operador representa datos de identidad, contacto, licencia, vigencias, carpeta documental y estado de cuenta. Su consulta recupera información desde la hoja Operadores, donde el identificador ocupa la primera columna. El modelo ViajeHistorial reúne folio, fecha, unidad, estado, origen, destino y valores de duración y consumo para mostrarlos al usuario. Estos modelos ayudan a trasladar información hacia la interfaz, pero no son tablas locales creadas por el servicio SQLite revisado. La diferencia es relevante para explicar dónde reside cada dato y cuáles pueden estar disponibles cuando el teléfono pierde acceso a la nube."
+  },
+  {
+    "kind": "p",
+    "text": "La base local se crea con el nombre LogiAppLocal.db3 dentro del directorio de datos de la aplicación. El servicio inicializa dos tablas: LogRecord y UbicacionViaje. LogRecord contiene fecha, proceso, mensaje de error, traza técnica, estado de sincronización e identificación del operador. UbicacionViaje conserva folio, coordenadas, fecha y hora de captura, hoja mensual y fila de destino. También mantiene campos utilizados para compatibilidad con un esquema anterior de seguimiento. Las operaciones de acceso se coordinan mediante un semáforo compartido que reduce la ejecución simultánea dentro del mismo proceso (Alba Roldan, 2026, Modelos; Servicios/BaseDeDatosLocal.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "El diseño de UbicacionViaje conserva, junto a las coordenadas, el contexto del viaje al que pertenece cada punto. Esta asociación evita depender exclusivamente del folio que esté abierto cuando la conectividad regrese. Si un punto permanece pendiente mientras el usuario concluye una operación o abre posteriormente otra, el registro conserva sus propios datos de destino. La sincronización ordena por fecha y hora los puntos recuperados antes de enviarlos. El resultado buscado es mantener la secuencia capturada y prevenir mezclas entre viajes, sin afirmar una garantía absoluta frente a borrado del almacenamiento, desinstalación o fallas ajenas al proceso."
+  },
+  {
+    "kind": "p",
+    "text": "En Google Sheets, Operadores utiliza trece columnas para identidad, contacto, información bancaria, licencia, vigencias, carpeta, contraseña transformada y estado. Viajes utiliza columnas desde A hasta V para salida, relación con operador y vehículo, ruta, combustible, estado, llegada, cierre, indicadores y enlaces. Mantenimiento recibe once valores efectivos, aunque el rango declarado por el método abarca más columnas. Los catálogos de unidades y remolques se consultan en dos columnas; destinos y clientes se consultan en una. La descripción corresponde al contrato utilizado por el código y debe contrastarse con la configuración real del libro antes de modificarla."
+  },
+  {
+    "kind": "p",
+    "text": "Sheets se utiliza como repositorio tabular compartido, con relaciones lógicas establecidas por la aplicación. No se identificaron restricciones equivalentes a claves foráneas de una base relacional ni una transacción que abarque la creación de carpetas y la escritura de registros. De este modo, un error entre dos pasos puede dejar una operación parcialmente completada. El diseño incorpora algunos mecanismos de reintento y de identificación de archivos existentes, pero requiere comprobar los escenarios de fallo parcial. Esta característica orienta tanto el mantenimiento técnico como la elaboración de una bitácora de incidencias."
+  },
+  {
+    "kind": "table",
+    "caption": "Distribución de los datos entre almacenamiento local y nube",
+    "headers": [
+      "Recurso",
+      "Contenido",
+      "Uso operativo"
+    ],
+    "rows": [
+      [
+        "SQLite: UbicacionViaje",
+        "Folio, coordenadas, captura y destino de tracking",
+        "Conservar puntos y enviarlos posteriormente"
+      ],
+      [
+        "SQLite: LogRecord",
+        "Proceso, mensaje, traza, fecha y operador",
+        "Registrar errores y trasladarlos a Logs_App"
+      ],
+      [
+        "Preferences",
+        "Sesión, viaje activo, llegada y cierre pendiente",
+        "Recuperar contexto y organizar sincronización"
+      ],
+      [
+        "Archivos del teléfono",
+        "Fotografías copiadas por folio",
+        "Conservar evidencias antes de subirlas"
+      ],
+      [
+        "Google Sheets",
+        "Operadores, catálogos, viajes, mantenimiento, tracking y logs",
+        "Consulta y consolidación administrativa"
+      ],
+      [
+        "Google Drive",
+        "PDF y fotografías en carpetas por operador y folio",
+        "Expedientes y evidencias enlazadas"
+      ]
+    ]
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.5 Registro y expediente digital del operador"
+  },
+  {
+    "kind": "p",
+    "text": "El registro se divide en dos fases para diferenciar la creación del perfil de la entrega documental. En la primera se capturan nombre, edad, correo, teléfonos, clave interbancaria, licencia, vigencias y contraseña. Se comprueba la presencia de los datos obligatorios y se aplican reglas básicas de formato. La edad debe ser numérica y corresponder a una persona de al menos dieciocho años; el teléfono principal debe contener diez dígitos; la clave interbancaria debe contener dieciocho dígitos; el número de licencia se limita a quince caracteres. Estas comprobaciones controlan la forma de entrada, sin verificar con terceros la identidad o titularidad de los datos."
+  },
+  {
+    "kind": "p",
+    "text": "La validación de correo utiliza una expresión regular y las fechas de licencia y apto médico se comparan con la fecha del dispositivo. El registro rechaza vigencias iguales o inferiores a noventa días. Una vez satisfechas esas condiciones, se obtiene el siguiente identificador de operador a partir del máximo registrado y se crea una carpeta con el ID y el nombre. Dentro de ella se preparan subcarpetas de documentos y evidencias. Después se inserta la fila del operador, cuya contraseña se transforma antes de enviarse. El estado inicial es VALIDACION y permanece sujeto a revisión administrativa (Alba Roldan, 2026, Vistas/PaginaRegistro.xaml.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "El estado pendiente se guarda en preferencias para recuperar la segunda fase si el proceso se interrumpe. Al volver al formulario, la presencia del identificador pendiente permite habilitar la sección documental y bloquear los campos ya utilizados en la creación inicial. Esta decisión reduce la repetición del alta cuando falta completar los archivos, pero no convierte las dos fases en una transacción indivisible. Un fallo después de crear una carpeta y antes de insertar la fila todavía necesita revisión. También requiere verificación el caso de dos altas simultáneas que calculen el mismo siguiente número, porque la asignación del ID no utiliza un bloqueo central."
+  },
+  {
+    "kind": "p",
+    "text": "La segunda fase exige nueve documentos en PDF: licencia federal, apto médico, INE, acta de nacimiento, NSS, currículum, comprobante de domicilio, RFC o cédula fiscal y CURP. El selector limita el tipo de archivo elegido y la aplicación comprueba que exista una selección para cada categoría antes de iniciar la carga. Los archivos se almacenan con nombres funcionales que permiten sustituir versiones anteriores. El servicio de Drive busca un documento del mismo nombre antes de crear otro, con lo que el reintento puede actualizarlo. La aplicación no incorpora reconocimiento de texto ni determina automáticamente la autenticidad del contenido."
+  },
+  {
+    "kind": "p",
+    "text": "Una vez completada la carga se intenta enviar una notificación al operador y otra a la administración. El mensaje actual comunica el identificador y explica que la cuenta se encuentra en validación; no transmite la contraseña elegida. La falla de uno de los correos se registra y se informa, pero no se utiliza como prueba de que los PDF no se hayan guardado. Para cerrar el registro, la aplicación elimina las preferencias del proceso pendiente y regresa a la pantalla inicial. Esta separación entre expediente recibido y cuenta activada preserva la intervención humana necesaria para autorizar el acceso (Alba Roldan, 2026, Servicios/ServicioEmail.cs; TLB Transportes, 2026c)."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.6 Acceso, recuperación y control de vigencias"
+  },
+  {
+    "kind": "p",
+    "text": "El acceso operativo utiliza el ID del operador y una contraseña. La consulta recorre la hoja Operadores, normaliza el identificador y verifica la contraseña almacenada. Si la combinación es válida, todavía se evalúa el estado de la cuenta: ACTIVO permite continuar, INACTIVO impide el acceso y los demás estados se interpretan como validación pendiente. El ID aceptado se guarda en preferencias y se abre el menú. Este flujo corrige una diferencia de los documentos iniciales que indicaban ingreso mediante correo; el comportamiento actual compara el dato contra la columna del identificador (Alba Roldan, 2026, Servicios/ConsultasGoogleSheets.cs; Vistas/InicioSesion.xaml.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "El servicio de contraseñas genera un valor mediante PBKDF2 con SHA-256, doscientas diez mil iteraciones, salt aleatorio de dieciséis bytes y un resultado de treinta y dos bytes. El salt evita que dos contraseñas iguales produzcan necesariamente la misma representación. La comparación utiliza una operación de tiempo constante suministrada por la biblioteca criptográfica. El almacenamiento corresponde a un hash y no a un mecanismo para recuperar el texto original. Además, existe compatibilidad con valores heredados y una migración a hash después de una verificación correcta, lo que permite actualizar registros antiguos gradualmente."
+  },
+  {
+    "kind": "p",
+    "text": "La recuperación de contraseña comienza con el ID y la consulta del correo registrado. El sistema genera un código aleatorio de seis dígitos, intenta enviarlo y permite hasta tres verificaciones. Si se agotan los intentos, guarda un bloqueo local de quince minutos. Al acertar, solicita una nueva contraseña de al menos ocho caracteres y su confirmación. Este procedimiento proporciona una comprobación mediante el correo durante la recuperación; no equivale a autenticación multifactor permanente en cada acceso. Tampoco se identificó una expiración del código controlada por un servidor o una limitación central que coordine solicitudes desde varios teléfonos."
+  },
+  {
+    "kind": "p",
+    "text": "Las reglas de contraseña no están uniformadas entre todas las pantallas. La recuperación aplica una longitud mínima, mientras que el cambio desde el perfil comprueba principalmente que el campo no esté vacío. El registro presenta una indicación visual de longitud, pero su controlador no incorpora una comprobación equivalente a la recuperación. Por tanto, el informe reconoce el componente criptográfico implementado y diferencia esa fortaleza de la política de captura pendiente de homologar. Para una siguiente iteración se requiere definir una sola regla y aplicarla en alta, cambio y recuperación sin depender únicamente del texto de ayuda visible."
+  },
+  {
+    "kind": "p",
+    "text": "La autorización del módulo de viajes combina el estado administrativo con la vigencia de dos documentos. Cuando el menú aparece, consulta al operador y elimina la sesión si la cuenta ya no está ACTIVO. Después toma la menor cantidad de días restante entre licencia y apto médico. Si el valor es cero o negativo, bloquea viajes; si es de hasta noventa días, permite operar con advertencia; si supera ese plazo, habilita el acceso sin esa advertencia. Cuando la consulta remota falla, el botón también se bloquea para evitar iniciar sin comprobar las condiciones requeridas (Alba Roldan, 2026, Vistas/PaginaMenu.xaml.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "El perfil muestra nombre, ID, fechas y colores de vigencia. Para actualizar licencia o apto médico se elige un PDF y una nueva fecha mayor a noventa días. La aplicación sustituye o crea el archivo en Drive y posteriormente actualiza la fecha en Sheets. La operación no modifica por sí misma el estado de cuenta a VALIDACION. Los colores se calculan al mostrar la información; no se encontró una tarea diaria independiente que los actualice fuera del uso de la interfaz. En consecuencia, se documenta un control preventivo de consulta y acceso, sin atribuir una supervisión permanente de todos los expedientes."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.7 Apertura y continuidad del viaje"
+  },
+  {
+    "kind": "p",
+    "text": "La apertura del viaje comienza con la carga de unidades, remolques, destinos y clientes. Las cuatro consultas se ejecutan en paralelo para obtener los catálogos de selección. El operador elige origen, destino, cliente y unidad, indica si lleva remolque y captura odómetro y combustible de salida. El formulario requiere los campos principales antes de continuar. Los catálogos de unidades y remolques se solicitan entre las filas dos y cien de las columnas A y B; destinos y clientes utilizan ese mismo intervalo en la primera columna. Esta configuración limita el conjunto consultado y debe ampliarse si el volumen supera el rango previsto."
+  },
+  {
+    "kind": "p",
+    "text": "El folio de viaje combina un número secuencial con un sufijo hexadecimal aleatorio de ocho caracteres. La secuencia facilita su lectura y el sufijo reduce la posibilidad de colisión cuando varios teléfonos consultan el mismo máximo. El inicio se agrega a la hoja Viajes con fecha y hora, operador, recursos asignados, ruta, cliente, odómetro, combustible y estado EN TRANSITO. Esta operación necesita acceso a la nube: el código no conserva una solicitud completa de apertura en SQLite para enviarla después. La continuidad sin red se aplica a un viaje que ya cuenta con contexto de operación."
+  },
+  {
+    "kind": "p",
+    "text": "Después de registrar la salida se guardan localmente el folio, destino, inicio y valores de partida. La aplicación determina el nombre de una hoja mensual de historial y obtiene o crea una fila para ese folio. A continuación genera un enlace desde Viajes hacia el registro de seguimiento. También intenta capturar el primer punto geográfico, lo conserva en SQLite e intenta subirlo. Si el GPS no responde, registra la incidencia sin deshacer necesariamente el viaje ya creado. La existencia del folio y la existencia del primer punto deben verificarse por separado para interpretar adecuadamente una apertura parcial."
+  },
+  {
+    "kind": "p",
+    "text": "Al volver a abrir la aplicación, el estado local permite recuperar el viaje activo. El acceso al módulo detecta el folio pendiente y dirige hacia su continuidad; además, el cierre de sesión se bloquea cuando hay un viaje en curso. Estas medidas reducen la creación accidental de operaciones paralelas desde la navegación normal del mismo teléfono. Su alcance no equivale a un control central de exclusividad entre diferentes dispositivos de una misma cuenta. Para acreditar ese escenario se necesita una verificación específica con dos sesiones y reglas administrativas que definan cuál dispositivo conserva la responsabilidad del viaje (Alba Roldan, 2026, App.xaml.cs; Vistas/PaginaMenu.xaml.cs)."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.8 Seguimiento GPS y registro de llegada"
+  },
+  {
+    "kind": "p",
+    "text": "En Android, el seguimiento utiliza un servicio nativo de ubicación declarado como servicio en primer plano de tipo Location y no exportado. El servicio presenta una notificación persistente de viaje activo, consulta el folio almacenado y comprueba que el seguimiento continúe habilitado. Solicita actualizaciones a los proveedores GPS y de red con un intervalo nominal de diez minutos. Además, aplica un filtro temporal para evitar capturas demasiado próximas. Este valor describe la configuración del algoritmo; la entrega real de posiciones depende del sistema operativo, sensores, permisos, energía y condiciones del entorno (Alba Roldan, 2026, Platforms/Android/ServicioUbicacionViaje.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "Cada posición capturada contiene latitud, longitud y hora local, y se asocia al folio, hoja y fila correspondientes. Antes de intentar el envío se guarda en SQLite. El servicio puede entonces solicitar al sincronizador que procese la cola si hay internet. La persistencia permite distinguir el momento de captura del momento de transmisión: una coordenada recibida por la oficina más tarde conserva la fecha registrada en el teléfono. Esta propiedad es útil para reconstruir una secuencia, pero la exactitud temporal sigue dependiendo del reloj del equipo. No se implementó una sincronización horaria independiente con un servidor de referencia."
+  },
+  {
+    "kind": "p",
+    "text": "El reporte manual complementa la captura periódica. Al pulsar el botón, la pantalla solicita una ubicación de alta precisión con un tiempo máximo de espera de diez segundos, prepara el punto, lo almacena y prueba el envío si detecta internet. Si la comunicación no concluye, el registro debe permanecer pendiente. El mensaje visible ayuda al usuario a conocer la intención de guardado, pero no debe utilizarse aisladamente para una prueba técnica. Existe un manejo general de error que puede mostrar una referencia a guardado local incluso si el GPS falló antes de insertar, por lo que la evidencia debe incluir la inspección de la cola."
+  },
+  {
+    "kind": "p",
+    "text": "En los destinos distintos de Android, el código compartido contiene un bucle de reporte periódico iniciado desde la pantalla. Esa alternativa no constituye un servicio nativo equivalente para todas las plataformas. La revisión no acredita continuidad con la pantalla apagada en iOS, Mac Catalyst o Windows. En Android también deben mantenerse condiciones mínimas: el dispositivo encendido, la ubicación disponible, permisos adecuados y restricciones de energía compatibles. La posibilidad de cambiar de aplicación o apagar la pantalla es una capacidad a verificar en la matriz de dispositivos; no justifica describir el seguimiento como disponible de manera incondicional durante todo el día."
+  },
+  {
+    "kind": "p",
+    "text": "La llegada se registra mediante confirmación explícita del operador. Antes de habilitar el cierre, se solicita una última ubicación con un máximo de quince segundos y se guarda localmente permitiendo coordenadas repetidas. El intento directo de envío también permite esa repetición, para distinguir la llegada aunque el teléfono permanezca detenido. Sin embargo, si el punto queda pendiente por falta de red, el sincronizador lo reenvía con la deduplicación normal y puede omitir su línea cuando coincide con la última coordenada remota. La hora de llegada del viaje se conserva por una vía separada. Este caso requiere verificar y mantener la excepción durante el reintento, sin confundir la captura local con su persistencia final en el historial. Si no se obtiene el punto, el formulario informa el requisito y no completa la transición. Cuando se logra la captura, deshabilita seguimiento, detiene el servicio, calcula la duración entre salida y llegada, guarda ese contexto e intenta actualizar el estado EN DESTINO con su hora (Alba Roldan, 2026, Vistas/PaginaTerminarViaje.xaml.cs; Servicios/SincronizadorGlobal.cs; Servicios/ConsultasGoogleSheets.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "La duración se obtiene de las marcas temporales de salida y llegada, y no del instante en que termina de subir la fotografía. Esto distingue la conclusión física del trayecto de la gestión posterior de evidencias. Cuando falta conexión, la llegada mantiene datos pendientes de sincronización. En la revisión se identificó un caso que merece comprobarse: el método remoto puede devolver false en vez de lanzar una excepción, mientras que el controlador de llegada no utiliza ese retorno para establecer siempre el indicador pendiente. El diseño del protocolo de pruebas debe contemplar tanto excepciones de red como respuestas fallidas sin excepción."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.9 Cierre del viaje, indicadores y evidencias"
+  },
+  {
+    "kind": "p",
+    "text": "El cierre solicita odómetro final, combustible restante y al menos una fotografía. La captura de recarga se habilita cuando el operador indica que abasteció durante el trayecto. La aplicación compara el kilometraje de llegada con el de salida y rechaza que sea menor. También comprueba que el combustible final no supere la suma de combustible inicial y recargado. Estas reglas detectan algunas inconsistencias evidentes. No sustituyen la verificación física de litros y odómetro ni eliminan todos los errores de entrada: los métodos de conversión numérica existentes requieren reforzarse para rechazar expresamente letras, negativos y formatos decimales no previstos."
+  },
+  {
+    "kind": "p",
+    "text": "El recorrido se calcula restando el odómetro inicial al final. El consumo se obtiene sumando combustible inicial y recarga y restando combustible final. Cuando el consumo es positivo, el historial divide los kilómetros entre los litros para presentar rendimiento. Por tanto, el indicador describe un resultado aritmético basado en valores declarados por el usuario. No procede afirmar que la distancia se obtiene integrando el GPS, que los litros provienen de un sensor del tanque o que existe un margen de error experimental demostrado. Esta precisión conceptual permite interpretar los valores y planear su conciliación con registros externos (Alba Roldan, 2026, Vistas/PaginaTerminarViaje.xaml.cs; Servicios/ConsultasGoogleSheets.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "Antes de comunicarse con la nube, el cierre copia las fotografías seleccionadas a un directorio persistente por folio dentro de los datos de la aplicación. Después guarda en preferencias los valores finales, recarga, observaciones, duración, hora de llegada y lista de archivos. El folio se incorpora a una lista de cierres pendientes. Solo entonces intenta organizar las evidencias en Drive y actualizar Sheets. Esta secuencia ofrece una base de recuperación frente a desconexión durante el envío. La copia local requiere espacio disponible y archivos accesibles; una excepción en esa etapa debe incluirse en pruebas porque no está cubierta por el mismo manejo de las llamadas remotas."
+  },
+  {
+    "kind": "p",
+    "text": "En Drive, las evidencias de viaje se guardan dentro de la carpeta del operador, en una subcarpeta de evidencias y otra identificada por folio. Las fotografías reciben un nombre que combina folio y número de orden. Al reintentar, el servicio consulta si existe ese nombre antes de cargar de nuevo, lo que reduce duplicados producidos por una interrupción parcial. No se encontró un proceso de compresión de imágenes ni una conciliación por contenido o suma de verificación. La correspondencia de las fotografías depende de la lista preservada y del nombre generado, de modo que la prueba debe comprobar cantidad, apertura y asociación con el viaje."
+  },
+  {
+    "kind": "p",
+    "text": "El método de cierre escribe kilometraje, combustible, recarga, observaciones, vínculo de evidencias, duración, recorrido y consumo en las columnas previstas de Viajes y después modifica el estado a FINALIZADO. La interfaz permite terminar localmente la operación cuando la red no está disponible y comunica que las fotografías se enviarán posteriormente. Una vez cerrado, limpia el contexto del viaje activo, detiene seguimiento y regresa al menú. Esta transición libera al usuario para continuar, conservando el folio en la lista pendiente cuando hace falta. La confirmación local y la confirmación remota son estados distintos que deben quedar claros en la capacitación."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.10 Sincronización y consulta de antecedentes"
+  },
+  {
+    "kind": "p",
+    "text": "El sincronizador global comienza comprobando disponibilidad de internet y utiliza un semáforo para evitar ejecuciones simultáneas en el mismo proceso. Revisa primero la lista de cierres completos pendientes; recupera sus valores y fotografías, intenta enviarlos y retira las claves cuando el cierre remoto devuelve éxito. Después procesa información pendiente del viaje actual y las ubicaciones conservadas en SQLite. Los puntos se ordenan por fecha y hora, y se eliminan de la cola solo después de una respuesta satisfactoria del método de envío. Los disparadores incluyen arranque, recuperación de conectividad, reanudación de Android y captura desde el servicio (Alba Roldan, 2026, Servicios/SincronizadorGlobal.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "Esta coordinación es una estrategia de reintento basada en eventos disponibles para la aplicación. Detectar NetworkAccess.Internet no prueba que Google sea alcanzable ni que las credenciales sigan autorizadas, por lo que las llamadas todavía pueden fallar. Tampoco hay una transacción distribuida entre fotografía, fila y estado final. La supervisión debe contemplar un archivo cargado con una fila pendiente, puntos ya transmitidos tras un reintento y errores que interrumpan el lote. La deduplicación y los semáforos ayudan dentro de su alcance, pero no constituyen una garantía central de procesamiento exactamente una vez entre todos los dispositivos."
+  },
+  {
+    "kind": "p",
+    "text": "El seguimiento remoto utiliza una fila por viaje en la hoja mensual. La primera columna identifica el folio y las siguientes contienen bloques de texto con una posición por línea. Cada línea combina fecha y hora con coordenadas representadas mediante cultura invariante. Cuando el bloque supera el umbral preventivo de cuarenta y cinco mil caracteres, se continúa en otra columna y se amplía la cuadrícula si resulta necesario. El primer punto se distingue en verde y el último en rojo. El sistema también conserva compatibilidad para trasladar puntos pendientes del esquema anterior de columnas hacia la organización vigente por filas."
+  },
+  {
+    "kind": "p",
+    "text": "La consulta de mapa construye un enlace de Google Maps a partir del primer punto, el último y hasta nueve puntos intermedios. Si existen más posiciones, selecciona una muestra para el vínculo. Esto facilita una referencia visual, aunque el servicio de mapas puede calcular un trayecto de conducción diferente al recorrido real entre las posiciones. La fila de tracking conserva más información que la que cabe en ese enlace. Por ello, la evidencia técnica principal es la secuencia almacenada y el mapa debe describirse como una representación auxiliar aproximada, sin adjudicarle una reconstrucción exhaustiva de cada movimiento."
+  },
+  {
+    "kind": "p",
+    "text": "El historial solicita los registros de Viajes y recorre las filas desde las más recientes, filtrando por operador. Presenta como máximo diez viajes con datos de ruta, unidad, estado, llegada, duración, kilómetros y consumo. El detalle se muestra en una ventana de consulta, y la actualización de la pantalla permite repetir la lectura. El límite facilita una vista breve, pero implica que no se ofrece desde esa página una búsqueda completa de todo el historial de la empresa. Los análisis consolidados por periodos mayores deben realizarse sobre los registros centrales o mediante una ampliación posterior de filtros y paginación."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.11 Registro de mantenimiento y administración de operadores"
+  },
+  {
+    "kind": "p",
+    "text": "El módulo de mantenimiento solicita unidad, fecha del servicio, lugar, taller o establecimiento, tipo de mantenimiento, piezas y kilometraje. La identificación del operador se obtiene de la sesión. Las fotografías se eligen desde la galería y pueden retirarse antes del guardado; su incorporación es opcional en la implementación revisada. Después se genera un folio con prefijo MT, se cargan las imágenes que existan y se inserta la fila del reporte en Sheets. Este módulo conserva el antecedente de un servicio realizado; no incluye un campo de costo, una agenda de mantenimiento automático ni un cálculo de próximo servicio."
+  },
+  {
+    "kind": "p",
+    "text": "El procedimiento requiere conexión tanto para obtener el catálogo como para registrar y adjuntar evidencias. Si falla, comunica la incidencia y permite reintentar en el formulario. No se encontró una cola local de mantenimientos equivalente a la cola de ubicaciones o al cierre pendiente. Los requisitos y manuales que mencionan costos y funcionamiento general sin red exceden, por tanto, el alcance actual de esta pantalla. Para el informe se conserva la contribución comprobable: centralizar información técnica del servicio y asociarla a operador, unidad y folio, con un vínculo a las fotografías cuando fueron agregadas (Alba Roldan, 2026, Vistas/PaginaMantenimiento.xaml.cs; TLB Transportes, 2026c)."
+  },
+  {
+    "kind": "p",
+    "text": "El complemento administrativo está escrito en Google Apps Script y agrega un menú a la hoja. Permite revisar dependencias de un operador, desactivarlo conservando sus datos, eliminarlo si no tiene información relacionada y ejecutar una eliminación completa con confirmaciones. La desactivación cambia el estado a INACTIVO, que la aplicación consulta al entrar al menú. La eliminación total utiliza un bloqueo del documento, envía la carpeta a la papelera y elimina filas relacionadas desde las posiciones mayores hacia las menores. Además, registra fecha, acción, operador, conteos y resultado en una hoja de auditoría (Alba Roldan, 2026, GoogleAppsScriptAdministracion/Codigo.gs)."
+  },
+  {
+    "kind": "p",
+    "text": "La protección propuesta por el script genera una advertencia antes de editar Operadores; no impide de manera absoluta que el propietario cambie o borre datos. También se identificó una dependencia de versión que requiere revisión antes de utilizar la limpieza completa: la función de tracking busca encabezados de folio en el esquema antiguo de columnas, mientras que el código móvil actual organiza un folio por fila. En consecuencia, no se considera acreditada la eliminación íntegra del nuevo formato GPS. Las acciones administrativas deben verificarse sobre una copia controlada, con respaldo y conciliación posterior, sin ejecutarlas durante la elaboración documental."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "3.12 Diagnóstico, distribución y evolución"
+  },
+  {
+    "kind": "p",
+    "text": "El diagnóstico utiliza un servicio que captura excepciones y las guarda en LogRecord. Algunos mensajes se clasifican como fallas de red, formato, carga de archivos o límites de peticiones. Después, distintos puntos de la aplicación intentan trasladar los registros a la hoja Logs_App y borran la copia local tras confirmar el envío. La traza técnica ayuda a reproducir errores, aunque su contenido requiere control de acceso por poder incluir contexto de operación. Los registros de diagnóstico no equivalen a una auditoría completa de toda modificación de Sheets: no se encontró en el complemento revisado un trigger que documente cualquier edición manual."
+  },
+  {
+    "kind": "p",
+    "text": "El manejo de autenticación y correo contiene configuración sensible fija en los servicios actuales. Esa circunstancia constituye una deuda técnica que debe atenderse antes de ampliar la distribución. El informe no reproduce sus valores, cuentas o identificadores privados. Una evolución requiere centralizar operaciones de confianza, revisar permisos y establecer un procedimiento autorizado de sustitución y rotación. Asimismo, la existencia de hashes de contraseña no demuestra cifrado del resto de los datos locales ni cumplimiento integral de obligaciones de privacidad. Estas propiedades deben analizarse por separado y sustentarse con políticas y verificaciones correspondientes."
+  },
+  {
+    "kind": "p",
+    "text": "La carpeta de distribución contiene paquetes Android arm64 identificados como versiones 2.0, 2.1, 2.2 y 2.2.1. El archivo de proyecto actual declara versión visible 2.2 y código de aplicación 5. Como el nombre del APK, el mensaje de Git y los metadatos del proyecto pueden diferir, se distinguen como fuentes de versión. La identificación precisa de una prueba debe incluir el paquete instalado y su metadato observado, además del commit de referencia cuando corresponda. La presencia de los paquetes demuestra un artefacto distribuible, sin probar que todos los dispositivos de la empresa estén actualizados."
+  },
+  {
+    "kind": "p",
+    "text": "El plan de implementación organiza en cinco días la revisión de infraestructura, preparación de servicios, despliegue, pruebas, capacitación y documentación de entrega (TLB Transportes, 2026f). Esta secuencia se incorpora como programación documental del proyecto. El plan no acredita por sí solo que cada actividad se ejecutara en esos días, que los usuarios asistieran a una capacitación o que existiera una aceptación formal. Su cumplimiento requiere bitácoras, registros de asistencia y constancias de recepción que identifiquen fechas, responsables y versión utilizada."
+  },
+  {
+    "kind": "p",
+    "text": "Git registra antecedentes desde enero y cambios posteriores sobre conexión, documentos, viajes, historial, estados, logs, persistencia y seguimiento en segundo plano. El anuncio de septiembre sobre la versión 2.2.1 menciona recarga de combustible e intervalos aproximados de diez minutos; los cambios de octubre se concentran en mantenimiento, interfaz, mensajes y vínculos. Esta secuencia permite justificar el carácter incremental del trabajo y ubicar la versión revisada al corte. Para el resto del año se plantea completar comprobaciones de dispositivos, corregir los límites identificados, actualizar manuales y formalizar la recepción, sin presentar esas actividades futuras como concluidas."
+  },
+  {
+    "kind": "heading",
+    "level": 1,
+    "text": "IV RESULTADOS"
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "4.1 Productos obtenidos al corte de la revisión"
+  },
+  {
+    "kind": "p",
+    "text": "El resultado técnico principal es una aplicación con módulos relacionados para expediente, acceso, viajes, ubicación, evidencias, mantenimiento e historial, acompañada de servicios de almacenamiento y un complemento administrativo. La revisión del 23 de octubre de 2026 identificó implementación concreta de esos componentes y artefactos Android de distribución. Esto permite afirmar la existencia de una solución desarrollada y documentable. La comprobación funcional completa en campo exige, además, demostrar el recorrido de casos sobre una versión instalada, registrar condiciones del teléfono y conciliar los datos obtenidos en el dispositivo con los registros remotos."
+  },
+  {
+    "kind": "p",
+    "text": "La contribución de LogiApp consiste en organizar el evento operativo alrededor de identificadores que relacionan información tabular con archivos. En el alta, la carpeta agrupa los documentos del operador; en el viaje, el folio vincula salida, coordenadas, llegada, cierre y evidencia; en mantenimiento, un folio reúne datos técnicos y fotografías opcionales. Este orden es una capacidad implementada que responde al problema de dispersión documental descrito por TLB. El grado en que reduce el tiempo de búsqueda, los reprocesos o las llamadas debe medirse mediante una comparación antes y después (TLB Transportes, 2026a; Alba Roldan, 2026)."
+  },
+  {
+    "kind": "table",
+    "caption": "Correspondencia entre objetivos, productos y límites observados",
+    "headers": [
+      "Objetivo",
+      "Producto o evidencia",
+      "Resultado sustentado",
+      "Límite de la afirmación"
+    ],
+    "rows": [
+      [
+        "Organizar expedientes",
+        "Registro en dos fases, carpeta y PDF",
+        "Estructura y flujo implementados",
+        "La autenticidad requiere revisión humana"
+      ],
+      [
+        "Controlar acceso y vigencias",
+        "Hash, estados y semáforo",
+        "Reglas presentes en el código",
+        "La política de contraseña y sesiones requiere uniformarse"
+      ],
+      [
+        "Documentar viajes",
+        "Salida, llegada, cierre y folio",
+        "Ciclo de captura implementado",
+        "El inicio requiere servicios remotos"
+      ],
+      [
+        "Conservar información en ruta",
+        "SQLite, Preferences y archivos",
+        "Colas de puntos y cierre pendientes",
+        "No cubre toda la aplicación ni pérdida del teléfono"
+      ],
+      [
+        "Facilitar seguimiento",
+        "Servicio Android y tracking mensual",
+        "Captura periódica y reporte manual implementados",
+        "Frecuencia y precisión reales requieren medición"
+      ],
+      [
+        "Calcular indicadores",
+        "Recorrido, consumo y rendimiento",
+        "Fórmulas basadas en captura del operador",
+        "No existe validación con sensores de combustible"
+      ],
+      [
+        "Documentar mantenimiento",
+        "Formulario, fila y vínculo de fotos",
+        "Registro de servicios implementado",
+        "Sin costo, programación preventiva o cola offline"
+      ],
+      [
+        "Administrar operadores",
+        "Apps Script y auditoría",
+        "Desactivación y procedimientos de baja disponibles",
+        "Limpieza GPS actual pendiente de compatibilidad"
+      ]
+    ]
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "4.2 Verificación automatizada realizada"
+  },
+  {
+    "kind": "p",
+    "text": "El 23 de octubre de 2026 se ejecutó el comando dotnet run --project LogiApp.SmokeTests/LogiApp.SmokeTests.csproj --no-restore desde el repositorio. La ejecución finalizó con código de salida cero y el mensaje «Smoke tests completados correctamente». El programa enlaza directamente SeguridadPassword.cs y realiza seis comprobaciones. La evidencia corresponde a una ejecución local del componente de contraseñas. No se presenta como prueba de acceso completo contra Sheets, de envío de correo, de seguimiento Android ni de sincronización de fotografías (Alba Roldan, 2026, LogiApp.SmokeTests/Program.cs)."
+  },
+  {
+    "kind": "p",
+    "text": "Las comprobaciones aceptan que el valor generado se reconozca como hash, que dos transformaciones de la misma contraseña utilicen salts distintos, que la contraseña correcta valide y que una incorrecta sea rechazada. También comprueban la aceptación y el rechazo correspondientes a valores heredados. El resultado observado respalda esos caminos del componente en el entorno ejecutado. No aporta medición de resistencia a ataques, revisión criptográfica independiente, desempeño bajo concurrencia ni cobertura exhaustiva de entradas malformadas. Al delimitar el alcance, el informe conserva un resultado reproducible sin extenderlo a propiedades que esa prueba no evalúa."
+  },
+  {
+    "kind": "table",
+    "caption": "Comprobaciones del programa local de contraseñas",
+    "headers": [
+      "Criterio",
+      "Resultado observado",
+      "Alcance"
+    ],
+    "rows": [
+      [
+        "Reconocimiento del formato generado",
+        "Satisfactorio",
+        "SeguridadPassword.EsHash"
+      ],
+      [
+        "Salt distinto para dos hashes de igual entrada",
+        "Satisfactorio",
+        "Variación entre dos generaciones"
+      ],
+      [
+        "Aceptación de contraseña correcta con hash",
+        "Satisfactorio",
+        "Ruta positiva de verificación"
+      ],
+      [
+        "Rechazo de contraseña incorrecta con hash",
+        "Satisfactorio",
+        "Ruta negativa de verificación"
+      ],
+      [
+        "Aceptación de valor heredado correcto",
+        "Satisfactorio",
+        "Compatibilidad previa a migración"
+      ],
+      [
+        "Rechazo de valor heredado incorrecto",
+        "Satisfactorio",
+        "Ruta negativa del formato heredado"
+      ]
+    ]
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "4.3 Verificación funcional requerida para consolidar resultados"
+  },
+  {
+    "kind": "p",
+    "text": "Los planes de pruebas consultados describen casos de GPS, persistencia, integración, expansión de tracking y validación de datos, e incluyen resultados reportados por sus autores (TLB Transportes, 2026e). Esos documentos son antecedentes útiles para construir el protocolo, pero no se equiparan a ejecuciones reproducidas durante esta revisión. Para consolidarlos se requiere una bitácora que identifique fecha, versión, modelo de dispositivo, versión Android, permisos, red, pasos y resultado observado. Cada caso debe incluir evidencia anonimizada y un criterio de aceptación previo. De esta forma puede distinguirse un comportamiento esperado de uno efectivamente obtenido."
+  },
+  {
+    "kind": "p",
+    "text": "La prueba de continuidad de un viaje debe comenzar con una apertura realizada con conectividad y después interrumpir el acceso a internet sin desactivar la ubicación. Se capturan puntos identificables, se confirma llegada y se intenta cerrar con fotografías. Antes de restablecer red se registra el número de elementos pendientes y su asociación al folio. Tras la reconexión se concilian filas, horas, coordenadas y archivos con la copia local. El criterio útil es la correspondencia entre elementos capturados y recibidos, además de la ausencia de asociaciones cruzadas; el mensaje de éxito de la interfaz por sí solo no completa esa verificación."
+  },
+  {
+    "kind": "p",
+    "text": "La verificación de seguimiento en segundo plano debe incluir teléfono con pantalla apagada, cambio a otra aplicación, modo de ahorro de energía y denegación de permisos. Conviene registrar intervalos reales entre capturas en lugar de asumir que son exactamente diez minutos. También debe distinguirse la pérdida de internet de la falta de señal GPS, porque la persistencia puede conservar un punto obtenido sin red, pero no crear una posición que el sensor no entregó. El forzado de cierre y el apagado del equipo deben documentarse como condiciones particulares, con resultados propios y sin promesas de continuidad incondicional."
+  },
+  {
+    "kind": "table",
+    "caption": "Matriz propuesta de verificación funcional",
+    "headers": [
+      "Caso",
+      "Evidencia requerida",
+      "Criterio de aceptación",
+      "Estado al corte"
+    ],
+    "rows": [
+      [
+        "Alta y expediente completo",
+        "Fila y nueve PDF de prueba",
+        "Un ID, estado VALIDACION y documentos asociados",
+        "Pendiente de reproducción controlada"
+      ],
+      [
+        "Vigencias y bloqueo",
+        "Casos vencido, próximo y vigente",
+        "Botón y mensaje coherentes con la regla",
+        "Revisado en código"
+      ],
+      [
+        "Cierre con recarga",
+        "Valores y cálculo conciliados",
+        "Recorrido y consumo equivalentes a entradas válidas",
+        "Revisado en código"
+      ],
+      [
+        "Desconexión y reconexión",
+        "Conteos local/remoto y marcas temporales",
+        "Recuperación sin mezcla de folios ni faltantes",
+        "Pendiente de reproducción controlada"
+      ],
+      [
+        "Pantalla apagada y energía",
+        "Serie de puntos por modelo Android",
+        "Comportamiento descrito con intervalos reales",
+        "Pendiente de medición"
+      ],
+      [
+        "Falla parcial Drive/Sheets",
+        "Archivo, fila y reintento",
+        "Recuperación coherente y duplicados controlados",
+        "Pendiente de reproducción controlada"
+      ],
+      [
+        "Datos numéricos inválidos",
+        "Letras, negativos y formatos decimales",
+        "Rechazo explícito antes de guardar",
+        "Requiere reforzar validación"
+      ],
+      [
+        "Baja administrativa",
+        "Copia del libro y carpeta de prueba",
+        "Relaciones conciliadas en esquema vigente",
+        "Requiere revisar limpieza GPS"
+      ]
+    ]
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "4.4 Beneficios esperados y medición de impacto"
+  },
+  {
+    "kind": "p",
+    "text": "La organización automática de carpetas y la asociación de fotografías con folios permiten esperar una búsqueda documental más directa que la recuperación desde conversaciones dispersas. El registro de salida y llegada también puede reducir la necesidad de transcribir mensajes para construir el antecedente del viaje. Sin embargo, esos beneficios se expresan como mecanismos y expectativas sustentadas en las funciones disponibles. Para declararlos resultados de productividad se requiere definir una muestra, cronometrar tareas equivalentes, registrar errores y comparar periodos con un volumen de operación semejante. Sin esa base no corresponde asignar porcentajes de mejora."
+  },
+  {
+    "kind": "p",
+    "text": "Los materiales generales incluyen proyecciones de ahorro mensual, reducción de tiempos de alta y disponibilidad inmediata de evidencias. La revisión no dispone de una serie de costos, tiempos cronometrados o conciliaciones financieras que permita ratificar esas magnitudes. Además, la transmisión de imágenes depende de conectividad y tamaño, por lo que una espera de cero segundos no es un criterio técnico apropiado. El informe conserva esas cifras únicamente como antecedentes de expectativas del proyecto, sin incorporarlas al balance de logros. La evaluación económica posterior deberá considerar horas efectivamente liberadas, costos del servicio y mantenimiento del sistema (TLB Transportes, 2026a)."
+  },
+  {
+    "kind": "p",
+    "text": "Una medición útil puede registrar el tiempo total para localizar un expediente, completar un alta, recuperar evidencia de un viaje y conciliar combustible. Cada indicador requiere definir el inicio y fin de la tarea, responsable, cantidad de casos y condiciones de excepción. En el caso de sincronización conviene medir demora entre captura y recepción, número de reintentos y proporción de registros conciliados. Para rendimiento se necesita comparar entradas con odómetro y comprobantes de abastecimiento. El propósito es transformar los beneficios plausibles en evidencia operativa verificable y mantener separadas la calidad del registro y la eficiencia mecánica del vehículo."
+  },
+  {
+    "kind": "p",
+    "text": "Para evaluar la utilidad administrativa es necesario separar el registro de mantenimiento de una estrategia preventiva completa. La pantalla entrega un antecedente de servicio, unidad y piezas, pero no programa automáticamente una intervención posterior. La empresa puede utilizar esos datos como insumo para analizar frecuencias y prioridades, siempre que complete criterios de kilometraje, tiempo y condición mecánica. Un resultado de prevención de fallas requeriría comparar incidencias y servicios con un periodo de referencia. Por ello, la existencia del formulario se reporta como producto, mientras que la reducción de paros o reparaciones permanece como un efecto por investigar."
+  },
+  {
+    "kind": "p",
+    "text": "La satisfacción de los operadores puede documentarse mediante tareas concretas y observación de dificultades: identificar el botón correcto, interpretar el estado de conexión, corregir una entrada y reconocer si el cierre quedó pendiente. El registro de esas observaciones permite distinguir familiaridad con el teléfono de claridad del flujo diseñado. No se atribuye una aceptación general a la interfaz únicamente por contener botones y mensajes. Para un resultado de usabilidad se recomienda registrar participantes, tareas, errores, solicitudes de ayuda y comentarios, de manera que los cambios posteriores respondan a problemas observables y no a preferencias aisladas del equipo."
+  },
+  {
+    "kind": "p",
+    "text": "El análisis de costos debe distinguir inversión inicial y gasto recurrente. El hecho de utilizar componentes de código abierto o herramientas con modalidades gratuitas no significa que operar el sistema carezca de costos. Deben contemplarse conectividad móvil, dispositivos, energía, almacenamiento, soporte, revisión de permisos y tiempo de capacitación. Los montos de infraestructura mencionados en antecedentes sirven para planear, pero no se consideran una cotización vigente ni un desembolso comprobado. La valoración económica final requiere datos de la empresa y un periodo definido para comparar costo de operación y beneficio administrativo."
+  },
+  {
+    "kind": "p",
+    "text": "Una mejora relevante de trazabilidad documental consiste en mantener juntas la versión del programa y la estructura del libro de trabajo. Si se cambia una columna, el nombre de una hoja o la forma de guardar el GPS, debe existir una nota de cambio con el componente afectado y el procedimiento de migración. Los mensajes de Git apoyan el seguimiento del código, pero no registran automáticamente ediciones en servicios externos. Integrar ambas fuentes permitirá explicar por qué una captura anterior tiene una forma distinta y evitará interpretar como pérdida de información lo que puede ser una incompatibilidad de esquema."
+  },
+  {
+    "kind": "p",
+    "text": "La medición de confiabilidad debe considerar también los casos que no concluyen. Una muestra compuesta solo por cierres exitosos no permite evaluar recuperación ni pérdida de datos. Es necesario conservar intentos fallidos, interrupciones, archivos inaccesibles y operaciones atendidas manualmente, indicando su causa y resolución. Con esa información pueden calcularse tasas de conciliación y demora dentro de condiciones definidas. Al corte, estas medidas se proponen como instrumentos de seguimiento. La evidencia disponible permite describir mecanismos de continuidad y riesgos, mientras que la cuantificación de su efectividad requiere la ejecución y documentación del protocolo."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "4.5 Limitaciones, mantenimiento y continuidad anual"
+  },
+  {
+    "kind": "p",
+    "text": "La solución presenta límites concretos: catálogos consultados hasta la fila cien, historial móvil de diez viajes, soporte local parcial y dependencia del estado del teléfono. La representación de mapa utiliza una muestra de puntos y no acredita el trayecto exacto. Las funciones de acceso directo a Google requieren revisar la gestión de configuración sensible y permisos antes de ampliar su uso. La concurrencia entre dispositivos y las operaciones parciales entre Drive y Sheets también deben verificarse. Estos aspectos no anulan los componentes desarrollados; delimitan el entorno en que pueden utilizarse y las mejoras necesarias para una operación más controlada."
+  },
+  {
+    "kind": "p",
+    "text": "La información personal de los expedientes, incluidos documentos y datos de contacto, exige procedimientos de acceso, conservación y baja definidos por la empresa. El código examinado no acredita por sí solo una política institucional, cifrado local completo o conformidad jurídica. La administración debe definir quién consulta cada recurso y cómo se atienden cambios de personal o pérdida del equipo. En el plano técnico, se recomienda revisar la coherencia de la limpieza administrativa con el esquema vigente de tracking, la acumulación de fotografías ya sincronizadas y los mensajes de error que puedan confundirse con una confirmación de almacenamiento."
+  },
+  {
+    "kind": "p",
+    "text": "La continuidad prevista para noviembre y diciembre de 2026 comprende completar la matriz de pruebas en un entorno controlado, resolver las validaciones numéricas, homologar la política de contraseñas, verificar la compatibilidad del complemento administrativo y actualizar los manuales conforme al comportamiento real. También contempla integrar evidencias de capacitación y recepción cuando existan actas o registros correspondientes. Estas actividades se formulan como parte del plan anual posterior al corte del informe. Su cierre deberá respaldarse con fechas, responsables y resultados observados, conservando trazabilidad entre requerimiento, cambio y comprobación."
+  },
+  {
+    "kind": "p",
+    "text": "Con la evidencia disponible al corte, el cumplimiento se valora por los productos técnicos y su correspondencia con las necesidades del proyecto. Se dispone de una base implementada para centralizar registros y expedientes, recuperar información pendiente de ruta y consultar indicadores derivados de la captura. La prueba local aporta un resultado específico sobre el componente de contraseñas; las verificaciones de campo siguen delimitadas por el protocolo propuesto y por los antecedentes documentales. Esta evaluación permite presentar los avances de residencia con claridad, reconocer las condiciones de operación y orientar la siguiente etapa sin convertir expectativas en resultados demostrados."
+  }
+]

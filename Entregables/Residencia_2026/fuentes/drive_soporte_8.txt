@@ -1,0 +1,44 @@
+Categoría Tarea principal Descripción técnica Frecuencia Responsable
+Software Optimización de SQLite
+Depuración de registros antiguos y compactación de la base de 
+datos local para mantener la fluidez. Mensual Desarrollador
+Hardware Revisión de periféricos
+Inspección física de cables, cargadores y soportes para evitar 
+desconexiones por vibración. Quincenal Equipo técnico
+Nube Respaldo de Sheets
+Exportación de datos históricos a archivos de respaldo para 
+evitar saturación en el Dashboard principal. Trimestral Desarrollador
+Seguridad Rotación de API Keys
+Actualización de credenciales de Google Cloud y revisión de 
+permisos de acceso a carpetas de Drive. Semestral Desarrollador
+Inventario Stock de emergencia
+Verificación de existencia de equipos de repuesto (celulares y 
+cables) listos para su uso inmediato. Mensual Almacén
+Conectividad Calibración GPS
+Comparativa de rutas registradas vs. reales para ajustar la 
+precisión de los sensores de los dispositivos. Mensual Equipo técnico
+Capacitación Refuerzo de uso
+Sesión breve con operadores para revisar buenas prácticas en 
+el manejo de la app y cuidado del equipo. Semestral Equipo técnico
+Automatización
+Verificación de 
+ejecución de Jobs en 
+Pentaho.
+Revisar que los scripts de alerta de vigencias (licencias, 
+seguros) se estén disparando correctamente y no haya errores 
+de conexión con el servidor. Mensual Desarrollador
+Inteligencia de 
+negocios
+Validación de 
+Dashboards en Looker 
+Studio
+Confirmar que los filtros de KPI y las gráficas de rendimiento 
+reflejen los datos reales de la base de datos sin errores de 
+visualización. Trimestral Desarrollador
+Nube
+Gestión de 
+almacenamiento en la 
+nube.
+Revisar el espacio disponible en Google Drive y organizar 
+archivos antiguos de operadores inactivos para no saturar el 
+almacenamiento de la cuenta comercial. Semestral Desarrollador

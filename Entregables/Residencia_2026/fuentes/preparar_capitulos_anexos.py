@@ -1,0 +1,162 @@
+from pathlib import Path
+import json
+import re
+
+OUT=Path(__file__).resolve().parent
+blocks=[]
+def h(text,level=3): blocks.append({'kind':'heading','level':level,'text':text})
+def p(text): blocks.append({'kind':'p','text':text})
+def t(caption,headers,rows):
+    assert len(headers)<=4
+    assert all(len(row)==len(headers) for row in rows)
+    blocks.append({'kind':'table','caption':caption,'headers':headers,'rows':rows})
+
+h('VIII ANEXOS',1)
+h('Anexo A Matriz de correspondencia con el Anexo VIII',2)
+p('La matriz relaciona los diecinueve apartados del Anexo VIII del Modelo Dual con las secciones del reporte y sus criterios de revisión documental. El índice general contiene la paginación correspondiente. Las constancias emitidas por la empresa o por el instituto se identifican por separado de los productos técnicos del proyecto.')
+t('Correspondencia de los diecinueve apartados del Anexo VIII', ['Núm.','Apartado solicitado','Ubicación temática','Criterio de revisión'],[
+['1','Portada','Preliminares: portada','Verificar título, estudiante, institución, carrera, asesores, empresa, lugar y fecha.'],
+['2','Agradecimientos','Preliminares: agradecimientos','Personalizar reconocimientos y confirmar que expresan la experiencia del estudiante.'],
+['3','Resumen','Preliminares: resumen','Conservar propósito, procedimiento, producto obtenido y alcance documentado.'],
+['4','Índice','Preliminares: índice general','Actualizar páginas después de cerrar la edición y revisar anexos y referencias.'],
+['5','Introducción','Generalidades: introducción','Relacionar contexto, problema, alcance y organización del trabajo.'],
+['6','Descripción de la unidad económica y del puesto o área de trabajo','Generalidades: empresa y área de trabajo','Validar información institucional y funciones efectivamente desempeñadas.'],
+['7','Descripción del PED y periodos en que se realizó','Generalidades: proyecto de educación dual y periodos','Confirmar fechas formales con documentos del programa; distinguirlas del historial de commits.'],
+['8','Problemas a resolver, priorizándolos','Generalidades: problemas a resolver','Revisar prioridad, efectos operativos y delimitación de cada problema.'],
+['9','Objetivos general y específicos','Generalidades: objetivos','Comprobar relación entre objetivos, actividades y resultados sustentados.'],
+['10','Justificación','Generalidades: justificación','Explicar utilidad para usuarios y empresa sin introducir beneficios cuantificados sin medición.'],
+['11','Marco teórico y fundamentos teóricos','Marco teórico','Verificar citas, referencias y relación de conceptos con la solución desarrollada.'],
+['12','Procedimiento y descripción de actividades realizadas','Desarrollo','Vincular análisis, implementación, ajustes y verificación con fuentes identificables.'],
+['13','Resultados y productos que correspondan a la naturaleza del proyecto','Resultados','Distinguir software y documentos disponibles, pruebas realizadas y validaciones todavía pendientes.'],
+['14','Actividades sociales en la unidad económica, si es el caso','Resultados: actividades sociales','Incorporar solo actividades efectivamente realizadas y respaldadas; señalar si no se dispone de evidencia.'],
+['15','Conclusiones, recomendaciones y experiencia personal profesional','Conclusiones y recomendaciones','Mantener conclusiones relacionadas con objetivos y personalizar la experiencia del estudiante.'],
+['16','Competencias desarrolladas o aplicadas','Competencias','Relacionar cada competencia con una actividad o producto concreto.'],
+['17','Fuentes de información','Fuentes de información','Comprobar correspondencia entre citas del texto, documentación del proyecto y bibliografía.'],
+['18','Anexos y carta de autorización, si corresponde','Anexos A a D; documentación institucional recibida','Adjuntar la carta auténtica únicamente cuando la unidad económica la proporcione.'],
+['19','Registros de productos','Anexo D: ficha y estado documental del producto','Consignar únicamente registros acreditados; no confundir créditos del software con un registro autoral.']
+])
+h('A.1 Correspondencia entre actividades y evidencia')
+p('El historial de código identifica momentos del desarrollo y no sustituye las fechas formales del programa académico. Las presentaciones resumen avances, mientras que los archivos fuente muestran la implementación disponible. Los protocolos propuestos de los anexos B y C documentan actividades futuras y no acreditan pruebas o capacitaciones realizadas. Esta distinción permite relacionar problemas, objetivos y productos sin atribuir resultados operativos que no cuentan con mediciones.')
+
+h('Anexo B Protocolo propuesto de prueba de continuidad sin conexión',2)
+p('El presente protocolo se propone para verificar la continuidad del registro y la recuperación de pendientes de LogiApp en una sesión controlada. Su inclusión en el reporte no acredita que la prueba haya sido ejecutada ni que sus criterios hayan sido satisfechos. El responsable debe completar una bitácora durante la ejecución y conservar evidencias verificables. El objetivo es observar el comportamiento de una versión identificada de la aplicación cuando se pierde la conexión a internet, se mantiene el viaje activo y posteriormente se restablece el acceso a los servicios remotos.')
+h('B.1 Preparación y condiciones de la sesión')
+p('La sesión requiere un teléfono autorizado para pruebas, una versión de LogiApp cuya identificación pueda registrarse y un conjunto de datos de ensayo separado de la operación habitual. El responsable debe acordar con la empresa el dispositivo, la cuenta, la unidad y el entorno que se utilizarán. Los folios de prueba deben ser distinguibles de los viajes productivos. La sesión debe realizarse en condiciones que permitan observar la pantalla sin interferir con la conducción. Cualquier desplazamiento corresponde a un entorno autorizado y a un acompañante encargado del registro de evidencia.')
+p('Antes de comenzar, se deben comprobar permisos de ubicación, conectividad, disponibilidad de energía y acceso a los destinos de almacenamiento de prueba. También se debe registrar la configuración del dispositivo que pueda influir en el proceso, como la versión de Android y las restricciones de batería aplicables a la aplicación. No se necesita desactivar controles de seguridad del teléfono para declarar válida la prueba. Si una condición impide ejecutar un paso, se registra como limitación y se analiza antes de continuar.')
+t('Identificación de la sesión de prueba', ['Campo','Dato que debe registrarse'],[
+['Identificador de sesión','Código interno de la sesión y fecha de ejecución.'],
+['Responsables','Persona que ejecuta y persona que observa, mediante identificación autorizada.'],
+['Aplicación','Versión instalada y referencia de compilación o revisión de código, cuando esté disponible.'],
+['Dispositivo','Modelo, versión de Android y configuración relevante de batería y permisos.'],
+['Entorno','Cuenta, hojas y carpetas de prueba autorizadas, sin copiar credenciales en la bitácora.'],
+['Datos del ensayo','Folio de prueba, escenario seleccionado y condiciones iniciales.'],
+['Medición temporal','Hora inicial y reloj de referencia utilizado durante toda la sesión.']
+])
+h('B.2 Secuencia de ejecución')
+t('Pasos propuestos para desconexión y recuperación', ['Paso','Acción','Observación que se registra','Criterio propuesto'],[
+['1','Abrir la aplicación con conexión y consultar su versión.','Versión, estado de acceso y hora de inicio.','La sesión queda identificada sin ambigüedad.'],
+['2','Iniciar un viaje de prueba con datos autorizados.','Folio, confirmación visible y estado inicial remoto.','Se identifica un único viaje de ensayo.'],
+['3','Observar el seguimiento con conexión durante el intervalo acordado.','Puntos o eventos recibidos y notificación de seguimiento.','Existe una referencia inicial para comparar.'],
+['4','Desactivar el acceso a internet conservando la ubicación.','Hora exacta y cambio visible del estado de red.','Se conoce el comienzo del intervalo sin conexión.'],
+['5','Mantener el viaje activo durante un intervalo acordado.','Estado de la interfaz, mensajes y continuidad percibida.','La aplicación conserva el estado del viaje.'],
+['6','Cambiar a otra pantalla o aplicación y apagar la pantalla cuando corresponda.','Duración de cada condición y presencia de la notificación.','Se observa el comportamiento sin interacción permanente.'],
+['7','Volver a LogiApp sin recuperar internet.','Viaje mostrado y cualquier aviso de información pendiente.','El viaje sigue siendo reconocible y no se crea otro por error.'],
+['8','Restablecer la conexión en un punto autorizado.','Hora de recuperación y estados de sincronización visibles.','El sistema intenta recuperar los datos pendientes.'],
+['9','Esperar el periodo de observación acordado y revisar el destino remoto.','Registros recibidos, horas y correspondencia con el folio.','Se identifica la información recuperada y cualquier ausencia.'],
+['10','Marcar llegada y completar el cierre con datos de ensayo.','Hora de llegada, evidencia autorizada y confirmación.','El registro final conserva la relación con el mismo viaje.'],
+['11','Comparar la bitácora con la información almacenada.','Faltantes, duplicados, orden temporal y cierre.','Toda diferencia queda documentada para análisis.'],
+['12','Cerrar la sesión y resguardar las evidencias.','Resultado de cada criterio, incidencias y responsable de revisión.','Existe un expediente de prueba trazable.']
+])
+p('Los intervalos de observación deben acordarse antes de iniciar y quedar escritos en la bitácora. No conviene elegirlos después de conocer el resultado, porque eso altera la comparación entre sesiones. El protocolo no fija un número universal de puntos esperados: dicho valor depende de la configuración de captura de la versión evaluada, de la disponibilidad de ubicación y del movimiento real del dispositivo. Cuando se requiera una tasa de recepción, el responsable debe definir primero qué constituye un punto esperado y qué eventos pueden excluirse de manera justificada.')
+p('La pérdida de internet y la pérdida de ubicación son condiciones distintas. Durante el escenario principal se conserva el acceso a ubicación para aislar la recuperación de datos pendientes. Si después se evalúa la revocación de permisos, el apagado del GPS o la interrupción forzada del proceso, cada situación debe tratarse como un caso independiente. Mezclar varias condiciones en la misma sesión dificulta identificar la causa de un registro faltante. También debe registrarse cualquier reinicio, cierre inesperado o cambio de configuración que ocurra durante el ensayo.')
+h('B.3 Evidencia incidencias e interpretación')
+p('La evidencia mínima comprende la bitácora temporal, la identificación de la versión y una revisión del almacenamiento de prueba. Las capturas de pantalla deben mostrar únicamente datos autorizados para el informe. Si una imagen incorpora nombres de operadores, folios productivos, matrículas, ubicaciones o credenciales, no debe publicarse sin una versión preparada para ese fin. Una descripción del observador puede complementar una captura, pero no debe utilizarse para atribuir un comportamiento que no se observó o para cubrir un intervalo del cual no existe información suficiente.')
+t('Registro propuesto de incidencias', ['Dato','Contenido a completar'],[
+['Identificador y momento','Código de incidencia y hora observada.'],
+['Paso y condición','Paso del protocolo, conectividad, estado de pantalla y ubicación.'],
+['Comportamiento observado','Descripción concreta del mensaje, dato faltante o respuesta de la aplicación.'],
+['Resultado esperado','Criterio acordado antes de la sesión que no se cumplió o quedó sin observar.'],
+['Evidencia asociada','Archivo, nota o registro de prueba que permita revisar el caso.'],
+['Seguimiento','Responsable de análisis, decisión y referencia de la corrección si posteriormente existe.']
+])
+p('El resultado se puede clasificar como satisfactorio, no satisfactorio o inconcluso para cada criterio. Satisfactorio significa que la evidencia disponible respalda el comportamiento definido para la sesión. No satisfactorio significa que se observó una diferencia respecto del criterio. Inconcluso indica que faltó una condición, un registro o una evidencia necesaria para decidir. Esta tercera categoría evita transformar la ausencia de observaciones en una aprobación automática. Un fallo no debe borrarse de la bitácora después de corregirlo: la nueva comprobación se registra como una sesión posterior.')
+p('La comparación final debe revisar la correspondencia del folio, el orden temporal, el estado de cierre y la existencia de pendientes o duplicados. Si se miden duración de sincronización, batería o consumo de datos, se deben informar el instrumento, la lectura inicial, la lectura final y las condiciones del ensayo. Una sesión aislada ayuda a detectar problemas concretos, pero no permite afirmar un porcentaje general de disponibilidad o de ahorro. Las conclusiones operativas requieren sesiones suficientes y condiciones que representen el uso esperado por la empresa.')
+
+h('Anexo C Plan propuesto de capacitación y mantenimiento',2)
+p('Este plan organiza la transferencia de conocimiento de LogiApp a las personas que capturan información y a quienes revisan los registros de la empresa. Se presenta como una propuesta de adopción y continuidad que debe ajustarse con los responsables de la operación. No acredita sesiones impartidas, asistencia ni evaluaciones realizadas. El propósito es que cada participante comprenda el proceso completo de un viaje, identifique cuándo el teléfono conserva información pendiente y sepa a quién reportar una incidencia sin modificar registros para ocultarla.')
+h('C.1 Capacitación por funciones')
+t('Sesiones propuestas de capacitación', ['Participantes','Contenido práctico','Ejercicio propuesto','Comprobación'],[
+['Operadores','Acceso, permisos y revisión de la información personal.','Abrir una cuenta de prueba y revisar los permisos requeridos.','El participante reconoce el estado de acceso y solicita ayuda ante un dato incorrecto.'],
+['Operadores','Inicio, seguimiento y cierre del viaje.','Completar un recorrido de ensayo con datos claramente ficticios.','El participante conserva el mismo folio y completa los datos necesarios.'],
+['Operadores','Estado de red y pendientes.','Observar el escenario guiado sin conexión y la recuperación.','El participante distingue captura pendiente y confirmación remota.'],
+['Operadores','Evidencias y reportes de mantenimiento.','Adjuntar una fotografía de ensayo y completar un reporte de prueba.','El participante identifica la evidencia y entiende el resultado del envío.'],
+['Personal administrativo','Consulta de historial y documentos.','Localizar un viaje de prueba y su evidencia asociada.','El participante verifica correspondencia y reporta inconsistencias.'],
+['Responsable técnico','Versión, configuración e incidencias.','Reproducir una incidencia de ensayo y preparar su registro.','El responsable conserva versión, pasos y evidencia sin incluir secretos.']
+])
+p('La capacitación debe utilizar un lenguaje cercano a las tareas del participante. Para el operador resulta más útil reconocer el estado del viaje y la confirmación de sus acciones que memorizar los nombres de las bibliotecas. Para el personal administrativo conviene explicar la relación entre viaje, evidencia y registro, además de las condiciones que pueden retrasar una actualización. El responsable técnico necesita conocer cómo identificar la versión y cómo preparar un reporte que permita reproducir el problema. Separar estas necesidades evita saturar a todos los participantes con el mismo detalle.')
+p('Cada sesión puede comenzar con una demostración y continuar con un ejercicio realizado por el participante. El instructor observa la secuencia y registra los pasos que requieren apoyo. Si ocurre un error de captura, se explica el procedimiento autorizado para corregirlo sin alterar de manera informal la trazabilidad. La evaluación debe utilizar acciones observables, como iniciar un viaje de ensayo, reconocer un aviso de conexión o localizar una evidencia. La asistencia a una explicación no demuestra por sí sola que la persona pueda completar el proceso con autonomía.')
+h('C.2 Materiales y seguimiento de aprendizaje')
+p('Los materiales de apoyo pueden incluir una guía breve del operador, una guía de consulta administrativa y un formato de reporte de incidencia. Cada documento debe indicar la versión de LogiApp a la que corresponde y su fecha de revisión. Las imágenes deben provenir de una sesión preparada con datos de prueba. Cuando cambie el flujo de una pantalla, el responsable debe revisar las instrucciones afectadas para que el material no indique botones o mensajes que ya no aparecen. Es preferible mantener una referencia actualizada que distribuir varias copias contradictorias.')
+t('Registro propuesto de capacitación', ['Campo','Contenido a completar'],[
+['Sesión y versión','Fecha, tema, versión demostrada y responsable de impartición.'],
+['Participantes','Identificación autorizada de asistentes y función operativa.'],
+['Práctica','Ejercicio realizado, condiciones del entorno y necesidad de apoyo.'],
+['Resultado','Acciones completadas, dificultades observadas y dudas pendientes.'],
+['Seguimiento','Acción de refuerzo, responsable y fecha acordada para revisar el aprendizaje.']
+])
+h('C.3 Mantenimiento preventivo y atención de incidencias')
+p('El mantenimiento de la solución debe considerar la aplicación, los permisos de sus servicios externos, los archivos de apoyo y las guías utilizadas por las personas. La frecuencia depende del volumen de operación y de los acuerdos con la empresa. Antes de modificar una versión se debe identificar el problema, su efecto y el entorno donde ocurre. Posteriormente se revisa la corrección con un caso que represente el fallo observado. Una compilación que termina sin errores confirma una condición técnica limitada y debe complementarse con la verificación del comportamiento que motivó el cambio.')
+t('Actividades propuestas de continuidad técnica', ['Momento','Actividad','Evidencia de revisión','Responsable funcional'],[
+['Antes de liberar una versión','Revisar inicio y cierre de viaje, acceso a evidencia y escenario de recuperación.','Bitácora con versión, casos y resultados.','Responsable técnico con revisión operativa.'],
+['Al reportarse una incidencia','Registrar pasos, alcance, mensajes y condiciones del dispositivo.','Reporte identificable y evidencia autorizada.','Persona que observa y responsable de soporte.'],
+['Después de un cambio de configuración','Comprobar permisos y acceso a recursos de prueba.','Registro del cambio y revisión de funciones afectadas.','Administrador autorizado y responsable técnico.'],
+['En revisión periódica acordada','Comprobar pendientes, consistencia de registros y vigencia de guías.','Lista de hallazgos y acciones con responsable.','Personal administrativo y responsable técnico.'],
+['Al cambiar de responsable','Entregar fuentes, configuración documentada y pendientes conocidos.','Inventario de recepción y asuntos abiertos.','Responsable saliente y receptor designado.']
+])
+p('Para atender una incidencia se propone registrar primero el síntoma y preservar la evidencia. Después se determina si el problema afecta un dispositivo, un usuario, un viaje o varios registros. Esa delimitación permite priorizar y evita aplicar cambios generales frente a un caso aislado. El reporte técnico debe omitir claves, archivos de autenticación y expedientes personales. Si se requiere revisar información de operación, el acceso debe realizarse por las personas autorizadas y los resultados compartidos deben limitarse a lo necesario para comprender la causa y verificar la solución.')
+p('La actualización de dependencias debe planearse como una actividad que puede modificar el comportamiento de compilación, permisos o acceso a servicios. Se debe conservar la identificación de la versión anterior, preparar una revisión de las funciones afectadas y documentar cualquier procedimiento de recuperación disponible. El cierre de una incidencia requiere registrar la corrección y la comprobación correspondiente. Cuando una limitación no pueda resolverse de inmediato, debe permanecer visible en el inventario de pendientes, con una explicación comprensible para quienes utilizan la aplicación y dependen de sus registros.')
+
+h('Anexo D Inventario y estado documental del producto',2)
+p('El corte documental de este inventario es el 23 de octubre de 2026. El código fuente inspeccionado corresponde a la revisión HEAD 54ef6a3. La configuración de LogiApp.csproj declara ApplicationDisplayVersion 2.2 y ApplicationVersion 5. En Distribucion se encuentra el archivo LogiApp-v2.2.1-arm64.apk; la expresión 2.2.1 forma parte de su etiqueta de distribución y no se ha verificado el manifiesto binario de ese APK. Por tanto, el inventario conserva la diferencia entre la versión declarada en el proyecto y el nombre del archivo distribuible.')
+h('D.1 Inventario técnico y académico')
+t('Componentes documentados al 23 de octubre de 2026', ['Elemento','Ubicación o referencia','Contenido observado','Alcance documental'],[
+['Solución de aplicación','LogiApp.sln y LogiApp.csproj','Solución y configuración del proyecto .NET MAUI.','Código fuente de referencia HEAD 54ef6a3.'],
+['Interfaz móvil','Vistas y Resources','Pantallas, interacción y recursos gráficos del proyecto.','Archivos fuente disponibles; no equivalen a una sesión de uso documentada.'],
+['Modelos y servicios','Modelos y Servicios','Estructuras de información y lógica de operación y persistencia.','Implementación disponible para revisión técnica.'],
+['Soporte de Android','Platforms/Android','Configuración y componentes específicos de Android.','Fuentes de plataforma disponibles en el repositorio.'],
+['Automatización administrativa','GoogleAppsScriptAdministracion','Fuentes de apoyo administrativo.','Disponibilidad de código; no acredita por sí sola su activación en producción.'],
+['Pruebas del proyecto','LogiApp.SmokeTests','Fuentes de pruebas técnicas.','Los resultados ejecutados corresponden al apartado de validación del informe.'],
+['Paquete de distribución','Distribucion/LogiApp-v2.2.1-arm64.apk','Archivo APK de 38,544,903 bytes.','Etiqueta de distribución 2.2.1; manifiesto binario no verificado.'],
+['Presentaciones previas','PPTX en raíz y Entregables','Resúmenes del proyecto y avances de septiembre y octubre de 2026.','Material explicativo histórico, con alcance propio de cada presentación.'],
+['Reporte académico','Informe y anexos que integran este documento','Descripción técnica, resultados documentados y protocolos propuestos.','Corte de información del 23 de octubre de 2026.']
+])
+p('El repositorio contiene fuentes de la aplicación y componentes de apoyo, además de presentaciones preparadas en momentos distintos del desarrollo. El archivo APK inventariado constituye un producto de distribución disponible para revisión, aunque su nombre no demuestra el contenido de su manifiesto ni permite atribuirle automáticamente la revisión de código inspeccionada. La relación entre una compilación concreta y el código fuente requiere evidencia del proceso de construcción correspondiente; esa relación no se documenta mediante el nombre del archivo.')
+h('D.2 Ficha de identificación del producto')
+t('Identificación documental de LogiApp', ['Campo','Valor documentado'],[
+['Nombre del producto','LogiApp, según ApplicationTitle en LogiApp.csproj.'],
+['Tipo de proyecto','Aplicación .NET MAUI con interfaz XAML y código C#, acompañada por componentes de apoyo administrativo.'],
+['Finalidad documentada','Registro y seguimiento de viajes, manejo de evidencias y procesos relacionados con la operación de transporte.'],
+['Fecha de corte','23 de octubre de 2026.'],
+['Referencia del código fuente','HEAD 54ef6a3 del repositorio inspeccionado.'],
+['Versión visible declarada','ApplicationDisplayVersion = 2.2 en LogiApp.csproj.'],
+['Versión interna declarada','ApplicationVersion = 5 en LogiApp.csproj, incluida la configuración Android de publicación.'],
+['Archivo distribuible disponible','Distribucion/LogiApp-v2.2.1-arm64.apk. La versión 2.2.1 corresponde a la etiqueta del archivo.'],
+['Verificación del APK','No se verificó el manifiesto binario del APK en esta revisión documental.'],
+['Recepción técnica','No se aportó documentación de recepción técnica del producto.']
+])
+h('D.3 Registros de productos y autorizaciones')
+p('Al corte del 23 de octubre de 2026 no se aportó una carta de autorización de la unidad económica para la titulación. Tampoco se aportaron constancias de registro autoral ni documentos de cesión del producto. La recepción técnica de LogiApp no se encuentra documentada en las fuentes integradas a este expediente. Estas condiciones describen la documentación recibida para elaborar el informe y no afirman la inexistencia de trámites, acuerdos o documentos fuera de las fuentes revisadas.')
+t('Estado documental de autorizaciones y registros', ['Documento','Estado en el expediente','Alcance de la constatación'],[
+['Carta de autorización para titulación','No aportada al corte documental.','No se identifica una carta recibida para incorporar como anexo auténtico.'],
+['Constancia de registro autoral','No aportada al corte documental.','El expediente revisado no acredita una inscripción autoral.'],
+['Documento de cesión del producto','No aportado al corte documental.','El expediente revisado no documenta una cesión.'],
+['Recepción técnica','No documentada en las fuentes aportadas.','No se identifica constancia de recepción con versión, fecha y receptor.']
+])
+p('Las leyendas de créditos del software y la disponibilidad del código fuente son elementos del producto técnico. En las fuentes aportadas no se acompañan de las constancias externas indicadas en el cuadro anterior. El apartado de registros conserva ese estado documental sin atribuir números de inscripción, firmas, fechas de autorización o actos de recepción no acreditados.')
+
+assert all(b['kind'] in ('heading','p','table') for b in blocks)
+text=' '.join(b.get('text','') if b['kind']!='table' else ' '.join(b['headers']+[' '.join(row) for row in b['rows']]) for b in blocks)
+words=len(re.findall(r'\S+',text))
+assert words>=1800,words
+(OUT/'capitulos_anexos.json').write_text(json.dumps(blocks,ensure_ascii=False,indent=2),encoding='utf-8')
+print(json.dumps({'bloques':len(blocks),'palabras':words,'salida':str(OUT/'capitulos_anexos.json')},ensure_ascii=False))

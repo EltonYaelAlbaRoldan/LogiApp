@@ -1,0 +1,205 @@
+Índice
+Índice 2
+Introducción 3
+Definición del problema 4
+Solución propuesta 5
+Tecnologías y herramientas utilizadas 6
+Implementación y pruebas 7
+Fases de la implementación 7
+Protocolo de pruebas funcionales 7
+Validación de usuario 7
+Resultado final 8
+Ganancias económicas 8
+Ganancias no económicas 8
+2Introducción
+El presente documento describe el desarrollo e implementación de una solución
+tecnológica integral diseñada para optimizar la gestión logística y operativa de TLB
+Transportes. El proyecto surge de la necesidad de digitalizar y centralizar los
+procesos de monitoreo de unidades, registro de evidencias y administración de
+activos, los cuales tradicionalmente se gestionan de forma manual o mediante
+canales de comunicación informales.
+La solución consiste en un ecosistema digital compuesto por una aplicación móvil
+multiplataforma desarrollada en .NET MAUI y una arquitectura de almacenamiento
+en la nube basada en Google Cloud. El sistema permite a los operadores registrar
+viajes, mantenimientos y evidencias fotográficas en tiempo real, incluso en
+condiciones de conectividad limitada gracias a la implementación de persistencia de
+datos local con SQLite.
+El sistema incluye un módulo de gestión de capital humano, el cual permite que los
+nuevos operadores realicen su registro y entrega de documentación de manera
+digital. Este proceso automatiza la creación de carpetas personales y expedientes
+en la nube, permitiendo que el personal administrativo revise la documentación y
+active las cuentas directamente desde la base de datos centralizada, eliminando la
+necesidad de procesos físicos.
+A través de esta plataforma, la empresa no solo logra una visibilidad total de su flota
+mediante monitoreo GPS, sino que también automatiza la organización documental
+y la generación de reportes de rendimiento (BI), transformando datos operativos en
+información estratégica para la toma de decisiones.
+3Definición del problema
+Actualmente, TLB Transportes enfrenta una serie de desafíos operativos derivados
+de la falta de una herramienta tecnológica centralizada para el seguimiento de sus
+unidades y la gestión de su personal. Los principales puntos críticos identificados
+son:
+● Descentralización de la información: La comunicación entre los operadores y
+el personal administrativo se realiza principalmente a través de aplicaciones
+de mensajería instantánea como WhatsApp. Esto genera un flujo de datos
+desordenado, donde las evidencias de viaje, reportes de ubicación y gastos
+se pierden en chats individuales, dificultando su recuperación para auditorías
+o aclaraciones.
+● Carga administrativa excesiva: El proceso de transferir la información recibida
+por mensajes hacia la base de datos central es manual y lento. Esta
+duplicidad de tareas consume horas de trabajo del personal administrativo,
+aumentando la probabilidad de errores humanos en la captura de datos
+críticos.
+● Falta de visibilidad en tiempo real: Al no contar con un sistema de monitoreo
+GPS integrado, la empresa depende de reportes manuales de los choferes
+para conocer el estatus de las rutas. Esto impide una reacción rápida ante
+desviaciones o retrasos y genera una "ceguera operativa" sobre la ubicación
+exacta de los activos.
+● Cálculos de rendimiento ineficientes: El cálculo de tiempos de viaje, consumo
+de combustible y rendimientos por unidad se realiza de forma extemporánea
+y manual. La falta de automatización en estos cálculos impide identificar a
+tiempo fugas de recursos o ineficiencias en las rutas.
+● Gestión de mantenimiento reactiva y desarticulada: No se cuenta con un
+registro centralizado y automatizado del historial de mantenimiento (frenos,
+motor, llantas, etc.) por unidad. Al no haber alertas preventivas ni un
+seguimiento técnico digital, aumentan las probabilidades de fallas mecánicas
+en ruta, paros no programados y costos elevados por reparaciones
+correctivas.
+● Gestión documental obsoleta: El proceso de registro de nuevos operadores y
+la entrega de su documentación física genera retrasos en la activación de
+cuentas y riesgos de pérdida de información sensible, además de saturar el
+espacio físico de archivo.
+Estos factores limitan la capacidad de escalabilidad de la empresa y elevan los
+costos operativos debido al pago de horas extra administrativas y la falta de control
+estricto sobre los insumos de los viajes.
+4Solución propuesta
+La solución consiste en un sistema de gestión de transporte integral que digitaliza el
+ciclo de vida operativo de TLB Transportes. A diferencia de los métodos manuales,
+esta plataforma centraliza la información en tiempo real a través de los siguientes
+módulos funcionales:
+● Seguimiento dinámico de viajes: El núcleo del sistema permite a los
+operadores registrar el inicio, progreso y cierre de rutas. Incluye la captura
+obligatoria de evidencias fotográficas y el registro de folios, asegurando que
+cada movimiento de la flota esté debidamente documentado y geolocalizado
+mediante el sensor GPS del dispositivo.
+● Gestión de capital humano y expedientes: Se implementa un proceso de
+registro online donde los nuevos operadores cargan su documentación
+personal. El sistema organiza automáticamente estos archivos en carpetas
+digitales en la nube (Google Drive), permitiendo que el área administrativa
+valide los perfiles y active las cuentas de usuario de manera remota y
+eficiente.
+● Monitoreo de mantenimiento preventivo: El sistema incluye un módulo para el
+registro y seguimiento de los servicios realizados a las unidades (motor,
+frenos, llantas, etc.). Esto permite prever fallas mecánicas y mantener un
+historial digital de la salud de cada vehículo, reduciendo tiempos muertos por
+reparaciones correctivas.
+● Control de insumos y consumos: La aplicación automatiza el cálculo de
+rendimientos de combustible y gastos de viaje. Al eliminar los cálculos
+manuales, se obtiene una precisión exacta sobre los costos de operación por
+kilómetro recorrido.
+● Inteligencia de negocios (BI) y KPI: Toda la información recolectada se
+procesa para generar indicadores clave de rendimiento (KPI). Los
+administradores tienen acceso a tableros de control que muestran el estatus
+de la flota, el cumplimiento de rutas y la eficiencia operativa, facilitando la
+toma de decisiones basada en datos reales.
+Esta propuesta transforma la operación de una gestión basada en mensajería
+informal a un entorno de control total, garantizando la persistencia de los datos
+incluso en zonas con baja cobertura mediante almacenamiento local.
+5Tecnologías y herramientas utilizadas
+Para garantizar la escalabilidad, la automatización y el funcionamiento en ruta, se ha
+seleccionado un conjunto de tecnologías que permiten la integración total entre la
+operación y la administración:
+● Desarrollo móvil (.NET MAUI): Framework multiplataforma utilizado para
+construir la aplicación operativa, permitiendo el acceso nativo a la cámara
+para evidencias y al sensor GPS para el rastreo de rutas.
+● Persistencia de datos local (SQLite): Tecnología que asegura la integridad de
+la información en ruta. Permite que los registros de viajes y mantenimientos
+se guarden en el dispositivo cuando no hay señal, sincronizándose al
+detectar conexión.
+● Infraestructura en la nube (Google Cloud):
+○ Google Drive: Repositorio central para la organización automatizada
+de expedientes digitales y evidencias fotográficas.
+○ Google Sheets: Funciona como el motor de base de datos en tiempo
+real donde se consolidan todos los registros de la flota.
+● Análisis y visualización (Looker Studio): Herramienta utilizada para la
+creación de tableros de control (Dashboards). Permite visualizar los KPI de
+rendimiento, estatus de la flota y consumos de combustible de manera gráfica
+y dinámica para la toma de decisiones.
+● Automatización y alertas (Pentaho): Se utiliza esta herramienta de integración
+de datos para gestionar el envío de notificaciones automáticas. Su función
+principal es alertar sobre vigencias próximas a vencer (licencias, pólizas de
+seguro, verificaciones) y próximos servicios de mantenimiento preventivo.
+● Lógica de negocio (XAML y C#): Implementación del patrón MVVM para una
+interfaz fluida que comunica la captura de datos del operador con los
+servicios en la nube de forma eficiente.
+● Hardware operativo: Dispositivos móviles Android equipados con planes de
+datos y sistemas de carga continua en las unidades para garantizar la
+disponibilidad del servicio.
+6Implementación y pruebas
+La puesta en marcha del sistema se ejecutó mediante un plan de despliegue
+controlado y una fase de validación técnica para asegurar la confiabilidad de la
+herramienta en el entorno operativo de TLB Transportes.
+Fases de la implementación
+El despliegue se realizó en un periodo de cinco días, iniciando con la preparación de
+la infraestructura en la nube y la configuración de dispositivos móviles. Se continuó
+con la vinculación de las API de Google, la instalación del software en las unidades
+y una fase crítica de pruebas de integridad. El proceso concluyó con la capacitación
+técnica a los operadores y el personal administrativo, asegurando una transición
+fluida hacia el nuevo flujo digital.
+Protocolo de pruebas funcionales
+Se aplicó un plan de pruebas integral para verificar el comportamiento del
+ecosistema bajo condiciones reales:
+● Pruebas de conectividad y latencia: Se validó el envío de datos y evidencias
+utilizando redes móviles (4G/LTE), confirmando que el sistema maneja
+correctamente los tiempos de respuesta en ruta.
+● Pruebas de persistencia (Modo offline): Mediante el uso de SQLite y
+Preferences, se comprobó que los registros realizados en zonas sin cobertura
+se mantienen íntegros en el dispositivo y se sincronizan automáticamente al
+recuperar la señal.
+● Pruebas de integración: Se verificó la correcta comunicación entre la
+aplicación móvil y los repositorios de Google Drive y Sheets, garantizando
+que cada evidencia fotográfica se asocie correctamente al folio de viaje
+correspondiente.
+● Pruebas de estrés de base de datos: Se simuló la carga masiva de
+expedientes de operadores para asegurar que la arquitectura en la nube
+soporte el volumen de información sin degradación del rendimiento.
+Validación de usuario
+Se realizaron simulaciones de operación completa con el personal de transporte,
+logrando una reducción drástica en el tiempo de captura y validando que la interfaz
+es intuitiva para los operadores durante sus jornadas laborales.
+7Resultado final
+Tras la implementación del sistema y la automatización de los flujos de trabajo, se
+han identificado impactos significativos tanto en la rentabilidad como en la calidad
+operativa de TLB Transportes.
+Ganancias económicas
+● Optimización del gasto operativo: Se ha implementado un rastreo GPS con
+disponibilidad 24/7, eliminando la dependencia de reportes manuales y
+reduciendo desvíos de ruta innecesarios.
+● Reducción de costos en Capital Humano: La automatización ha permitido un
+ahorro proyectado de $10,000.00 a $15,000.00 MXN mensuales en sueldos
+administrativos, al optimizar las tareas de captura y permitir una gestión con
+menos personal dedicado a procesos manuales.
+● Eficiencia en el consumo de insumos: Mediante el registro exacto de
+rendimientos por unidad, se proyecta un ahorro de 4 horas semanales
+dedicadas previamente solo al cálculo manual de consumo de combustible.
+● Prevención de gastos por mantenimiento: El sistema dispara alertas
+proactivas que evitan reparaciones correctivas mayores, cuyo impacto
+económico se reduce al atender fallas menores detectadas en tiempo real por
+el módulo de mantenimiento.
+Ganancias no económicas
+● Agilidad extrema en altas de personal: El tiempo de registro y activación de
+nuevos operadores se redujo drásticamente de 2 horas a solo 5 minutos,
+representando una optimización del 95% en el proceso de integración de
+capital humano.
+● Inmediatez en la gestión de evidencias: El tiempo de espera para la
+recepción y organización de evidencias fotográficas pasó de ser
+indeterminado (vía WhatsApp) a 0 segundos de espera, gracias a la
+sincronización automática con Google Drive.
+● Trasparencia y trazabilidad operativa: Se ha logrado una visibilidad total de la
+flota, permitiendo respuestas inmediatas a clientes y eliminando el desorden
+documental mediante la organización jerárquica de expedientes digitales.
+● Cultura de decisiones basada en datos: La gerencia ahora opera bajo un
+esquema de KPI actualizados al minuto a través de Looker Studio,
+eliminando la administración basada en suposiciones y permitiendo ajustes
+operativos inmediatos.
+8910

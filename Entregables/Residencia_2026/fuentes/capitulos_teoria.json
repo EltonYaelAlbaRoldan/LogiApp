@@ -1,0 +1,280 @@
+[
+  {
+    "kind": "heading",
+    "level": 1,
+    "text": "II MARCO TEÓRICO"
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.1 Digitalización de los procesos de transporte"
+  },
+  {
+    "kind": "p",
+    "text": "La digitalización de un proceso operativo consiste en representar sus eventos, responsables y documentos mediante datos que puedan recuperarse y relacionarse. En el transporte de carga, la unidad de análisis no se reduce al vehículo: incluye al operador, el viaje, los lugares de origen y destino, el instante de cada evento y las evidencias que justifican la entrega. Una fotografía aislada comunica una observación, pero solo adquiere utilidad administrativa cuando conserva una relación identificable con el folio de viaje y con la persona responsable de su captura."
+  },
+  {
+    "kind": "p",
+    "text": "En LogiApp esta relación se concreta mediante identificadores de operador y folios para viajes y mantenimientos. La función del identificador es conservar una referencia común entre registros tabulares y carpetas de documentos. La calidad de esa referencia determina si un administrativo puede reconstruir una operación sin consultar conversaciones independientes. El problema descrito por TLB Transportes se aborda, por tanto, desde la organización de la información y la validación en el punto de captura, además de la sustitución de formatos físicos por una pantalla móvil (TLB Transportes, 2026a)."
+  },
+  {
+    "kind": "p",
+    "text": "La trazabilidad es la posibilidad de reconstruir una secuencia de hechos a partir de registros relacionados. Para interpretar correctamente un viaje se requiere distinguir el inicio, los reportes de ubicación, la llegada y el cierre administrativo. Estos hechos pueden ocurrir en instantes distintos. La llegada marca un evento operativo; el cierre incorpora datos finales y evidencias. Conservar esa distinción evita interpretar el tiempo de captura posterior de una fotografía como si fuera el instante de llegada del vehículo."
+  },
+  {
+    "kind": "p",
+    "text": "El resultado de digitalizar también depende de reglas organizacionales. Deben definirse responsables de activar cuentas, corregir catálogos, revisar documentos y atender pendientes de sincronización. Una tabla compartida ofrece visibilidad, pero su utilidad se debilita si se eliminan filas o se cambian nombres de hojas sin considerar a la aplicación que las consume. El diseño técnico y las prácticas de administración forman así un mismo proceso de información."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.2 Desarrollo móvil con C sharp y XAML"
+  },
+  {
+    "kind": "p",
+    "text": "Microsoft (2025a) describe .NET MAUI como un entorno para construir aplicaciones nativas móviles y de escritorio con C# y XAML a partir de una base de código compartida. XAML permite declarar la composición visual y C# expresar acciones, validaciones y acceso a servicios. El proyecto único reúne recursos y configuración de plataformas. Esta capacidad facilita compartir componentes, aunque no sustituye la verificación de permisos y comportamientos específicos de cada sistema operativo."
+  },
+  {
+    "kind": "p",
+    "text": "En el caso de LogiApp, la interfaz de registro, perfil, mantenimiento y viajes se distribuye en páginas. Los archivos XAML definen los controles de captura y sus archivos asociados en C# atienden los eventos. Los modelos representan datos y los servicios concentran operaciones auxiliares, acceso a Google y almacenamiento. Esta organización explica las responsabilidades existentes sin atribuir automáticamente al proyecto un patrón arquitectónico que requiera componentes adicionales, como ViewModels y comandos desacoplados (Alba Roldan, 2026)."
+  },
+  {
+    "kind": "p",
+    "text": "La programación asíncrona permite esperar operaciones de red o de archivo sin mantener ocupado el hilo que actualiza la interfaz. Su uso resulta relevante al cargar catálogos, consultar operadores o subir fotografías. Sin embargo, una operación asíncrona puede fallar, devolver un resultado negativo o continuar después de que una página cambie. Por ello, la secuencia debe establecer qué datos se conservan antes de iniciar la comunicación, qué señal confirma el éxito y cómo se presenta al usuario un resultado pendiente."
+  },
+  {
+    "kind": "p",
+    "text": "Compartir código no significa que todas las plataformas ofrezcan el mismo nivel de continuidad. El seguimiento de fondo incorpora una implementación nativa Android, mientras otras plataformas mantienen mecanismos diferentes. La evaluación técnica debe separar los destinos declarados en el archivo del proyecto de los dispositivos donde se instaló y verificó una versión. El alcance de la residencia se centra en la solución implementada y en los artefactos Android disponibles, sin equiparar una configuración de compilación con una liberación productiva en todos los sistemas."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.3 Separación de responsabilidades y servicios remotos"
+  },
+  {
+    "kind": "p",
+    "text": "Fielding (2000) explica la separación cliente servidor como una restricción arquitectónica que distingue la interfaz de usuario del almacenamiento. Esa separación permite analizar las responsabilidades de cada extremo y sus intercambios. En una aplicación móvil, el cliente captura y presenta información, mientras los servicios externos reciben solicitudes sobre recursos. La conexión entre ambos requiere identificar qué recurso se consulta o modifica y qué resultado devuelve cada petición."
+  },
+  {
+    "kind": "p",
+    "text": "LogiApp utiliza bibliotecas cliente para consultar Google Sheets y Google Drive. Las llamadas a estas API no convierten por sí solas al sistema en una arquitectura de microservicios. La aplicación concentra reglas de negocio y se conecta directamente a servicios administrados. El término servicio en el código designa clases auxiliares; no demuestra que cada módulo se despliegue como una unidad independiente con sus propios contratos de red, autenticación y operación."
+  },
+  {
+    "kind": "p",
+    "text": "Esta distinción permite evaluar el acoplamiento actual. Si la posición de una columna cambia, pueden afectarse tanto las lecturas del teléfono como los scripts administrativos. Un contrato de datos estable debe indicar nombres de hojas, orden de columnas, significado de estados, formatos de fechas e identificadores. Documentar ese contrato es una medida concreta para facilitar mantenimiento y evolución, incluso cuando el repositorio no dispone de una API empresarial intermedia."
+  },
+  {
+    "kind": "p",
+    "text": "La separación futura de reglas y acceso remoto también tiene una motivación operativa. Un servicio central podría validar estados, asignar identificadores y autorizar cambios sin delegar esas decisiones en cada instalación móvil. Esta posibilidad se plantea como evolución de la solución. El informe describe la arquitectura existente y las consecuencias de sus decisiones, sin presentar una propuesta futura como si ya hubiera sido desplegada."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.4 Persistencia local y transacciones"
+  },
+  {
+    "kind": "p",
+    "text": "SQLite presenta sus transacciones como atómicas, consistentes, aisladas y durables: los cambios incluidos en una misma transacción se completan de manera íntegra o se revierten cuando ocurre una interrupción (SQLite, s. f.). Microsoft (2025b) documenta el uso de sqlite-net-pcl para almacenar y recuperar objetos en aplicaciones MAUI. Estas propiedades fundamentan el uso de una base de datos local para conservar registros mientras el dispositivo no puede comunicarse con la nube."
+  },
+  {
+    "kind": "p",
+    "text": "La garantía de una transacción se aplica a las operaciones que realmente participan en ella. Guardar un punto en SQLite no confirma que una fotografía se haya subido a Drive ni que una fila de Sheets esté actualizada. Cada sistema mantiene su propio estado. La integridad del proceso completo exige relacionar esos estados y definir los pasos de recuperación ante un fallo parcial. Este es un problema de coordinación entre componentes, diferente de la integridad interna del archivo de base de datos."
+  },
+  {
+    "kind": "p",
+    "text": "En LogiApp se distinguen tres recursos locales: las tablas de eventos y posiciones en SQLite, las preferencias de sesión y viaje, y los archivos de evidencia. Las preferencias conservan valores que permiten reconstruir el contexto de una operación; las imágenes conservan el contenido que posteriormente debe transmitirse. El análisis de recuperación debe considerar los tres recursos. La eliminación de datos de la aplicación o la pérdida del teléfono puede afectar información pendiente, aun cuando el dispositivo haya informado de un guardado local correcto."
+  },
+  {
+    "kind": "p",
+    "text": "La concurrencia añade otro requisito. Un servicio de ubicación y la interfaz pueden intentar sincronizar durante un mismo intervalo. Los semáforos del proceso ayudan a serializar tareas dentro de una instancia, pero no coordinan por sí mismos dos teléfonos diferentes. En consecuencia, se deben diferenciar la exclusión local, la asignación central de identificadores y la prevención de duplicados en el repositorio compartido. Cada mecanismo resuelve un problema distinto y requiere pruebas propias."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.5 Sincronización y recuperación de fallos"
+  },
+  {
+    "kind": "p",
+    "text": "La sincronización es el proceso de trasladar cambios entre estados locales y remotos siguiendo reglas de orden y confirmación. Un registro puede estar capturado, pendiente de envío, transmitido o confirmado. Si estos estados se mezclan, la interfaz puede mostrar como finalizada una operación que todavía tiene información en el dispositivo. Para el usuario, el mensaje debe indicar qué se logró y qué depende de recuperar conectividad, manteniendo la posibilidad de continuar con las actividades permitidas."
+  },
+  {
+    "kind": "p",
+    "text": "Un caso ilustrativo es el cierre de viaje: puede existir una fotografía en Drive y fallar después la actualización de la fila de cierre. Repetir toda la secuencia sin identificar los archivos previamente creados podría duplicar evidencias. La aplicación utiliza nombres y folios estables para localizar elementos existentes durante los reintentos. Este mecanismo reduce repeticiones en las condiciones contempladas por el código, aunque no constituye una transacción distribuida ni una garantía general de ejecución exactamente una vez (Alba Roldan, 2026)."
+  },
+  {
+    "kind": "p",
+    "text": "La idempotencia describe el comportamiento por el que repetir una operación produce el mismo efecto final que ejecutarla una vez. En LogiApp, el concepto resulta útil para diseñar casos de prueba sobre un folio ya enviado, una imagen previamente cargada y una reconexión repetida. La verificación debe comparar cantidad de registros, vínculos y estado del pendiente, además de revisar el mensaje mostrado en pantalla. El éxito de una llamada aislada no acredita la consistencia del conjunto."
+  },
+  {
+    "kind": "p",
+    "text": "La condición de acceso a internet también requiere interpretación. Detectar una interfaz de red o una clasificación de conectividad permite iniciar un intento de envío; no asegura que el servidor responda ni que la cuenta conserve permisos. Una red con portal cautivo, una credencial vencida o una cuota agotada puede producir errores aunque el teléfono tenga señal. El procedimiento de soporte debe identificar esas causas y conservar el pendiente hasta obtener una confirmación válida."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.6 Repositorios tabulares y gestión de archivos"
+  },
+  {
+    "kind": "p",
+    "text": "Google Drive API permite integrar la creación y administración de archivos con una aplicación, mientras Google Sheets ofrece operaciones sobre datos tabulares. La documentación de Sheets establece cuotas de uso y recomienda aplicar espera progresiva cuando una solicitud recibe un rechazo por exceso de llamadas (Google, 2026b, 2026c). Estas restricciones hacen necesario estimar la frecuencia de escrituras y considerar los reintentos al aumentar el número de dispositivos."
+  },
+  {
+    "kind": "p",
+    "text": "La elección de dos repositorios responde a la naturaleza de la información. Los campos de un viaje se consultan y comparan como registros; una licencia o una fotografía conserva un contenido documental que requiere un archivo. El vínculo entre ambos se mantiene por folio y referencia de carpeta o archivo. El expediente puede considerarse completo cuando los datos esperados y sus evidencias están relacionados, no únicamente cuando existe una carpeta con el nombre del operador."
+  },
+  {
+    "kind": "p",
+    "text": "Una hoja de cálculo admite colaboración y revisión directa, pero el significado empresarial de sus filas depende de convenciones externas. Si se ordena una hoja, se borra un operador o se cambia un folio, pueden alterarse asociaciones utilizadas por la aplicación. Las protecciones visuales y los menús administrativos ayudan a orientar el trabajo, aunque deben distinguirse de restricciones obligatorias de autorización. La responsabilidad de conservar la integridad del conjunto permanece en las reglas y en los procedimientos de administración."
+  },
+  {
+    "kind": "p",
+    "text": "El crecimiento del historial GPS también influye en el modelo. El código agrupa reportes de un viaje y abre nuevos bloques cuando el contenido acumulado alcanza su umbral previsto. Esto evita ciertos errores de tamaño, pero mantiene la necesidad de revisar volumen, legibilidad y facilidad de consulta. Una solución adecuada para un piloto puede necesitar otra estrategia de almacenamiento al aumentar años de operación o usuarios concurrentes. El informe no fija un número máximo de unidades sin una prueba de carga que lo sustente."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.7 Geolocalización y condiciones de Android"
+  },
+  {
+    "kind": "p",
+    "text": "Android distingue la ubicación en primer plano y en segundo plano, así como la precisión aproximada y la precisa. La documentación señala que un servicio en primer plano comunica su actividad mediante una notificación persistente y requiere declarar su tipo de servicio cuando corresponde (Google, 2026a). Esta distinción fundamenta la implementación Android de LogiApp y la necesidad de explicar al operador cuándo se está capturando su posición."
+  },
+  {
+    "kind": "p",
+    "text": "La información geográfica debe interpretarse junto con el instante de captura y las condiciones del equipo. La cantidad de decimales con que se escribe una coordenada no demuestra su exactitud física. Un dato puede conservar muchos decimales y proceder de una lectura con error considerable. Para evaluar el seguimiento se deben registrar disponibilidad del sensor, precisión reportada, antigüedad de la posición y condiciones de recepción. Sin esas mediciones no corresponde atribuir al sistema una precisión de un metro."
+  },
+  {
+    "kind": "p",
+    "text": "El seguimiento periódico permite reconstruir posiciones reportadas, pero deja intervalos entre observaciones. Si un mapa une puntos mediante un servicio de rutas, la trayectoria calculada puede representar una alternativa vial y no la carretera efectivamente recorrida. En LogiApp los mapas de consulta se generan a partir de puntos seleccionados; deben utilizarse como apoyo de interpretación. El odómetro capturado por el operador mantiene una finalidad distinta: registrar kilometraje para los cálculos del viaje."
+  },
+  {
+    "kind": "p",
+    "text": "La operación segura requiere que las interacciones manuales se realicen con el vehículo detenido y en condiciones adecuadas. La captura automática disminuye la necesidad de intervenir durante el trayecto, pero sigue dependiendo del teléfono, sus permisos y la ejecución del servicio. Los protocolos de aceptación deben incluir pantalla apagada, ahorro de batería, cambio de aplicación y reinicio. La existencia de código para esas situaciones es un punto de partida para probarlas, no una evidencia suficiente de continuidad en todos los modelos de dispositivo."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.8 Autenticación y protección de información"
+  },
+  {
+    "kind": "p",
+    "text": "Temoshok et al. (2025) diferencian la autenticación de otros procesos de identidad y describen requisitos para administrar autenticadores. Un hash de contraseña permite verificar una entrada sin conservar una copia reversible de la contraseña original; el uso de un valor aleatorio por registro dificulta reutilizar cálculos entre cuentas. En LogiApp se emplea una derivación PBKDF2 con parámetros explícitos. Su presencia debe evaluarse junto con recuperación de acceso, límites de intentos, sesiones y permisos sobre los datos."
+  },
+  {
+    "kind": "p",
+    "text": "El código de recuperación enviado al correo constituye un mecanismo de restablecimiento. No demuestra por sí mismo que cada inicio de sesión solicite un segundo factor. Esta diferencia es relevante para redactar manuales: el operador debe entender qué proceso está realizando y la administración debe conocer sus límites. Del mismo modo, una clave guardada como hash no vuelve secretos a los restantes campos del expediente ni cifra automáticamente la base local del teléfono."
+  },
+  {
+    "kind": "p",
+    "text": "Google (2026d) recomienda controlar las claves de cuentas de servicio y evitar su exposición en ubicaciones que puedan distribuirse o consultarse sin autorización. La revisión de LogiApp identifica como prioridad de evolución centralizar el acceso a servicios y mejorar el manejo de configuración sensible. El análisis del informe conserva esta recomendación sin reproducir valores, tokens ni archivos de credenciales. Describir una deuda técnica no requiere divulgar el material que podría aprovecharse para acceder a los recursos."
+  },
+  {
+    "kind": "p",
+    "text": "La información del proyecto incluye datos de contacto, documentos de identificación, vigencias y ubicaciones. Cada categoría requiere un propósito y responsables de consulta. Desde el diseño de operación se propone limitar la descarga de expedientes, conservar trazabilidad administrativa y acordar periodos de retención. Estas medidas se presentan como prácticas técnicas que deben formalizarse con la empresa. La memoria no declara cumplimiento normativo integral ni reemplaza una revisión institucional sobre tratamiento de datos."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.9 Desarrollo iterativo y administración del trabajo"
+  },
+  {
+    "kind": "p",
+    "text": "El Manifiesto Ágil expresa el valor de la adaptación mediante la frase «Respuesta ante el cambio sobre seguir un plan» (Beck et al., 2001, sección de valores, cuarto valor). Schwaber y Sutherland (2020) presentan Scrum como un marco de trabajo sustentado en inspección y adaptación. Su guía define responsabilidades y eventos; utilizar un backlog y efectuar entregas sucesivas muestra prácticas iterativas, pero no demuestra por sí solo la aplicación completa de todos los elementos de Scrum."
+  },
+  {
+    "kind": "p",
+    "text": "El trabajo de LogiApp se puede interpretar mediante incremento funcional: primero es necesario disponer de operadores y repositorios; después se conectan captura de viajes, evidencias y recuperación de fallos. El control de versiones permite observar cambios concretos y relacionarlos con módulos. Esta secuencia aporta evidencia del desarrollo incremental. Las reuniones, aceptaciones o duraciones de sprint deben sustentarse en bitácoras si se desean documentar como hechos del periodo."
+  },
+  {
+    "kind": "p",
+    "text": "El backlog recuperado contiene dos enumeraciones de historias con códigos semejantes. Para su trazabilidad conviene conservar la descripción funcional como referencia principal y asignar una identificación consistente en la memoria. Un requisito sobre apertura de viaje debe vincularse con la página correspondiente, sus validaciones y un caso de prueba, aunque su número cambie entre versiones de un documento. La claridad del vínculo es más útil que repetir una numeración ambigua."
+  },
+  {
+    "kind": "p",
+    "text": "La priorización atiende dependencia y riesgo operativo. Mantener la identidad del operador, relacionar el folio con sus datos y conservar el cierre ante desconexión anteceden a un tablero analítico. Las funciones de analítica previstas dependen de que las capturas tengan unidades y periodos comparables. El enfoque iterativo permite reconocer entregables terminados y pendientes, sin convertir todas las actividades de un plan anual en resultados ya realizados."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.10 Calidad de datos y evaluación de resultados"
+  },
+  {
+    "kind": "p",
+    "text": "La calidad de datos puede examinarse mediante completitud, validez, consistencia y trazabilidad. En el cierre de viaje, la completitud exige contar con campos y evidencia; la validez verifica que los números sean interpretables; la consistencia compara odómetro final e inicial; la trazabilidad relaciona valores con folio y operador. Un control puede ser satisfactorio en una dimensión y fallar en otra. Por ejemplo, un formulario completo todavía podría contener una recarga negativa o un separador decimal mal interpretado."
+  },
+  {
+    "kind": "p",
+    "text": "El rendimiento del viaje se obtiene dividiendo kilómetros recorridos entre litros consumidos, cuando el consumo es positivo. Los kilómetros corresponden a la diferencia entre odómetros y el consumo a la suma de combustible inicial y recargas menos combustible final. Para interpretar el cociente deben mantenerse unidades compatibles y especificar si los valores representan litros, estimaciones o lecturas de otro instrumento. Una fórmula correcta aplicada a entradas ambiguas puede producir un indicador poco confiable."
+  },
+  {
+    "kind": "p",
+    "text": "La evaluación de beneficios requiere comparar muestras equivalentes. El tiempo para crear una cuenta puede incluir captura, carga de documentos y revisión administrativa; medir solo el primer paso no representa el alta completa. Asimismo, una fotografía disponible en el teléfono no equivale a evidencia accesible en oficina. La definición de cada indicador debe establecer inicio, fin, fuente, responsable y periodo. Esta precisión permite distinguir una mejora observada de una expectativa razonable de automatización."
+  },
+  {
+    "kind": "p",
+    "text": "Los documentos previos mencionan reducciones de tiempo, ahorros y grados de madurez. Tales afirmaciones deben conservar su naturaleza documental cuando no se acompaña la serie de mediciones correspondiente. La contribución técnica verificable se expresa mediante componentes, reglas y productos existentes. El impacto económico se evaluará con registros antes y después que permitan revisar volumen, variabilidad y costos de operación. No se deduce de la cantidad de pantallas ni de que una compilación haya terminado correctamente."
+  },
+  {
+    "kind": "heading",
+    "level": 2,
+    "text": "2.11 Usabilidad y comunicación de estados"
+  },
+  {
+    "kind": "p",
+    "text": "Campbell et al. (2024) reúnen criterios verificables de accesibilidad en WCAG 2.2. Entre sus principios resulta útil para el diseño móvil acompañar información visual con señales que no dependan exclusivamente del color. Estas pautas se emplean como referencia de diseño y revisión; citarlas no constituye una certificación de accesibilidad de la aplicación. LogiApp debe examinarse en sus pantallas reales y con las condiciones de lectura del usuario operativo."
+  },
+  {
+    "kind": "p",
+    "text": "El semáforo de vigencias ofrece una interpretación rápida del tiempo restante, pero debe acompañarse por fechas y mensajes que expliquen la acción requerida. Un color puede resultar difícil de distinguir en exterior o para una persona con alteraciones de percepción cromática. Mostrar los días y la causa del bloqueo reduce esa dependencia. La revisión de usabilidad debe observar también tamaño de texto, acceso a los botones y comportamiento del formulario con el teclado abierto."
+  },
+  {
+    "kind": "p",
+    "text": "Los mensajes de sincronización merecen el mismo cuidado. El usuario necesita saber si puede abandonar la pantalla, si una fotografía quedó conservada o si debe reintentar. Un mensaje genérico de error puede provocar duplicación de capturas o pérdida del contexto. La evidencia de una operación debe obtenerse de su estado persistido y su relación remota, no exclusivamente del texto de una alerta. Esta necesidad orienta las pruebas de aceptación y las recomendaciones para evolución de la interfaz."
+  },
+  {
+    "kind": "table",
+    "caption": "Conceptos técnicos y aplicación en LogiApp",
+    "headers": [
+      "Concepto",
+      "Aplicación",
+      "Condición de interpretación"
+    ],
+    "rows": [
+      [
+        "Trazabilidad",
+        "Relacionar operador, folio, eventos y archivos",
+        "Una carpeta aislada no demuestra expediente completo"
+      ],
+      [
+        "Persistencia local",
+        "Conservar puntos, errores y contexto pendiente",
+        "El alcance varía por módulo y recurso"
+      ],
+      [
+        "Sincronización",
+        "Reintentar cambios al recuperar comunicación",
+        "Confirmar estado remoto antes de retirar el pendiente"
+      ],
+      [
+        "Autenticación",
+        "Verificar ID y contraseña transformada en hash",
+        "Separar inicio de sesión y recuperación de acceso"
+      ],
+      [
+        "Seguimiento GPS",
+        "Capturar posiciones con fecha y contexto",
+        "El intervalo y la precisión dependen del dispositivo"
+      ],
+      [
+        "Indicador",
+        "Calcular recorrido, consumo y rendimiento",
+        "Mantener unidades y calidad de las entradas"
+      ],
+      [
+        "Validación",
+        "Comparar comportamiento observado con criterio",
+        "Un plan de pruebas no sustituye la bitácora de ejecución"
+      ]
+    ]
+  }
+]

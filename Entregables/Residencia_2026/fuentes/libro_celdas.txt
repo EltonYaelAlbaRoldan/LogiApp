@@ -1,0 +1,1055 @@
+=== Anexo I ===
+B2: Anexo I
+PROYECTO DE EDUCACIÓN DUAL EN LA UNIDAD ECONÓMICA
+B4: Nombre del Proyecto de Educación Dual:
+C4: Sistema de Control para la Optimización de Ciclos de Viaje y Tiempos de
+Traslado
+B5: Nombre de la Unidad 
+Económica:
+C5: TLB Transportes
+B6: Área(s) en la que 
+desarrollará el proyecto:
+C6: Sistemas Computacionales
+B7: Programa(s) Educativo(s)
+solicitado(s):
+C7: Ingenieria en Sistemas Computacionales
+B8: Período:
+C8: Enero - Diciembre 2026
+B11: Objetivo del proyecto:
+B12: Desarrollar una solución tecnológica integral basada en una aplicación móvil, utilizando preferentemente Software Libre y herramientas del ecosistema de Google, para automatizar el ciclo de viaje y la recopilacion de datos operativos y de mantenimiento, el monitoreo GPS y la gestión de evidencias en TLB Transportes.
+B13: Descripción del proyecto:
+B14: El proyecto consiste en una aplicación para teléfonos que permite llevar un control de operaciones de la empresa. El sistema permite registrar a nuevos operadores, subir sus documentos y revisar que sus licencias estén vigentes mediante un semáforo de colores. Además, los operadores pueden reportar el estado de sus unidades antes de salir y registrar sus rutas de viaje de forma sencilla, permitiendo que la administración vea los resultados y reportes de eficiencia sin necesidad de hacer cuentas a mano.
+B15: Problemática a resolver:
+B16: El proceso actual depende de registros manuales y comunicación mediante mensajería convencional para avisar llegadas o salidas, lo cual genera un flujo de información lento y desfasado. Existe una dependencia crítica de que el personal transcriba estos datos manualmente a la base de datos, lo que incrementa el riesgo de "errores de dedo" y retrasa la toma de decisiones. Esta falta de inmediatez impide reducir tiempos operativos.
+B17: Resultados esperados:
+B18: Se espera que la aplicación logre la autonomía total del operador en el reporte de sus actividades, enviando automáticamente correos electrónicos con los puntos más importantes de la ruta, como la hora de salida y llegada. La app debe garantizar la integridad de las evidencias mediante la captura digital de firmas y fotografías en el punto de entrega, asegurando que la información clave llegue de forma inmediata a los involucrados. Asimismo, se busca que el módulo de mantenimiento fuerce una revisión sistemática de la unidad, convirtiendo el celular en una herramienta activa de supervisión y control operativo. Finalmente, se espera obtener un control estricto sobre el cumplimiento de las vigencias de cada operador, permitiendo que la administración detecte a tiempo los documentos de licencia federal y del apto medico vencidos mediante el sistema de alertas visuales.
+B19: Producto final esperado:
+B20: Una aplicación móvil de código abierto y una base de datos centralizada que elimina los registros manuales. El sistema entregará una interfaz móvil donde el operador gestiona su acceso, realiza el chequeo preventivo de la unidad en un módulo de mantenimiento y registra los hitos críticos de su ruta mediante botones de un solo clic que capturan automáticamente hora y ubicación en tiempo real. Como resultado administrativo, la plataforma enviará notificaciones automáticas por correo electrónico con los estatus clave del viaje y procesará los datos mediante herramientas de reporte para crear tableros visuales que muestren las alertas de documentos por vencer. El proyecto concluirá con la entrega de manuales técnicos, diagramas de funcionamiento y guías de usuario para asegurar que la empresa pueda operar el sistema de forma permanente.
+B24: Actividades a realizar  
+en la Unidad 
+Económica(1)
+C24: Competencias a desarrollar 
+en la Unidad Económica(2)
+D24: Tiempo de 
+realización(3)
+E24: Evidencias de 
+la actividad(4)
+B25: Arquitectura de Microservicios y Sincronización Cloud: Configuración de la infraestructura de backend basada en el ecosistema de Google para la persistencia de datos.
+C25: Capacidad para integrar servicios en la nube y asegurar la disponibilidad de datos operativos.
+D25: Enero - Marzo
+E25: Código fuente del servicio ConexionGoogleAuth.cs y diagramas de conexión.
+B26: Digitalización de Expedientes y Gestión Documental: Automatización de la captura de documentación oficial y creación de estructuras de almacenamiento seguro.
+C26: Habilidad para migrar flujos analógicos a repositorios digitales inteligentes.
+D26: Enero - Abril
+E26: Módulos de PaginaRegistro y carga de PDFs en Google Drive.
+B27: Ingeniería de Validación y Soporte Decisionario: Implementación de un motor de reglas para el monitoreo de vigencias (Agente de validación inteligente).
+C27: Capacidad para desarrollar lógica de soporte a la toma de decisiones basada en algoritmos de fechas.
+D27: Marzo - Mayo
+E27: Módulo de semaforización funcional en la PaginaPerfil.
+B28: Automatización de ETL y Reporteo con Pentaho: Diseño de flujos de integración y limpieza de datos para la generación de informes.
+C28: Aplicar de manera correcta los métodos más optimos en el uso de técnicas de IA y estadísticas.
+D28: Abril - Junio
+E28: Flujos .ktr en Pentaho y reportes automatizados de mantenimiento.
+B29: Implementación de algoritmos de clasificación no supervisada (Clustering) sobre los registros de telemetría y eficiencia (Km/L) para agrupar automáticamente a los operadores según sus patrones de conducción ocultos, sin usar etiquetas previas.
+C29: Utilizar técnicas de agrupamiento (ej. K-Means) para descubrir estructuras subyacentes y segmentar entidades en bases de datos empresariales reales.
+D29: Abril - Junio
+E29: Gráficos de dispersión mostrando los clústeres de perfiles de operadores (ej. "Eficientes" vs "Alto consumo").
+B30: Implementación de Business Intelligence (BI): Creación de tableros dinámicos para el análisis de KPIs (Kilometraje, combustible y eficiencia operativa).
+C30: Capacidad para sintetizar volúmenes de datos en visualizaciones estratégicas para la gerencia.
+D30: Mayo - Junio
+E30: Tablero de control (Dashboard) con KPIs de eficiencia operativa y reporte comparativo de métricas.
+B31: Sistemas de Monitoreo Geoespacial en Tiempo Real: Despliegue de un módulo de rastreo activo para la supervisión de unidades y control de hitos de viaje vía GPS.
+C31: Gestión de Activos Digitales: Habilidad para implementar soluciones de monitoreo remoto y visibilidad de unidades en tiempo real.
+D31: Julio - Septiembre
+E31: Interfaz de PaginaViajes con captura de coordenadas y registros de trazabilidad.
+B32: Ingeniería de Documentación y Planos de Arquitectura: Elaboración de la memoria técnica del sistema, diagramas de clases, casos de uso y esquemas de base de datos.
+C32: Optimización de Sistemas: Capacidad para documentar formalmente soluciones tecnológicas bajo estándares de ingeniería.
+D32: Septiembre - Octubre
+E32: Manual técnico, diagramas de arquitectura (UML) y diagramas de flujo.
+B33: Transferencia Tecnológica y Manuales de Usuario: Creación de manuales operativos, guías de usuario y protocolos de capacitación para el personal de TLB.
+C33: Capacidad de comunicación técnica, liderazgo de proyectos y gestión de la capacitación
+D33: Todo el periodo
+E33: Manual de usuario final y registros de capacitación del personal.
+C37: Ing. Raúl Armando Balmaceda Pérez
+B39: Notas:
+
+(1) Actividades a realizar en la empresa: Son las acciones que el estudiante va a realizar en la empresa y serán validadas por las asignaturas.
+
+(2) Competencias a desarrollar en la empresa: Las competencias que los estudiantes desarrollaran con las actividades que van a realizar en la empresa. Previamente se debe proporcionar los programas de estudio en cuestión.
+
+(3) Tiempo de realización: Se expresa en meses o semanas u horas.
+
+(4) Evidencias de la actividad: Los documentos, archivos, fotos, diagramas que se le permitirán al estudiante usar para poder demostrar el cumplimento de la actividad y con esto validar la realización de la misma.
+
+=== Anexo II ===
+B1: Anexo II
+ANÁLISIS DE COMPETENCIAS DEL PROYECTO DE EDUCACIÓN DUAL (PED)
+B3: Nombre del (de la) estudiante dual:
+D3: Elton Yael Alba Roldan 
+B4: Matrícula del (de la) estudiante dual:
+D4: 22030013
+B5: Plan de estudios:
+D5: ISIC-2010-224
+B6: Programa Educativo:
+D6: Ingenieria en Sistemas Computacionales
+B7: Nombre del (de la) Asesor(a) Interno Dual (AID):
+D7: DCC. René Cruz Guerrero
+B8: Unidad Económica:
+D8: TLB Transportes
+B9: Nombre del (de la) Asesor(a) Externo Dual (AED):
+D9:  Ing. Raúl Armando Balmaceda Pérez
+B10: Nombre del PED:
+D10: Sistema de Control para la Optimización de Ciclos de Viaje y Tiempos de Traslado.
+B11: Periodo del PED:
+D11: Enero - Diciembre 2026
+B12: Horas totales del PED:
+D12: 1000 horas
+B15: Descripción del proyecto (2)
+B17: El proyecto consiste en una aplicación para teléfonos que permite llevar un control de operaciones de la empresa. El sistema permite registrar a nuevos operadores, subir sus documentos y revisar que sus licencias estén vigentes mediante un semáforo de colores. Además, los operadores pueden reportar el estado de sus unidades antes de salir y registrar sus rutas de viaje de forma sencilla, permitiendo que la administración vea los resultados y reportes de eficiencia sin necesidad de hacer cuentas a mano.
+B31: Clave y Asignatura (3)
+C31: Créditos
+ (4)
+D31: Competencia disciplinar
+E31: Docente relacionado 
+con el PED
+F31: Horas 
+dedicadas
+ (7)
+G31: Periodo en que 
+se desarrolla (8)
+H31: Periodo en que se acredita (9)
+B32: ETD2502 Digitalización Empresarial
+C32: 5
+D32: Evaluar proyectos de transformación digital, integrando soluciones innovadoras que respondan a las necesidades de los sectores industrial, social o educativo, considerando aspectos como costo, tiempo, sostenibilidad, impacto social, y responsabilidad ética.
+E32: DCC. German Cuaya Simbro
+F32: 80
+G32: 16 semanas
+H32: Enero-Junio-2026
+B33: ETD2503 Analítica de Datos para la Transformación Digital
+C33: 5
+D33: Obtener información y conocimiento útil a partir del procesamiento de conjuntos de datos mediante técnicas para OLAP, visualización y analítica de datos, con orientación a la transformación digital y la industria 4.0 a través de una actitud ética y en entornos colaborativos.
+E33: DR. Lauro Vargas Ruiz
+F33: 80
+G33: 16 semanas
+H33: Enero-Junio-2026
+B34: ETD2504 Aplicaciones Avanzadas de Inteligencia Artificia
+C34: 5
+D34: Evaluar modelos de Deep Learning aplicados a Big Data, considerando aspectos de optimización, escalabilidad y eficiencia computacional en un marco de equidad, inclusión y responsabilidad social.
+E34: DCC. René Cruz Guerrero
+F34: 80
+G34: 16 semanas
+H34: Enero-Junio-2026
+B35: ETD2505 Competencias Blandas en la Gestión Tecnológica
+C35: 5
+D35: Desarrolla habilidades para la gestión tecnológica, fortaleciendo la capacidad de comunicarse eficazmente, influir, negociar, liderar procesos de transformación digital, adaptarse al cambio y construir redes de contacto estratégicas para mejorar la colaboración, impulsar la innovación y facilitar la adopción de nuevas tecnologías en entornos organizacionales dinámicos, de equidad y responsabilidad social.
+E35: MAC. Mónica Jiménez Gutiérrez
+F35: 80
+G35: 16 semanas
+H35: Enero-Junio-2026
+B36: ETB2501 Tecnologías Móviles para la Transformación Digital
+C36: 5
+D36: Desarrolla aplicaciones para dispositivos móviles mediante el uso de herramientas emergentes dirigidas hacia la transformación digital además de utilizar técnicas de modelado para la solución de problemas y su integración en servicios de la nube y IoT, con capacidad de negociación y orientación a resultados para la solución de problemas en un contexto real en un marco de equidad, inclusión y responsabilidad social.
+E36: MTI Antonio Martínez González
+F36: 80
+G36: 16 semanas
+H36: Enero-Junio-2026
+B37: TOTAL (10)
+F37: =SUM(F32:F36)
+B39: Propuesta de Asesor(es) Interno(s) 
+B40: Dual(es):
+F41: DCC. René Cruz Guerrero
+E44: Elabora
+B47: MSC. Héctor Hernández Mendoza
+Nombre y firma del(de la) Presidente(a) de Academia (11)
+F47: Dr. Efren Rolando Romero León
+Nombre y Firma del (de la) Secretario(a) de Academia (12)
+B50: Docente(s) Relacionado(s) con el PED:
+G50: VoBo.
+B51: (13)
+B56: DCC. René Cruz Guerrero
+F56: Ing. Román Ortega Hernández
+Nombre y Firma del (de la) Jefe(a) del Programa Educativo de Ingeniería en Sistemas Computacionales (14)
+B58: DCC. German Cuaya Simbro
+B60: MAC. Mónica Jiménez Gutiérrez
+B62: MTI. Antonio Martínez Gonzalez
+B64: DCC. Lauro Vargas Ruiz
+B65: C.c.p. Dirección Académica
+C.c.p. Subdirección Académica
+A67:                                       Guía de llenado del formato del Anexo II:
+
+(1) Información General: Escribir los datos de identificación de las personas que formarán parte del desarrollo del PED y sus áreas de adscripción. En los apartados de nombre de estudiante dual, asesores(as) internos y externos dual, si es más de un participante, se debe anotar el nombre de todos(as) los (las) involucrados(as). Este formato es un solo por todo el PED.
+
+(2) Descripción del Proyecto: Describir las características del proyecto e incluir el objetivo principal del mismo y como contribuye al perfil profesional
+• Explicar la aportación del proyecto al perfil profesional.
+• Explicar el objetivo del proyecto
+• Explicar las características importantes del proyecto.
+(3) Clave  y  Asignatura:  Escribir  la  clave  oficial  y  el  nombre  de  las asignaturas de acuerdo a las competencias disciplinares correspondientes con el proyecto de educación dual.
+
+(4) Créditos: Escribir el número de créditos totales de cada una de las asignaturas contempladas para este proyecto.
+
+(5) Competencias Disciplinares: Enunciar la o las competencias disciplinares de cada asignatura referenciada.
+
+(6) Docente relacionado con el PED: Escribir los datos de identificación del docente de las asignaturas asociadas al PED
+
+(7) Horas de actividad: Escribir el número de horas dedicadas a desarrollar cada una de las competencias disciplinares referenciadas para este proyecto, en caso de ser necesario aumentar o disminuir el número de horas por competencia disciplinar para quedar dentro del rango de un mínimo de 1,000 horas y un máximo de 2,000 horas totales correspondientes al PED.
+
+• Para el cálculo de las horas del Proyecto de Educación Dual la academia calculará el tiempo de realización en la unidad económica para calcular las horas en el desarrollo de la competencia.
+
+A112: • En el caso de la Residencia Profesional se consideran las 500 horas marcadas en el Lineamiento para la Operación y Acreditación de la Residencia Profesional del TecNM.
+• El mínimo de horas debe ser de 1,000, sumando las horas de las asignaturas y las horas de la Residencia Profesional.
+
+(8) Periodo en que se desarrolla: Escribir el tiempo en el cual se llevará a cabo el desarrollo de la competencia disciplinar (semanas, meses o semestre) correspondiente a la asignatura que será dada de alta en el horario del estudiante. Cabe señalar que no necesariamente coincide con los periodos escolares establecidos.
+
+(9) Periodo en que se acredita: Escribir el periodo en que se asentará la calificación en el sistema de servicios escolares, de la asignatura que está dada de alta en el horario del (la) estudiante.
+
+(10) Total: Es el total de horas en que se desarrolla el PED y corresponde a la sumatoria de las horas asignadas a cada competencia disciplinar. Este Número debe coincidir con horas totales del PED, indicado en la información general.
+
+(11) Nombre y firma del (de la) Presidente(a) de Academia: Nombre y firma del (la) Presidente(a) de Academia responsable de plasmar el análisis que realiza la academia del PED.
+
+(12) Nombre y firma del (de la) Secretario(a) de Academia: Nombre y firma del (la) Secretario(a) de Academia responsable de plasmar el análisis que realiza la academia del PED.
+
+(13) Docente(s) Relacionado(s) con el PED: Docentes de las asignaturas asociadas al PED que pueden contar con experiencia profesional y capacitación en la(s) en área(s) afín(es) al giro del PED, que también podrían ser los AID del proyecto.
+
+(14) Nombre y firma del (la) Jefe(a) de División del PE: Nombre y firma del (la) Jefe(a) de División del Programa Educativo.
+
+
+=== Anexo III ===
+B2: Anexo III
+PLAN DE FORMACIÓN (PF) DEL PROYECTO DE EDUCACIÓN DUAL (PED)
+B4: Información General (1)
+B6: Nombre del (de la) estudiante dual:
+E6: Elton Yael Alba Roldan
+B7: Matrícula del (de la) estudiante dual:
+F7: 22030013
+B8: Plan de estudios:
+E8: ISIC-2010-224
+B9: Nombre de la(s) Asignatura(s):
+E9: Analítica de datos para la transformación digital, aplicaciones avanzadas de inteligencia artificial, competencias blandas en la gestión tecnológica, digitalización empresarial, tecnologías móviles para la transformación digital.
+B10: Programa Educativo:
+E10: Ingeniería en Sistemas Computacionales
+B11: Nombre del (de la) Asesor(a) Interno Dual (AID):
+E11: D.C.C. René Cruz Guerrero
+B12: Unidad Económica:
+E12: TLB Transportes
+B13: Nombre del (de la) Asesor(a) Externo Dual (AED):
+E13: Ing. Raúl Armando Balmaceda Pérez
+B14: Nombre del proyecto de educación dual:
+E14: Sistema de Control para la Optimización de Ciclos de Viaje y Tiempos de Traslado
+B15: Periodo que ampara la ejecución:
+E15: Enero - Diciembre 2026
+B16: Fecha de elaboración del llenado:
+E16: 5 de febrero del 2026
+B18: Proyecto de Educación Dual (2)
+B20: Objetivo del proyecto:
+B21: Desarrollar una solución tecnológica integral basada en una aplicación móvil, utilizando preferentemente Software Libre y herramientas del ecosistema de Google, para automatizar el ciclo de viaje y la recopilacion de datos operativos y de mantenimiento, el monitoreo GPS y la gestión de evidencias en TLB Transportes.
+B22: Descripción del proyecto:
+B23: El proyecto consiste en una aplicación para teléfonos que permite llevar un control de operaciones de la empresa. El sistema permite registrar a nuevos operadores, subir sus documentos y revisar que sus licencias estén vigentes mediante un semáforo de colores. Además, los operadores pueden reportar el estado de sus unidades antes de salir y registrar sus rutas de viaje de forma sencilla, permitiendo que la administración vea los resultados y reportes de eficiencia sin necesidad de hacer cuentas a mano.
+B24: Problemática a resolver:
+B25: El proceso actual depende de registros manuales y comunicación mediante mensajería convencional para avisar llegadas o salidas, lo cual genera un flujo de información lento y desfasado. Existe una dependencia crítica de que el personal transcriba estos datos manualmente a la base de datos, lo que incrementa el riesgo de "errores de dedo" y retrasa la toma de decisiones. Esta falta de inmediatez impide reducir tiempos operativos.
+B26: Resultados esperados:
+B27: Se espera que la aplicación logre la autonomía total del operador en el reporte de sus actividades, enviando automáticamente correos electrónicos con los puntos más importantes de la ruta, como la hora de salida y llegada. La app debe garantizar la integridad de las evidencias mediante la captura digital de firmas y fotografías en el punto de entrega, asegurando que la información clave llegue de forma inmediata a los involucrados. Asimismo, se busca que el módulo de mantenimiento fuerce una revisión sistemática de la unidad, convirtiendo el celular en una herramienta activa de supervisión y control operativo. Finalmente, se espera obtener un control estricto sobre el cumplimiento de las vigencias de cada operador, permitiendo que la administración detecte a tiempo los documentos de licencia federal y del apto medico vencidos mediante el sistema de alertas visuales.
+B28: Producto final esperado:
+B29: Una aplicación móvil de código abierto y una base de datos centralizada que elimina los registros manuales. El sistema entregará una interfaz móvil donde el operador gestiona su acceso, realiza el chequeo preventivo de la unidad en un módulo de mantenimiento y registra los hitos críticos de su ruta mediante botones de un solo clic que capturan automáticamente hora y ubicación en tiempo real. Como resultado administrativo, la plataforma enviará notificaciones automáticas por correo electrónico con los estatus clave del viaje y procesará los datos mediante herramientas de reporte para crear tableros visuales que muestren las alertas de documentos por vencer. El proyecto concluirá con la entrega de manuales técnicos, diagramas de funcionamiento y guías de usuario para asegurar que la empresa pueda operar el sistema de forma permanente.
+B32: (3) Descripción del entorno en la Unidad Económica
+B34: Acciones o tareas previas
+D34: El área o áreas
+F34: Horario de actividades
+B35: Registro manual de bitácoras de viaje y captura física de kilometraje.
+D35: Operaciones y logística
+F35: 8:00 - 16:00
+B36: Control analógico y revisión física de vigencias de licencias de operadores.
+D36: Administración y recursos humanos
+F36: 8:00 - 16:00
+B37: Recopilación en papel de vales de combustible y evidencias de carga.
+D37: Liquidaciones y facturación
+F37: 8:00 - 16:00
+B38: Archivo manual de reportes de servicios y costos de mantenimiento en taller.
+D38: Mantenimiento y taller mecánico
+F38: 8:00 - 16:00
+B41: (4) Análisis por competencia (desarrollo de competencias disciplinares y blandas)
+B43: (4.1) Descripción de la competencia disciplinar No:   1  Analítica de datos para la transformación digital
+B46: Aplicar técnicas analíticas y arquitecturas de extracción de información para procesar datos de rendimiento logístico, automatizando la centralización de indicadores clave para la toma de decisiones estratégicas de la empresa.
+E46: Periodo en el que se desarrolla
+E47: Enero-Junio 2026
+B50: (4.2) Actividades a realizar en Unidad Económica para desarrollar la competencia disciplinar
+B53: Actividades a realizar para cubrir la competencia disciplinar No. 1
+D53: Horas asignadas a la actividad
+E53: Evidencias de las actividades a desarrollar para el alcance de la competencia disciplinar
+B54: Desarrollo y configuración de flujos de extracción y transformación de datos de vigencias y viajes en pentaho.
+D54: 30
+E54: Archivos de transformación con extensión ktr y diagramas de flujo de datos limpios.
+B55: Desarrollo de transformaciones para el filtrado de vigencias documentales en pentaho.
+D55: 30
+E55: Repositorio de flujos lógicos con limpieza y depuración de registros de operadores.
+B56: Modelado de kpis logísticos e integración de tableros de control visuales.
+D56: 20
+E56: Plataforma interactiva en looker studio con indicadores de kilometraje, combustible y estatus operativos.
+B57: Total
+D57: =SUM(D54:D56)
+B60: (4.1) Descripción de la competencia disciplinar No:  2 Aplicaciones avanzadas de inteligencia artificial
+B63: Implementar algoritmos y motores de reglas lógicas automatizadas para optimizar de manera estandarizada el control de alertas operativas y la gestión financiera en los ciclos de transporte.
+E63: Periodo en el que se desarrolla
+E64: Enero-Junio 2026
+B67: (4.2) Actividades a realizar en Unidad Económica para desarrollar la competencia disciplinar
+B70: Actividades a realizar para cubrir la competencia disciplinar No. 2
+D70: Horas asignadas a la actividad
+E70: Evidencias de las actividades a desarrollar para el alcance de la competencia disciplinar
+B71: Desarrollo del motor de reglas lógicas para la detección automatizada de vencimientos documentales.
+D71: 40
+E71: Aplicación móvil con interfaz de perfil y sistema funcional de alertas por semaforización.
+B72: Programación del algoritmo de cálculo, validación y procesamiento de costos en el taller mecánico.
+D72: 40
+E72: Código fuente optimizado para el control financiero y validación de montos del servicio técnico.
+B73: Total
+D73: =SUM(D71:D72)
+B76: (4.1) Descripción de la competencia disciplinar No:  3 Digitalización empresarial
+B79: Diseñar interfaces de captura documental y flujos digitales de reportes técnicos para mitigar el uso de bitácoras físicas, agilizando el almacenamiento del historial de operaciones en la organización.
+E79: Periodo en el que se desarrolla
+E80: Enero-Junio 2026
+B83: (4.2) Actividades a realizar en Unidad Económica para desarrollar la competencia disciplinar
+B86: Actividades a realizar para cubrir la competencia disciplinar No. 3
+D86: Horas asignadas a la actividad
+E86: Evidencias de las actividades a desarrollar para el alcance de la competencia disciplinar
+B87: Desarrollo del módulo de taller, checklist de seguridad y captura de evidencias fotográficas de mantenimiento.
+D87: 40
+E87: Aplicación móvil con formulario técnico de servicios y almacenamiento de archivos de soporte.
+B88: Programación del sistema de almacenamiento local asíncrono e interfaz de consultas históricas de la ruta.
+D88: 40
+E88: Interfaz de historial de viajes con folios asignados y persistencia offline-first en base de datos sqlite.
+B89: Total
+D89: =SUM(D87:D88)
+B92: (4.1) Descripción de la competencia disciplinar No:  4 Tecnologías móviles para la transformación digital
+B95: Desarrollar interfaces móviles multiplataforma eficientes con persistencia segura de datos y localización satelital para asegurar la continuidad de la recolección de datos en campo.
+E95: Periodo en el que se desarrolla
+E96: Enero-Junio 2026
+B99: (4.2) Actividades a realizar en Unidad Económica para desarrollar la competencia disciplinar
+B102: Actividades a realizar para cubrir la competencia disciplinar No. 4
+D102: Horas asignadas a la actividad
+E102: Evidencias de las actividades a desarrollar para el alcance de la competencia disciplinar
+B103: Desarrollo del módulo de registro de personal institucional e inicio de sesión seguro para operadores. 
+D103: 40
+E103: Aplicación móvil con interfaz funcional de acceso y encriptación local de credenciales.
+B104: Programación del módulo de apertura de viajes, seguimiento gps y localización satelital en tiempo real.
+D104: 40
+E104: Cliente móvil con tracking activo de coordenadas y botones de reporte de ubicación en ruta.
+B105: Total
+D105: =SUM(D103:D104)
+B108: (4.1) Descripción de la competencia disciplinar No:  5 Competencias blandas en la gestión tecnológica
+B111: Demostrar habilidades de resolución de problemas complejos, trabajo en equipo y comunicación asertiva para coordinar el desarrollo de software y presentar soluciones tecnológicas accesibles a la organización.
+E111: Periodo en el que se desarrolla
+E112: Enero-Junio 2026
+B115: (4.2) Actividades a realizar en Unidad Económica para desarrollar la competencia disciplinar
+B118: Actividades a realizar para cubrir la competencia disciplinar No. 5
+D118: Horas asignadas a la actividad
+E118: Evidencias de las actividades a desarrollar para el alcance de la competencia disciplinar
+B119: Participar en reuniones periódicas con el asesor externo para validar pantallas y flujos técnicos del sistema.
+D119: 40
+E119: Minutas de seguimiento técnico, acuerdos de diseño de interfaces y registro de retroalimentación.
+B120: Presentar el funcionamiento de los tableros analíticos y pantallas operativas de forma accesible para la gerencia.
+D120: 40
+E120: Demostración interactiva de los gráficos en looker studio y explicación del procesamiento de datos logísticos.
+B121: Total
+D121: =SUM(D119:D120)
+B124: (4.4) Actividades a realizar en Unidad Económica para desarrollar la competencia blanda
+B126: Actividades a realizar para cubrir la competencia blanda No.  _____
+E126: Evidencia relacionada con la competencia.
+B127: Participar en reuniones periódicas con el asesor externo para validar flujos operativos y pantallas del sistema.
+E127: Minutas de seguimiento técnico, acuerdos de diseño de interfaces y registro de retroalimentación.
+B128: Documentar de forma clara los avances en el código fuente, la mitigación de riesgos de red y los cambios en la arquitectura.
+E128: Memoria técnica del proyecto, esquemas UML y reportes de control de incremento de software.
+B129: Coordinar simulaciones de uso del cliente móvil en emuladores de escritorio con personal administrativo.
+E129: Registro de pruebas de escritorio, observaciones de usabilidad atendidas y mejoras en la experiencia de usuario.
+B130: Presentar el funcionamiento del tablero analítico de métricas de forma accesible para la gerencia de la empresa.
+E130: Demostración interactiva de los gráficos en looker studio y explicación del procesamiento de datos logísticos.
+B133: (4.5) Actividades a realizar por el (la) Asesor(a) Interno Dual (AID) para el seguimiento del desarrollo de la competencia disciplinar
+B135: Actividades de acompañamiento
+E135: Fecha programada
+B136: Revisión del dataset local, diseño de la base de datos sqlite y planeación del inicio de sesión único.
+E136: 2026-03-01T00:00:00
+B137: Seguimiento a la programación en c# del motor de vigencias y mapeo de localización gps en ruta.
+E137: 2026-04-01T00:00:00
+B138: Validación de reportes de taller, simulación offline de carga de evidencias y pruebas de tableros analíticos.
+E138: 2026-05-01T00:00:00
+B142: (3)       Estrategia de evaluación de las evidencias (Ponderación de las evidencias)
+B144: Evidencia de aprendizaje disciplinar
+F144: Ponderación de evidencias
+%
+B145: Interfaz funcional de acceso y persistencia segura de credenciales.
+F145: 0.1
+B146: Pantalla de perfil de usuario y sistema visual de semaforización de vigencias.
+F146: 0.1
+B147: Formulario de reportes financieros, checklist y captura de evidencias en taller.
+F147: 0.1
+B148: Interfaz de viajes con tracking activo de coordenadas gps en tiempo real.
+F148: 0.1
+B149: Repositorio con persistencia offline-first en base de datos sqlite.
+F149: 0.1
+B150: Plataforma interactiva en looker studio configurada con kpis logísticos.
+F150: 0.1
+B151: Total
+F151: 0.6
+B154: Evidencia de aprendizaje competencia blanda
+F154: Ponderación de evidencias
+%
+B155: Comunicación asertiva y seguimiento en reuniones con usuarios y asesores.
+F155: 0.1
+B156: Responsabilidad en documentación técnica, pruebas de escritorio y control de riesgos.
+F156: 0.1
+B157: Trabajo colaborativo para la división de módulos y ajuste de requerimientos.
+F157: 0.1
+B158: Presentación clara de resultados operativos y demostración de kpis gerenciales.
+F158: 0.1
+B161: Total
+F161: 0.4
+B172: (3)   Esquema de integración de la calificación final de la asignatura
+B174: Evaluación Competencia disciplinar
+E174: 0.6
+B175: Evaluación Competencia blanda
+E175: 0.4
+B176: Evaluación Final
+E176: 1
+D180: Elaboró (7)
+B185: DCC. René Cruz Guerrero
+(7.1) Nombre y Firma de AID 1
+F185: Ing. Raúl Armando Balmaceda Pérez
+(7.2) Nombre y Firma de AED
+B197: (7.3) Nombre y Firma del Docente Relacionado con el PED
+B201: Vo.Bo.
+F201: Recibe
+B205: Nombre y Firma del (de la) Jefe(a) de División del PE de... (8)
+F205: Subdirector(a) Académico(a) (9)
+A209:                                   Guía de llenado del formato del Anexo III:
+
+(1) Información General: Escribir los datos de identificación de las personas que formarán parte del desarrollo del PED y sus áreas de adscripción, plan de estudios, nombre de la(s) asignatura(s), unidad académica, nombre del proyecto, periodo que ampara y fecha de elaboración. En los apartados de nombre del (la) estudiante dual, asesores(as) internos y externos dual, si es más de un participante, se debe anotar el nombre de todas y todos los involucrados. Este formato es uno solo por todo el PED.
+
+(2) Proyecto de Educación Dual: Describir el proyecto e incluir el objetivo principal del mismo y como contribuye al perfil profesional
+● Objetivo.
+● Descripción.
+● Problemática.
+● Resultados.
+● Producto final esperado.
+
+(3) Descripción del entorno en la Unidad Económica: Describir de manera general y sintética las acciones, tareas y entorno en el que el estudiante desarrollará las actividades a realizar en la unidad económica:
+● Acciones o tareas previas al inicio del proyecto dentro de la unidad económica.
+● El área o áreas donde desarrollará las actividades del proyecto.
+● Horario de actividades en la unidad económica
+
+(4) Análisis por competencia: Los puntos que se describen a continuación se repiten, de acuerdo con el número de asignaturas que se desarrollarán en el PED y que se listan en el formato de plan Dual
+
+(4.1) Descripción de la competencia disciplinar No.: Se enuncia de manera clara, concreta y descriptiva la competencia disciplinar que se pretende que el (la) estudiante desarrolle como resultado de su proceso formativo en el desarrollo del PED y que corresponden a la asignatura que acreditará, identificada en el Anexo II. Escribir el periodo en que se desarrolla.
+
+A250:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             (4.2) Actividades a realizar para cubrir la competencia disciplinar No.: Describir el conjunto de actividades que el (la) estudiante desarrollará durante el proyecto, 
+
+● Actividades a realizar para cubrir la competencia disciplinar No.: Se enuncian las actividades que se van a desarrollar para el cumplimiento de la competencia disciplinar desde la unidad económica.
+● Horas asignadas a la actividad: Con base en las actividades a desarrolla se determinará los tiempos en que el (la) estudiante las debe realizar, para poder dar el seguimiento.
+● Evidencias de las actividades a desarrollar para el alcance de la competencia disciplinar: Indicar en un listado las evidencias que avalan el desarrollo de las actividades.
+● Total: Indica la suma de las horas asignadas a las actividades y debe ser un mínimo de 1,000 hasta un máximo de 2,000 horas.
+
+Nota: El (la) asesor(a) interno dual y el (la) asesor(a) externo dual en conjunto, coordinarán, y supervisarán las actividades. Estas actividades no solo son importantes para la adquisición de las competencias disciplinares; sino que también se constituyen en aprendizajes importantes para la adquisición y desarrollo de competencias disciplinares en el (la) estudiante, competencias fundamentales en su formación, pero sobre todo en su futuro desempeño profesional.
+
+(4.3)    Descripción    de    las    competencias    blandas    No.:   Describe   las competencias blandas considerando el Anexo VI
+
+(4.4) Actividades a realizar en unida económica para desarrollar la competencia blanda No.:
+
+● Actividades  a  realizar  para  cubrir  la  competencia  blanda  No.:  Se enuncian las actividades que se van a desarrollar para el cumplimiento de la competencia disciplinar desde la unidad económica.
+● Evidencias de las actividades a desarrollar para el alcance de la competencia blanda: Indicar en un listado las evidencias que avalan el desarrollo de las actividades.
+
+
+A291: (4.5) Actividades a realizar por el (la) Asesor(a) Interno Dual (AID) para el seguimiento  del  desarrollo  de  la  competencia  disciplinar: Las actividades que el(la) profesor(a) llevará a cabo para que el acompañamiento y seguimiento de las actividades que el estudiante realizará en la empresa.
+
+● Actividades de acompañamiento: Se enumeran las actividades que se van a desarrollar para dar seguimiento del cumplimiento de las competencias disciplinares por el (la) estudiante en la empresa.
+● Fecha programada: Con base en las actividades a desarrollar se determinará la fecha en que se deberá realizar dicha actividad.
+
+(5) Estrategia de evaluación de las evidencias (Ponderación de las evidencias): Indica los criterios de valoración de los indicadores de desempeño por cada una de las actividades definidas en el punto anterior.
+
+● Evidencia de aprendizaje disciplinar: Escribir las evidencias correspondientes a las actividades a desarrollar
+● Ponderación: proporción de la calificación para la actividad.
+● Total: Es la suma de las ponderaciones de las actividades y no deberá ser mayor a 60%.
+● Evidencia de aprendizaje blandas: Escribir las evidencias correspondientes a las actividades a desarrollar
+● Ponderación: proporción de la calificación para la actividad.
+● Total: Es la suma de las ponderaciones de las actividades y no deberá ser mayor a 40%.
+
+(6) Esquema  de  integración  de  la  calificación  final  de  la  asignatura: Información concentrada para la evaluación de la competencia en términos numéricos. Esta integración la debe llevar a cabo cada asesor(a) interno dual en el Anexo VII, correspondiente al acta de acreditación.
+
+● Calificación Competencias Disciplinar: Escribir la calificación correspondiente al 60% del total, en base a la rúbrica para evaluar las competencias disciplinares Anexo V.
+● Calificación   Competencias   Blandas:       Escribir   la   calificación correspondiente al 40% del total en base a la rúbrica para evaluar las competencias blandas. Esta calificación se obtiene del Anexo VI.
+
+
+A332: ● Calificación final: Escribir la suma de las calificaciones de las competencias disciplinares y blandas, corresponde al 100% de la calificación de la asignatura.
+
+(7) Nombres y firmas de quien elabora el Plan de Formación (PF): Registra el(los)nombres y la(s) firma(s) del (la) asesor(a) interno y externos dual, que estará llevando el acompañamiento al estudiante, durante las actividades que desarrollará para la acreditación de la competencia disciplinar y del docente relacionado con el PED. En este formato se registran las firmas, si son varios(as) asesores(as) internos duales, cada uno avala únicamente el apartado que está firmando, es decir, una competencia disciplinar, si fuera el caso.
+
+(7.1)  Nombre  y  firma  del  (de  la)  Asesor  Interno  Dual  (AID)  N:  Registra el(los)nombres y la(s) firma(s) del (la) asesor(a) interno dual, que estará llevando el acompañamiento al estudiante, durante las actividades que desarrollará para la acreditación de la competencia disciplinar. En este formato se registran las firmas, si son varios(as) asesores(as) internos duales, cada uno avala únicamente el apartado que está firmando, es decir, una competencia disciplinar, si fuera el caso.
+
+(7.2) Nombre y firma del (de la) Asesor Externo Dual (AID) N: Registra el(los)nombres y la(s) firma(s) del (la) asesor(a) externo dual, que estará llevando el acompañamiento al estudiante, durante las actividades que desarrollará para la acreditación de la competencia disciplinar. En este formato se registran las firmas, si son varios(as) asesores(as) internos duales, cada uno avala únicamente el apartado que está firmando, es decir, una competencia disciplinar, si fuera el caso.
+
+(7.3) Nombre y firma del (de la) docente relacionado con el proyecto de Educación Dual: Registra el(los)nombres y la(s) firma(s) del (la) docente, que colabora con el Proyecto de Educación Dual.
+
+(8) Nombre y firma del (de la) Jefe(a) de División del PE: Nombre y firma del (la) Jefe(a) de División del Programa Educativo.
+
+(9) Nombre y firma del (de la) del Coordinador(a) Institucional de Educación Dual: Nombre y firma del (de la) Subdirector(a) Académico(a).
+
+
+=== Anexo IV ===
+B2: Anexo IV
+FORMATO EJECUCIÓN Y SEGUIMIENTO DEL PED
+B4: Información General (1)
+B7: Nombre del Estudiante Dual:
+E7: Elton Yael Alba Roldan
+B8: Matrícula del Estudiante Dual:
+E8: 22030013
+B9: Nombre del Proyecto:
+E9: Sistema de Control para la Optimización de Ciclos de Viaje y Tiempos de Traslado
+B10: Periodo de realización:
+E10: Enero - Junio - 2026
+B13: Área en la UE (2)
+C13: Competencia disciplinar (3)
+D13: Actividades desarrolladas (4)
+E13: Producto evidencia (5)
+F13: Asesores (6)
+G13: Nivel de Desempeño (7)
+L13: Retroalimentación (8)
+G14: Excelente
+H14: Notable
+I14: Bueno
+J14: Suficiente
+K14: Insuficiente
+B15: TLB TRANSPORTES
+C15: Implementar sistemas de información para la gestión documental y operativa.
+D15: Desarrollo de interfaz gráfica para el registro, digitalización y validación de expedientes de operadores.
+E15: Módulo de Registro
+F15: Interno
+F16: Externo
+B17: TLB TRANSPORTES
+C17: Desarrollar soluciones móviles orientadas al análisis logístico y geolocalización.
+D17: Programación del algoritmo de telemetría y captura de coordenadas GPS de forma automatizada.
+E17: Módulo de Telemetría (Operador)
+F17: Interno
+F18: Externo
+B19: TLB TRANSPORTES
+C19: Administrar bases de datos móviles para garantizar la persistencia de la información.
+D19: Diseño e implementación de base de datos local (SQLite) para asegurar los registros en modo "Offline".
+E19: Módulo de Persistencia Local
+F19: Interno
+F20: Externo
+B21: TLB TRANSPORTES
+C21: Gestionar datos en la nube para agilizar la toma de decisiones gerenciales.
+D21: Sincronización asíncrona bidireccional y carga de evidencias JSON hacia las APIs de Google Workspace.
+E21: Módulo de Integración Cloud
+F21: Interno
+F22: Externo
+B23: TLB TRANSPORTES
+C23: Aplicar metodologías de aseguramiento de calidad (QA) para la integridad del software.
+D23: Ejecución de pruebas de desconexión de red (Test Cards) y validaciones lógicas de reglas de negocio en origen.
+E23: Módulo de Calidad y Validación
+F23: Interno
+F24: Externo
+E26: Elaboró
+B29: DCC. René Cruz Guerrero
+(9) Nombre y Firma de AID 1
+F29:  Ing. Raúl Armando Balmaceda Pérez
+(10) Nombre y Firma de AED
+F35: Ing. Román Ortega Hernández
+PE de Ingeniería en Sistemas Computacionales (11)
+E38: Recibe
+B41: Elton Yael Alba Roldan
+Firma del Estudiante Dual (12)
+F41: DCC. René Cruz Guerrero
+Docente(s) Relacionado(s) con el PED (13)
+B44: DCC. German Cuaya Simbro
+Docente(s) Relacionado(s) con el PED (13)
+F44: MAC. Mónica Jiménez Gutiérrez
+Docente(s) Relacionado(s) con el PED (13)
+B48: DCC. Lauro Vargas Ruiz
+Docente(s) Relacionado(s) con el PED (13)
+F48: MTI Antonio Martínez González
+Docente(s) Relacionado(s) con el PED (13)
+B52: Fecha del seguimiento: (14) 
+A53:                           Guía de llenado del formato del Anexo IV:
+
+(1) Información General: Escribir los datos de identificación del Estudiante Dual, nombre del proyecto de educación dual y periodo de realización que corresponde al semestre.
+
+(2) Área en la Unidad Económica: Espacio funcional organizacional de la unidad económica donde realiza las actividades del PED.
+
+(3) Competencia Disciplinar: Se enuncia de manera clara, concreta y descriptiva la competencia disciplinar que se pretende que el (la) estudiante desarrolle como resultado de su proceso formativo en el desarrollo del PED y que corresponden a la asignatura que acreditará.
+
+(4) Actividades Desarrolladas: Describir el conjunto de actividades que el (la) estudiante desarrollará durante el proyect.
+
+(5) Producto evidencia: Los documentos, archivos, fotos, diagramas que se le permitirán al estudiante usar para poder demostrar el cumplimento de la actividad y con esto validar la realización de la misma.
+
+(6) Asesores:
+
+• Interno: Docente del instituto tecnológico designado para brindar acompañamiento, asesoramiento y evaluación al estudiante dual en el PED.
+• Externo: Persona de la unidad económica designado para brindar acompañamiento, asesoramiento y evaluación al estudiante dual en el PED.
+
+(7) Nivel de desempeño: Se selecciona con una “x” el nivel de desempeño
+alcanzado por el estudiante, por cada una de los criterios a evaluar.
+
+• Insuficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere insuficiente. Considerar que es el peor caso de desempeño.
+
+A94: • Suficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño  se  considere  que  se  encuentra  en  desarrollo;  el estudiante es incapaz de desarrollar de forma autónoma el desempeño esperado, y requiere ayuda teórica, práctica, de indicaciones, etc.
+• Bueno. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere que representa un dominio bueno. Es el criterio de lo que, medianamente, el estudiante debe demostrar como para ejecutar el indicador de desempeño de manera autónoma, dando al menos el resultado esperado.
+• Notable. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere notable. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante cumple con una actuación más allá de lo mínimo requerido.
+• Excelente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere excelente. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante excede una actuación mucho más allá de lo mínimo requerido.
+
+(8) Retroalimentación: Comentarios, observaciones sugerencias que se emiten con el propósito de señalar las áreas de oportunidad en el desarrollo de la competencia, así como, para motivar y reconocer el desempeño alcanzado.
+
+(9) Nombre y firma del (de la) AID N: Registra el nombre y la firma del (la) asesor(a) interno dual, que estará llevando el acompañamiento al estudiante, durante las actividades que desarrollará para la acreditación de la competencia disciplinar. En este formato se registran varias firmas, si son varios(as) asesores(as) internos duales, cada uno avala únicamente el apartado que está firmando, es decir una competencia disciplinar, si fuera el caso.
+
+A135: (10) Nombre y Firma del (de la) AED: Persona de la unidad económica designado para brindar acompañamiento, asesoramiento y evaluación al estudiante dual en el PED.
+
+(11) Nombre y firma del (de la) Jefe(a) de División del PE: Nombre y firma del (la) Jefe(a) de División del Programa Educativo.
+
+(12) Firma del Estudiante Dual: Enterado de conocimiento a la retroalimentación que se otorga al seguimiento del desarrollo del PED.
+
+(13) Nombre(s) y firma(s) del (de la/los/las) Docente(s) Relacionado(s) con el PED: Docentes de las asignaturas asociadas al PED que pueden contar con experiencia profesional y capacitación en la(s) en área(s) afín(es) al giro del PED, que también podrían ser los AID del proyecto.
+
+(14) Fecha del seguimiento: Día, mes y año en el que se realiza el llenado del formato.
+
+
+=== Anexo V AB ===
+B2: Anexo V
+RÚBRICA PARA EVALUAR COMPETENCIAS DISCIPLINARES DEL PED
+B5: Asignatura:
+C5: Competencias Blandas en la Gestión Tecnológica
+B6: Competencia disciplinar:
+C6: Desarrolla habilidades para la gestión tecnológica, fortaleciendo la capacidad de comunicarse eficazmente, influir, negociar, liderar procesos de transformación digital, adaptarse al cambio y construir redes de contacto estratégicas para mejorar la colaboración, impulsar la innovación y facilitar la adopción de nuevas tecnologías en entornos organizacionales dinámicos, de equidad y responsabilidad social.
+B7: Nombre de (de la) estudiante dual:
+C7: Elton Yael Alba Roldan
+B8: Matrícula de (de la) estudiante dual:
+E8: 22030013
+B9: Periodo de evaluación:
+C9: Enero-Junio-2026
+B12: Matriz de evaluación de la competencia disciplinar por el (la) estudiante dual (1)
+B15: Evidencias 
+(2)
+C15: Porcentaje
+D15: Nivel de desempeño (3)
+D16: Excelente
+E16: Notable
+F16: Bueno
+G16: Suficiente
+H16: Insuficiente
+B17: Presentación formal de avances y resultados a la gerencia de TLB Transportes, explicando el alcance tecnológico de LogiApp y demostrando con datos duros su utilidad para mejorar los procesos logísticos.
+C17: 0.2
+B18:  Coordinación efectiva con el equipo para el desarrollo de la solución, y empatía demostrada al capacitar a los operadores de transporte para facilitar la adopción de la nueva aplicación móvil.
+C18: 0.2
+B19: Resiliencia y liderazgo técnico para ajustar la planeación del proyecto ante las limitaciones físicas de la carretera, implementando ágilmente un modelo Offline-First (SQLite) para salvar la conectividad.
+C19: 0.2
+B21: TOTAL (%)
+C21: 0.6
+B25: *Evidencia adicional (capacitaciones, certificaciones laborales, entre otros). 
+Nombre de la evidencia/Registro/Fecha
+B28: Retroalimentación del (de la) Asesor(a) Interno Dual:
+B34: Firma del (de la) estudiante
+E34: DCC. René Cruz Guerrero
+Nombre y firma del (de la)
+ Asesor(a)  Interno Dual
+A36:                                    Guía de llenado del formato del Anexo V:
+
+(1) Matriz de evaluación de la competencia disciplinar por el estudiante dual: Valoración del nivel de desempeño por evidencia para el logro de la competencia por el estudiante dual.
+
+• Una evidencia puede utilizar varios renglones.
+• Cada nivel de desempeño, se debe describir y anotar en paréntesis el puntaje.
+• El total máximo de todas las evidencias no debe exceder de 60%.
+• Se elabora una por competencia general (asignatura) y por estudiante.
+• Esa calificación se refleja en la instrumentación didáctica.
+
+(2) Evidencias: Evidencias definidas en la instrumentación dual
+Puntos asignados: Puntos correspondientes al nivel de desempeño en el aspecto de la evidencia evaluada
+
+(3) Nivel de desempeño: Enunciar las características para cada nivel de desempeño con su valoración numérica entre paréntesis.
+
+• Insuficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere insuficiente. Considerar que es el peor caso de desempeño.
+• Suficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño   se   considere   que   se   encuentra   en   desarrollo;   el estudiante es incapaz de desarrollar de forma autónoma el desempeño esperado, y requiere ayuda teórica, práctica, de indicaciones, etc.
+• Bueno. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere que representa un dominio bueno. Es el criterio de lo que, medianamente, el estudiante debe demostrar como para ejecutar el indicador de desempeño de manera autónoma, dando al menos el resultado esperado.
+• Notable. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere notable. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante cumple con una actuación más allá de lo mínimo requerido.
+• Excelente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere excelente. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante excede una actuación mucho más allá de lo mínimo requerido.
+
+
+
+=== Anexo V AAIA ===
+B2: Anexo V
+RÚBRICA PARA EVALUAR COMPETENCIAS DISCIPLINARES DEL PED
+B5: Asignatura:
+C5: Aplicaciones Avanzadas de Inteligencia Artificia
+B6: Competencia disciplinar:
+C6: Evaluar modelos de Deep Learning aplicados a Big Data, considerando aspectos de optimización, escalabilidad y eficiencia computacional en un marco de equidad, inclusión y responsabilidad social.
+B7: Nombre de (de la) estudiante dual:
+C7: Elton Yael Alba Roldan
+B8: Matrícula de (de la) estudiante dual:
+E8: 22030013
+B9: Periodo de evaluación:
+C9: Enero-Junio-2026
+B12: Matriz de evaluación de la competencia disciplinar por el (la) estudiante dual (1)
+B15: Evidencias 
+(2)
+C15: Porcentaje
+D15: Nivel de desempeño (3)
+D16: Excelente
+E16: Notable
+F16: Bueno
+G16: Suficiente
+H16: Insuficiente
+B17: Evaluación de visión computacional aplicada a la validación de evidencias fotográficas recopiladas en campo (tickets, licencias y comprobantes).
+C17: 0.2
+B18: Uso o propuesta de OCR sobre los documentos logísticos digitalizados para convertir la información visual en bases de datos masivas estructuradas.
+C18: 0.2
+B19: Clasificación de grandes volúmenes de telemetría GPS (Big Data) mediante etiquetas visuales, relacionando las rutas con modelos de aprendizaje.
+C19: 0.2
+B21: TOTAL (%)
+C21: 0.6
+B25: *Evidencia adicional (capacitaciones, certificaciones laborales, entre otros). 
+Nombre de la evidencia/Registro/Fecha
+B28: Retroalimentación del (de la) Asesor(a) Interno Dual:
+B34: Firma del (de la) estudiante
+E34: DCC. René Cruz Guerrero
+Nombre y firma del (de la)
+ Asesor(a)  Interno Dual
+A36:                                    Guía de llenado del formato del Anexo V:
+
+(1) Matriz de evaluación de la competencia disciplinar por el estudiante dual: Valoración del nivel de desempeño por evidencia para el logro de la competencia por el estudiante dual.
+
+• Una evidencia puede utilizar varios renglones.
+• Cada nivel de desempeño, se debe describir y anotar en paréntesis el puntaje.
+• El total máximo de todas las evidencias no debe exceder de 60%.
+• Se elabora una por competencia general (asignatura) y por estudiante.
+• Esa calificación se refleja en la instrumentación didáctica.
+
+(2) Evidencias: Evidencias definidas en la instrumentación dual
+Puntos asignados: Puntos correspondientes al nivel de desempeño en el aspecto de la evidencia evaluada
+
+(3) Nivel de desempeño: Enunciar las características para cada nivel de desempeño con su valoración numérica entre paréntesis.
+
+• Insuficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere insuficiente. Considerar que es el peor caso de desempeño.
+• Suficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño   se   considere   que   se   encuentra   en   desarrollo;   el estudiante es incapaz de desarrollar de forma autónoma el desempeño esperado, y requiere ayuda teórica, práctica, de indicaciones, etc.
+• Bueno. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere que representa un dominio bueno. Es el criterio de lo que, medianamente, el estudiante debe demostrar como para ejecutar el indicador de desempeño de manera autónoma, dando al menos el resultado esperado.
+• Notable. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere notable. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante cumple con una actuación más allá de lo mínimo requerido.
+• Excelente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere excelente. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante excede una actuación mucho más allá de lo mínimo requerido.
+
+
+
+=== Anexo V DE ===
+B2: Anexo V
+RÚBRICA PARA EVALUAR COMPETENCIAS DISCIPLINARES DEL PED
+B5: Asignatura:
+C5: DIGITALIZACIÓN EMPRESARIAL
+B6: Competencia disciplinar:
+C6: Evaluar proyectos de transformación digital, integrando soluciones innovadoras que respondan a las necesidades de los sectores industrial, social o educativo, considerando aspectos como costo, tiempo, sostenibilidad, impacto social, y responsabilidad ética.
+B7: Nombre de (de la) estudiante dual:
+C7: Elton Yael Alba Roldan
+B8: Matrícula de (de la) estudiante dual:
+E8: 22030013
+B9: Periodo de evaluación:
+C9: Enero-Junio-2026
+B12: Matriz de evaluación de la competencia disciplinar por el (la) estudiante dual (1)
+B15: Evidencias 
+(2)
+C15: Porcentaje
+D15: Nivel de desempeño (3)
+D16: Excelente
+E16: Notable
+F16: Bueno
+G16: Suficiente
+H16: Insuficiente
+B17: Identificación de la problemática (rezago en expedientes/ceguera de red) en TLB Transportes y propuesta de LogiApp como solución digital.
+C17: 0.2
+B18: Documentación técnica del alcance, requerimientos operativos y funcionamiento de la arquitectura móvil implementada.
+C18: 0.2
+B19: Uso de herramientas digitales (.NET MAUI y Google Workspace) para digitalizar, controlar y analizar el proceso logístico.
+C19: 0.2
+B21: TOTAL (%)
+C21: 0.6
+B25: *Evidencia adicional (capacitaciones, certificaciones laborales, entre otros). 
+Nombre de la evidencia/Registro/Fecha
+B28: Retroalimentación del (de la) Asesor(a) Interno Dual:
+B34: Firma del (de la) estudiante
+E34: DCC. René Cruz Guerrero
+Nombre y firma del (de la)
+ Asesor(a)  Interno Dual
+A36:                                    Guía de llenado del formato del Anexo V:
+
+(1) Matriz de evaluación de la competencia disciplinar por el estudiante dual: Valoración del nivel de desempeño por evidencia para el logro de la competencia por el estudiante dual.
+
+• Una evidencia puede utilizar varios renglones.
+• Cada nivel de desempeño, se debe describir y anotar en paréntesis el puntaje.
+• El total máximo de todas las evidencias no debe exceder de 60%.
+• Se elabora una por competencia general (asignatura) y por estudiante.
+• Esa calificación se refleja en la instrumentación didáctica.
+
+(2) Evidencias: Evidencias definidas en la instrumentación dual
+Puntos asignados: Puntos correspondientes al nivel de desempeño en el aspecto de la evidencia evaluada
+
+(3) Nivel de desempeño: Enunciar las características para cada nivel de desempeño con su valoración numérica entre paréntesis.
+
+• Insuficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere insuficiente. Considerar que es el peor caso de desempeño.
+• Suficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño   se   considere   que   se   encuentra   en   desarrollo;   el estudiante es incapaz de desarrollar de forma autónoma el desempeño esperado, y requiere ayuda teórica, práctica, de indicaciones, etc.
+• Bueno. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere que representa un dominio bueno. Es el criterio de lo que, medianamente, el estudiante debe demostrar como para ejecutar el indicador de desempeño de manera autónoma, dando al menos el resultado esperado.
+• Notable. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere notable. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante cumple con una actuación más allá de lo mínimo requerido.
+• Excelente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere excelente. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante excede una actuación mucho más allá de lo mínimo requerido.
+
+
+
+=== Anexo V MTM ===
+B2: Anexo V
+RÚBRICA PARA EVALUAR COMPETENCIAS DISCIPLINARES DEL PED
+B5: Asignatura:
+C5: Tecnologías Móviles para la Transformación Digital
+B6: Competencia disciplinar:
+C6: Desarrolla aplicaciones para dispositivos móviles mediante el uso de herramientas emergentes dirigidas hacia la transformación digital además de utilizar técnicas de modelado para la solución de problemas y su integración en servicios de la nube y IoT, con capacidad de negociación y orientación a resultados para la solución de problemas en un contexto real en un marco de equidad, inclusión y responsabilidad social.
+B7: Nombre de (de la) estudiante dual:
+C7: Elton Yael Alba Roldan
+B8: Matrícula de (de la) estudiante dual:
+E8: 22030013
+B9: Periodo de evaluación:
+C9: Enero-Junio-2026
+B12: Matriz de evaluación de la competencia disciplinar por el (la) estudiante dual (1)
+B15: Evidencias 
+(2)
+C15: Porcentaje
+D15: Nivel de desempeño (3)
+D16: Excelente
+E16: Notable
+F16: Bueno
+G16: Suficiente
+H16: Insuficiente
+B17: Diseño de interfaz móvil (.NET MAUI) para facilitar la captura de evidencias logísticas y telemetría de los operadores.
+C17: 0.2
+B18: Conexión con servicios web (APIs RESTful) para la sincronización asíncrona de coordenadas GPS entre la aplicación y la nube.
+C18: 0.2
+B19: Integración de almacenamiento local (SQLite) y remoto (Google Sheets/Drive) para mantener disponible la información operativa.
+C19: 0.2
+B21: TOTAL (%)
+C21: 0.6
+B25: *Evidencia adicional (capacitaciones, certificaciones laborales, entre otros). 
+Nombre de la evidencia/Registro/Fecha
+B28: Retroalimentación del (de la) Asesor(a) Interno Dual:
+B34: Firma del (de la) estudiante
+E34: DCC. René Cruz Guerrero
+Nombre y firma del (de la)
+ Asesor(a)  Interno Dual
+A36:                                    Guía de llenado del formato del Anexo V:
+
+(1) Matriz de evaluación de la competencia disciplinar por el estudiante dual: Valoración del nivel de desempeño por evidencia para el logro de la competencia por el estudiante dual.
+
+• Una evidencia puede utilizar varios renglones.
+• Cada nivel de desempeño, se debe describir y anotar en paréntesis el puntaje.
+• El total máximo de todas las evidencias no debe exceder de 60%.
+• Se elabora una por competencia general (asignatura) y por estudiante.
+• Esa calificación se refleja en la instrumentación didáctica.
+
+(2) Evidencias: Evidencias definidas en la instrumentación dual
+Puntos asignados: Puntos correspondientes al nivel de desempeño en el aspecto de la evidencia evaluada
+
+(3) Nivel de desempeño: Enunciar las características para cada nivel de desempeño con su valoración numérica entre paréntesis.
+
+• Insuficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere insuficiente. Considerar que es el peor caso de desempeño.
+• Suficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño   se   considere   que   se   encuentra   en   desarrollo;   el estudiante es incapaz de desarrollar de forma autónoma el desempeño esperado, y requiere ayuda teórica, práctica, de indicaciones, etc.
+• Bueno. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere que representa un dominio bueno. Es el criterio de lo que, medianamente, el estudiante debe demostrar como para ejecutar el indicador de desempeño de manera autónoma, dando al menos el resultado esperado.
+• Notable. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere notable. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante cumple con una actuación más allá de lo mínimo requerido.
+• Excelente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere excelente. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante excede una actuación mucho más allá de lo mínimo requerido.
+
+
+
+=== Anexo V AD ===
+B2: Anexo V
+RÚBRICA PARA EVALUAR COMPETENCIAS DISCIPLINARES DEL PED
+B5: Asignatura:
+C5:  Analítica de Datos para la Transformación Digital
+B6: Competencia disciplinar:
+C6: Obtener información y conocimiento útil a partir del procesamiento de conjuntos de datos mediante técnicas para OLAP, visualización y analítica de datos, con orientación a la transformación digital y la industria 4.0 a través de una actitud ética y en entornos colaborativos.
+B7: Nombre de (de la) estudiante dual:
+C7: Elton Yael Alba Roldan
+B8: Matrícula de (de la) estudiante dual:
+E8: 22030013
+B9: Periodo de evaluación:
+C9: Enero-Junio-2026
+B12: Matriz de evaluación de la competencia disciplinar por el (la) estudiante dual (1)
+B15: Evidencias 
+(2)
+C15: Porcentaje
+D15: Nivel de desempeño (3)
+D16: Excelente
+E16: Notable
+F16: Bueno
+G16: Suficiente
+H16: Insuficiente
+B17: Procesamiento de conjuntos de datos logísticos (viajes y mantenimientos) extraídos desde la base de datos de LogiApp.
+C17: 0.2
+B18: Aplicación de técnicas de analítica (minería de datos) para identificar patrones operativos, rendimiento (Km/L) y tendencias de ruta.
+C18: 0.2
+B19: Construcción de tableros visuales (Dashboards) conectados a Google Sheets para apoyar la toma de decisiones basada en KPIs.
+C19: 0.2
+B21: TOTAL (%)
+C21: 0.6
+B25: *Evidencia adicional (capacitaciones, certificaciones laborales, entre otros). 
+Nombre de la evidencia/Registro/Fecha
+B28: Retroalimentación del (de la) Asesor(a) Interno Dual:
+B34: Firma del (de la) estudiante
+E34: DCC. René Cruz Guerrero
+Nombre y firma del (de la)
+ Asesor(a)  Interno Dual
+A36:                                    Guía de llenado del formato del Anexo V:
+
+(1) Matriz de evaluación de la competencia disciplinar por el estudiante dual: Valoración del nivel de desempeño por evidencia para el logro de la competencia por el estudiante dual.
+
+• Una evidencia puede utilizar varios renglones.
+• Cada nivel de desempeño, se debe describir y anotar en paréntesis el puntaje.
+• El total máximo de todas las evidencias no debe exceder de 60%.
+• Se elabora una por competencia general (asignatura) y por estudiante.
+• Esa calificación se refleja en la instrumentación didáctica.
+
+(2) Evidencias: Evidencias definidas en la instrumentación dual
+Puntos asignados: Puntos correspondientes al nivel de desempeño en el aspecto de la evidencia evaluada
+
+(3) Nivel de desempeño: Enunciar las características para cada nivel de desempeño con su valoración numérica entre paréntesis.
+
+• Insuficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere insuficiente. Considerar que es el peor caso de desempeño.
+• Suficiente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño   se   considere   que   se   encuentra   en   desarrollo;   el estudiante es incapaz de desarrollar de forma autónoma el desempeño esperado, y requiere ayuda teórica, práctica, de indicaciones, etc.
+• Bueno. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere que representa un dominio bueno. Es el criterio de lo que, medianamente, el estudiante debe demostrar como para ejecutar el indicador de desempeño de manera autónoma, dando al menos el resultado esperado.
+• Notable. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere notable. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante cumple con una actuación más allá de lo mínimo requerido.
+• Excelente. Enunciar las características de lo observable en la actuación del estudiante para que el logro del indicador de desempeño se considere excelente. Además de lo anterior, el criterio debe establecer qué elementos de valor agregado indican que el estudiante excede una actuación mucho más allá de lo mínimo requerido.
+
+
+
+=== Anexo VI ===
+B2: Anexo VI
+INSTRUMENTO DE EVALUACIÓN DE COMPETENCIAS BLANDAS (PED)
+B4: Nombre del Proyecto de Educación Dual:
+F4: Sistema de Control para la Optimización de Ciclos de Viaje y Tiempos de
+Traslado
+B5: Periodo de la evaluación:
+F5: Enero-Junio 2026
+B6: Departamento /Área en la Unidad Económica:
+F6: Sistemas Computacionales
+B7: Unidad Económica:
+F7: TLB Transportes
+B8: Nombre del Asesor Externo Dual (AED):
+F8:  Ing. Raúl Armando Balmaceda Pérez
+B9: Nombre del estudiante:
+F9: Elton Yael Alba Roldan
+B10: Matrícula del estudiante:
+F10: 22030013
+B11: Nombre del(los) asesor(es) internos(s) Dual (AID):
+F11: DCC. René Cruz Guerrero
+B13: Instrucciones: Anotar el puntaje para cada una de las competencias blandas indicadas, considerando los siguientes niveles de desempeño: Excelente = 4, Notables = 3, Bueno = 2, Suficiente =1, Insuficiente = 0.
+B15: No.
+C15: Competencias blandas (2)
+I15: Puntaje (3)
+B16: 1
+C16: Genera propuestas creativas, emprendedoras las para solución de problemas y gestiona los recursos necesarios para su implementación.
+B17: 2
+C17: Demuestra un comportamiento ético (disciplina, respeto, probidad, etc.)
+B18: 3
+C18: Trabaja en equipo en donde cuyos miembros juntos proveen liderazgo, crean un ambiente colaborativo e inclusivo, establecen metas, planean tareas y cumplen objetivos.
+B19: 4
+C19: Implementa las acciones y soluciones de los proyectos designados de manera organizada y productiva.
+B22: 5
+C22: Demuestra el correcto manejo de conflictos
+B23: 6
+C23: Tiene comunicación de forma oral de manera asertiva en diferentes audiencias
+B24: 7
+C24: Se comunica de forma escrita efectivamente
+B25: 8
+C25: Desarrolla la Inteligencia emocional (se comunicar efectivamente, es empático con otras personas, superar desafíos, se adapta a nuevas situaciones y aminorar conflictos)
+B26: 9
+C26: Toma decisiones, autoconfianza y un pensamiento crítico en las actividades que desarrolla para el beneficio o mejora del proyecto en que participa considerando el impacto de las soluciones ingenieriles en contextos globales, económicos, ambientales y sociales
+B27: 10
+C27: Demuestra liderazgo en las actividades encomendadas
+B28: Calificación Competencias blandas (4)
+B30: Comentarios / sugerencias (5)
+B36:  Ing. Raúl Armando Balmaceda Pérez
+B37: Nombre y firma del Asesor Externo Dual(6)
+E37: Fecha de aplicación (7)
+H37: Sello de la Unidad Económica (8)
+A38:                                 Guía de llenado del formato del Anexo VI:
+
+(1) Información General: Escribir los datos de identificación de las personas que formarán parte del desarrollo del PED y sus áreas de adscripción. En los apartados de nombre de estudiante dual, asesores internos y externos dual, si es más de un participante, se debe anotar el nombre de todos los involucrados. Este formato debe ser llenado por el Asesor externo dual y debe ser llenado por estudiante.
+
+(2) Competencias blandas: Competencias blandas propuestas a ser evaluadas por el Asesor Externo Dual.
+
+(3) Puntaje: Puntuación asignada a cada una de las competencias blandas según la escala propuesta en las instrucciones.
+
+(4) Calificación competencias blandas: Suma del puntaje que corresponde al 40% de la calificación final.
+
+(5) Comentarios / sugerencias: En caso de necesitar hacer una observación o aspecto a tomar en cuenta. Es deseable llenar este apartado con recomendaciones.
+
+(6) Nombre y firma del asesor externo dual: Este documento es llenado por el Asesor externo dual y es quien coloca su nombre y firma.
+
+(7) Fecha de aplicación: Fecha en la que se elabora este documento.
+
+(8) Sello de la Unidad Productiva.
+
+
+
+=== Anexo VII ===
+B2: Anexo VII
+ACTA DE ACREDITACIÓN INTEGRAL DUAL
+B4: Nombre de (de la) estudiante dual: (1)
+B5: Matrícula de (de la) estudiante dual: (1)
+B6: Programa Educativo: (1)
+B7: Semestre: (1)
+B8: Nombre del PED: (2)
+B9: Periodo de acreditación: (3)
+B14: Nombre y clave de la Asignatura 1: (4)
+B15: Evaluación Competencias disciplinares:
+B16: Evaluación Competencias blandas:
+B17: Evaluación Final: (7)
+B22: Firma del (de la) estudiante dual
+F22: Nombre y firma del (de la) Docente Relacionado con el PED
+A32:                                            Guía de llenado del formato del Anexo VII:
+
+(1) Nombre y matrícula del (de la) estudiante dual: Escribir los datos de identificación del Estudiante Dual.
+
+(2) Nombre del Proyecto de Educación Dual: Escribir el nombre del proyecto de educación dual.
+
+(3) Periodo de acreditación: Escribir el periodo en que se asentará la calificación en el sistema de servicios escolares, de la asignatura que está dada de alta en el horario del (la) estudiante.
+
+(4) Nombre y clave de la Asignatura: Escribir el nombre y clave de las asignaturas de acuerdo con las competencias disciplinares correspondientes con el proyecto de educación dual.
+
+(5) Evaluación Competencias disciplinares: Escribir la calificación correspondiente al nivel de desempeño de la competencia evaluada reportada en el anexo V
+
+(6) Evaluación Competencias blandas: Escribir la calificación correspondiente al nivel de desempeño de las competencias blandas reportada en el anexo VI
+
+(7) Evaluación Final: Escribir la calificación final resultado de la suma del punto 5 y punto 6.
+
+
+
+=== Anexo VIII ===
+B2: Anexo VIII.
+ESTRUCTURA DEL REPORTE INTEGRAL DEL PROYECTO DE EDUCACIÓN DUAL
+B4: CAPÍTULO
+C4: ESTRUCTURA DEL REPORTE INTEGRAL DEL PROYECTO DE EDUCACIÓN DUAL.
+B5: Preliminares
+D5: 1. Portada.
+2. Agradecimientos.
+3. Resumen.
+4. Índice.
+B6: Generalidades del proyecto
+
+D6: 5. Introducción.
+6. Descripción de la unidad económica y del puesto o área de trabajo del estudiante.
+7. Descripción del PED y periodos en que se realizó.
+8. Problemas a resolver, priorizándolos.
+9. Objetivos (General y Específicos).
+10. Justificación.
+B7: Marco teórico
+D7: 11. Marco Teórico (fundamentos teóricos).
+B8: Desarrollo
+D8: 12. Procedimiento y descripción de las actividades realizadas.
+B9: Resultados
+D9: 13. Resultados, planos, gráficas, prototipos, manuales, programas, análisis estadísticos, modelos matemáticos, simulaciones, normatividades, regulaciones y restricciones, entre otros. Solo para proyectos que por su naturaleza lo requieran: estudio de mercado, estudio técnico y estudio económico.
+14. Actividades Sociales realizadas en la unidad económica (si es el caso).
+B10: Conclusiones
+D10: 15. Conclusiones de Proyecto, recomendaciones para la unidad         económica y experiencia personal profesional
+adquirida.
+B11: Competencias
+desarrolladas
+D11: 16. Competencias desarrolladas y/o aplicadas.
+B12: Referencias
+D12: 17. Fuentes de información
+B13: Anexos
+D13: 18. Anexos (carta de autorización por parte de la unidad económica para la titulación y otros si son necesario).
+19. Registros de Productos (patentes, derechos de autor, compra-venta del proyecto, entre otros).
+B15: Nota:
+B16: Con base a un análisis y sustento académico, el ITESA puede proponer un máximo de extensión de hojas del reporte.

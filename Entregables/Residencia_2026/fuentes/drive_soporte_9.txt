@@ -1,0 +1,81 @@
+ID
+Riesgo / 
+Incidente Categoría Responsable Estado
+Nivel de 
+Impacto Probabilidad
+Plan de 
+Mitigación / 
+Comentarios / 
+Avances
+1
+Errores de 
+compilación Técnico Elton Yael En Proceso Alto Media
+Mantener 
+ramas 
+Se presentó 
+un error de 
+2
+Pérdida de 
+horas por Logística Elton Yael En Proceso Alto Muy Alta
+Documentar 
+procesos 
+El tiempo de 
+traslado actual 
+3
+Prioridad a 
+evaluaciones Gestión Elton Yael En Proceso Alto Alta
+Adelantar 
+entregas del 
+Se aproxima 
+la primera 
+4
+Fallo en 
+permisos de Técnico Elton / TI TLB En Proceso Media Baja
+Se configuró 
+cuenta de 
+Solucionado: 
+El flujo de 
+5
+Inconsistencia 
+en formato de Datos Elton / TI TLB En Proceso Media Alta
+Aplicar 
+limpieza de 
+Se detectaron 
+IDs con 
+6
+Suspensión 
+del monitoreo Técnico Elton Yael En Proceso Alto Alta
+Forzar 
+KeepScreenO
+El S.O. de los 
+celulares 
+7
+Pérdida o 
+sobreescritura 
+Técnico / 
+Datos Elton Yael Mitigado Alto Media
+Almacenar 
+datos en 
+Se cambió el 
+método 
+8
+Modificación 
+manual no Seguridad Elton Yael Mitigado Alto Baja
+Implementar 
+trigger onEdit 
+Ya genera un 
+log automático 
+9
+Trazado de 
+rutas Datos Elton Yael Mitigado Media Media
+Estandarizar 
+la captura de 
+Evitamos usar 
+3 decimales 
+10
+Acceso a la 
+app de Operativo Elton Yael Mitigado Alto Baja
+Validación 
+asíncrona del 
+Si el admin 
+cambia el 

@@ -1,0 +1,24 @@
+Product Backlog
+ID Requerimiento Como Quiero Para Prioridad
+HU1 Registro de Inicio de Viaje Operador Poder registrar la salida de una unidad con origen, destino y folio. Iniciar el seguimiento logístico formal en la base de datos. MUY ALTA
+HU2 Monitoreo GPS en Ruta Operador Reportar mi ubicación actual (coordenadas) con un solo clic durante el trayeMantener actualizado el estatus del viaje sin necesidad de llALTA
+HU3 Registro de Arribo a Destino Operador Marcar el momento exacto de mi llegada al destino final. Detener el cronómetro de tránsito y habilitar el formulario de MUY ALTA
+HU4 Captura de Evidencias y Cierre Operador Registrar kilometraje final, combustible y tomar fotos de los documentos de Finalizar el viaje correctamente y proporcionar pruebas de la ALTA
+HU5 Validación de Datos Técnicos Administrador Que el sistema no permita cerrar viajes sin los datos de combustible y kilomAsegurar que los KPIs de rendimiento sean precisos para eMEDIA
+HU6 Control de Vigencias Operador Visualizar los días restantes de mi licencia y examen médico. [cite: 2026-02Evitar multas y asegurar que mis documentos estén actualizALTA
+HU7 Carga de Documentación Operador Subir fotos de mi licencia renovada desde la aplicación. [cite: 2026-02-11] Actualizar mi expediente digital en Google Drive automáticaMEDIA
+HU8 Registro de Mantenimiento Operador Registrar servicios preventivos/correctivos, costos y taller. [cite: 2026-02-11Llevar un historial clínico de la unidad y controlar los gastos ALTA
+HU9 Gestión de Seguridad (Login) Operador Acceder con mi ID de empleado y una contraseña personal. [cite: 2026-02-1Proteger mi información y asegurar que solo yo registre mis MUY ALTA
+HU10 Alertas VisualesOperador Ver indicadores de color (Rojo/Amarillo) en las fechas de vigencia. [cite: 202Identificar rápidamente trámites urgentes por vencer. [cite: 2BAJA
+Product Backlog Integral
+ID Módulo Historia de Usuario Prioridad
+HU1 Seguridad Acceso al sistema: Validar ID y contraseña contra la base de datos en Sheets. Crítica
+HU2 Registro Alta de Operador: Crear un nuevo perfil con datos personales y profesionales. Alta
+HU3 Perfil Control de Vigencias: Visualizar alertas de vencimiento de Licencia y Examen MédicoAlta
+HU4 Evidencias Gestión de Documentos: Subir fotos de documentos a Google Drive desde la App. Media
+HU5 MantenimientoRegistro de Servicios: Reportar mantenimientos (taller, costo, piezas) con folio. Media
+HU6 Viajes Inicio de Viaje: Registrar salida con folio, unidad, origen y destino. Crítica
+HU7 Logística Monitoreo GPS: Enviar ubicación y hora en tiempo real a la columna de estatus. Alta
+HU8 Operación Arribo a Destino: Marcar llegada para detener tiempos de tránsito y desbloquear cierrCrítica
+HU9 KPIs Cierre de Viaje: Capturar KM final y combustible. Alta
+HU10 Integración Sincronización: Asegurar que todos los datos se guarden en el formato correcto para Alta

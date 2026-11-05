@@ -1,0 +1,277 @@
+Criterio RSU
+Descripción del 
+criterio
+Indicadores genéricos 
+sugeridos (los estudiantes 
+deben seleccionar los 
+aplicables)
+Justificación de los criterios 
+elegidos (explicar por qué 
+son relevantes para el 
+proyecto)
+Evidencia 
+del 
+proyecto 1 2 3 4
+Pertinencia 
+social del 
+proyecto
+El proyecto responde a 
+una necesidad real de 
+una comunidad u 
+organización
+☐ Existencia de un 
+problema social 
+identificado ☐ Justificación 
+del uso de tecnología para 
+resolver el problema ☐
+Identificación clara de 
+beneficiarios
+Evaluar estos indicadores es 
+fundamental porque un 
+proyecto de digitalización 
+solo tiene sentido si ataca 
+un "dolor" real de la 
+organización. Justificar 
+tecnológicamente la 
+solución y mapear a los 
+beneficiarios asegura que la 
+inversión en software tenga 
+un propósito estratégico y 
+no sea simplemente 
+"tecnología por tecnología", 
+garantizando que resolverá 
+el problema logístico de TLB 
+Transportes.
+Canvas.
+☑ ☑ ☑Identificació
+n de actores 
+sociales
+El equipo identifica 
+usuarios, beneficiarios 
+y actores involucrados
+☐ Identificación de 
+usuarios finales ☐
+Identificación de 
+organizaciones o 
+instituciones involucradas 
+☐ Identificación de 
+necesidades de los usuarios 
+☐ Consideración de 
+retroalimentación de 
+usuarios
+Seleccionar estos criterios 
+es vital porque el éxito de la 
+adopción digital depende de 
+las personas. Identificar 
+formalmente a los choferes, 
+administradores y sus 
+necesidades garantiza que 
+el sistema se diseñe a la 
+medida de la operación real. 
+Medir la retroalimentación 
+asegura que la herramienta 
+no sea impuesta, sino que 
+evolucione orgánicamente.
+Toolbox 
+producto/p
+roducción 
+inicial.
+☑ ☑ ☑ ☑
+Impacto 
+social 
+esperado
+El sistema genera 
+beneficios sociales 
+claros
+☐ Mejora en acceso a 
+información o servicios ☐
+Reducción de tiempo o 
+esfuerzo en procesos ☐
+Mejora en toma de 
+decisiones
+Estos indicadores son la 
+métrica principal del 
+Retorno de Inversión (ROI) 
+en la transformación digital. 
+Son relevantes porque el 
+objetivo central de migrar 
+de papel a la nube es 
+precisamente hacer la 
+información accesible al 
+instante, minimizar el 
+trabajo manual repetitivo y 
+empoderar a la gerencia con 
+datos precisos para 
+decisiones más rápidas.
+Plan de 
+implementa
+ción.
+☑ ☑ ☑Inclusión y 
+accesibilidad 
+digital
+El sistema considera 
+inclusión y 
+accesibilidad 
+tecnológica
+☐ Interfaz sencilla y 
+comprensible ☐
+Compatibilidad con 
+dispositivos comunes ☐
+Reducción de barreras 
+digitales
+Su medición es crucial en el 
+sector transporte, donde los 
+usuarios finales suelen tener 
+perfiles no técnicos. Evaluar 
+la simplicidad de la interfaz 
+y la compatibilidad con 
+hardware estándar es 
+relevante para asegurar que 
+la tecnología sea una 
+herramienta facilitadora y 
+no un obstáculo, evitando 
+que la "brecha digital" 
+frustre la recolección de 
+datos.
+Plan de 
+pruebas.
+☑ ☑ ☑
+Uso ético de 
+la tecnología
+El proyecto considera 
+aspectos éticos en el 
+uso de tecnología
+☐ Protección de datos 
+personales ☐ Transparencia 
+en el uso de datos ☐
+Seguridad básica del 
+sistema 
+En un sistema que maneja 
+geolocalización en tiempo 
+real e información 
+corporativa, estos criterios 
+son mandatorios. Son 
+relevantes para auditar que 
+el proyecto cumple con 
+estándares de 
+ciberseguridad, protegiendo 
+tanto la privacidad del 
+operador como la integridad 
+de los datos de la empresa 
+contra alteraciones o fugas. Analisis de 
+riesgos.
+☑ ☑ ☑Sustentabilid
+ad del 
+proyecto
+El sistema puede 
+mantenerse y seguir 
+generando impacto
+☐ Facilidad de 
+mantenimiento del sistema 
+☐ Posibilidad de escalar el 
+sistema ☐ Uso de 
+tecnologías accesibles o 
+abiertas ☐ Documentación 
+del sistema
+Estos indicadores 
+determinan la viabilidad a 
+largo plazo del software. 
+Son de alta relevancia 
+porque la empresa necesita 
+la garantía de que la 
+plataforma soportará el 
+crecimiento de su flotilla sin 
+colapsar ni incurrir en 
+costos de licenciamiento 
+insostenibles, asegurando 
+además que cualquier 
+desarrollador futuro pueda 
+entender el código.
+Plan de 
+mantenimie
+nto 
+preventivo 
+y Toolbox 
+producto/p
+roducción.
+☑ ☑ ☑ ☑
+Vinculación 
+con la 
+comunidad
+Existe interacción con 
+usuarios o actores 
+sociales
+☐ Retroalimentación de 
+usuarios sobre el prototipo 
+☐ Evidencia de 
+colaboración con actores 
+sociales
+Evaluar este aspecto es 
+clave para legitimar un 
+proyecto del Modelo Dual. 
+Estos indicadores son 
+relevantes para demostrar 
+que el software no se 
+desarrolló en un entorno 
+académico aislado, sino 
+mediante un proceso de cocreación y validación 
+continua con la empresa 
+formadora, asegurando su 
+aplicabilidad industrial. TRL.
+☑ ☑Evaluación 
+del impacto 
+social
+El equipo propone 
+formas de medir el 
+impacto del sistema
+☐ Definición de indicadores 
+de impacto ☐ Definición de 
+método de evaluación 
+(encuestas) ☐ Propuesta de 
+seguimiento del impacto
+La relevancia de estos 
+criterios radica en la 
+necesidad de estructurar la 
+mejora continua. Un 
+proyecto organizacional 
+requiere herramientas 
+formales (como KPIs y 
+encuestas) para cuantificar 
+de manera objetiva si la 
+digitalización logró el 
+impacto deseado y poder 
+corregir el rumbo si la 
+usabilidad decae con el 
+tiempo. RSU.
+☑ ☑ ☑
+Innovación 
+social 
+mediante 
+tecnología
+El proyecto propone 
+una solución 
+tecnológica novedosa 
+para un problema 
+social
+☐ Mejora respecto a 
+soluciones existentes ☐
+Integración de múltiples 
+tecnologías ☐ Creatividad 
+en la solución propuesta
+Son relevantes para calificar 
+el nivel de ingeniería del 
+proyecto. Evaluar cómo la 
+propuesta supera los 
+métodos tradicionales 
+mediante la orquestación 
+creativa de arquitecturas 
+modernas (offline-first, 
+cloud, móvil) es lo que 
+define verdaderamente si se 
+logró una transformación 
+digital o solo una simple 
+transcripción de datos.
+Tecnología 
+habilitadora
+.
+☑ ☑ ☑

@@ -1,0 +1,86 @@
+Operación: Ejecutar y documentar el 
+proceso de viajes (salidas, llegadas, 
+consumos) y el registro de 
+mantenimientos.
+Gestión: Realizar el alta de operadores y 
+administrar el control de evidencias 
+fotográficas y documentales.
+Estrategia: Rastrear las unidades en ruta 
+(GPS monitoreo) y analizar el 
+rendimiento del negocio mediante KPIs 
+(BI).
+Ceguera en ruta: Incertidumbre sobre 
+el estatus exacto de los viajes y las 
+entregas.
+Caos administrativo: Altas de 
+choferes tediosas y evidencias 
+fotográficas desorganizadas que se 
+pierden o son difíciles de auditar.
+Falta de información estratégica: 
+Imposibilidad de saber si un vehículo 
+es rentable o genera pérdidas por 
+falta de métricas claras y reportes de 
+mantenimiento consolidados.
+Tener control total, exacto y en tiempo real de la 
+logística sin tener que triangular llamadas con los 
+operadores.
+Un proceso de recursos humanos rápido, con un 
+expediente digital ordenado automáticamente para 
+cada chofer y sus entregas.
+Ver gráficos y paneles de control (Dashboards) 
+actualizados al instante para tomar decisiones 
+operativas y mecánicas basadas en datos reales.
+LogiApp (App móvil 
+de gestión logística
+TLB 
+Antes: Seguimiento de viajes a ciegas 
+(sin GPS), fotos de evidencias perdidas 
+en WhatsApp, procesos lentos de alta de 
+personal, y registro de mantenimientos 
+en papel sin indicadores (KPIs) para 
+medir la rentabilidad.
+Después: App que centraliza el proceso 
+de viajes con monitoreo GPS, organiza 
+evidencias en la nube, agiliza el alta de 
+operadores y alimenta un dashboard 
+(BI) para tomar decisiones precisas.
+Trazabilidad: Los administradores saben exactamente el 
+"cuándo, dónde, cómo y con qué evidencia" de cada viaje 
+activo o finalizado.
+Gestión: Libera a la oficina del papeleo físico, 
+automatizando desde el alta del personal hasta la 
+recolección de pruebas de entrega.
+Inteligencia de negocio directa: Convierte la operación 
+diaria en una ventaja competitiva, permitiendo auditar el 
+rendimiento de operadores y unidades con un solo clic.
+Rastreo: Elimina la incertidumbre del 
+seguimiento; la app registra coordenadas, 
+calcula duraciones, el kilometraje y 
+combustible.
+Digitalización: El alta de un operador crea 
+automáticamente su estructura de carpetas, 
+asegurando que cada foto de evidencia llegue 
+a su lugar sin depender de chats.
+Visibilidad: Transforma los datos en métricas 
+limpias.
+Módulo para el 
+proceso de viajes y 
+registro de 
+mantenimientos, 
+equipado con GPS 
+monitoreo en 
+tiempo real.
+Sistema de 
+automatización de 
+alta de operadores 
+estructurado con 
+un control de 
+evidencias directo a 
+Google Drive.
+Integración 
+transparente de
+registros operativos 
+hacia bases de 
+datos (Sheets) para 
+alimentar tableros 
+de KPI (BI).

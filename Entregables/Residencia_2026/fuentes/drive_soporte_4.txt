@@ -1,0 +1,51 @@
+Hardware requerido
+• Dispositivo Móvil Android (Smartphone): Es el hardware principal de operación. 
+Debe contar con sensor GPS integrado y conectividad (WiFi/Datos móviles) para la 
+recolección de telemetría en ruta.
+• Computadora de Desarrollo (PC/Laptop): Estación de trabajo con procesador de 
+arquitectura x64, necesaria para la compilación, depuración y despliegue del código 
+fuente mediante el entorno de desarrollo.
+• Servidores en la Nube (Google Cloud Infrastructure): Infraestructura remota que 
+aloja la base de datos centralizada y el sistema de gestión de archivos (DMS), 
+eliminando la necesidad de servidores físicos locales en TLB Transportes.
+Software requerido
+• .NET MAUI Framework: Framework multiplataforma utilizado para construir la interfaz 
+de usuario (UI) nativa y la lógica de negocio de la aplicación móvil.
+• SQLite (Engine local): Motor de base de datos relacional ligero insertado en la app, 
+encargado de la persistencia de datos en escenarios de "Ceguera de Red" (Edge 
+Computing).
+• Google Sheets & Drive APIs: Interfaces de programación de aplicaciones que 
+permiten la comunicación asíncrona entre el dispositivo móvil y la nube para el reporte 
+de viajes y evidencias.
+• Visual Studio 2022 (Community Edition): Entorno de Desarrollo Integrado (IDE) 
+utilizado para la codificación en lenguaje C# y XAML.
+Competencias (Habilidades)
+• Desarrollo de Aplicaciones Móviles: Conocimientos avanzados en el ciclo de vida de 
+apps móviles y manejo de sensores de hardware (GPS).
+• Arquitectura de Software Híbrida (Edge-to-Cloud): Capacidad para diseñar sistemas 
+que procesan datos localmente (Edge) y se sincronizan de forma inteligente con la nube 
+(Cloud).
+• Integración de APIs y Seguridad: Implementación de protocolos de autenticación 
+segura (OAuth 2.0) y consumo de servicios web RESTful.
+• Gestión de Bases de Datos: Habilidad para estructurar modelos de datos relacionales 
+tanto en entornos locales (SQLite) como en hojas de cálculo escalables (Sheets).
+Costos de Infraestructura
+Costos de infraestructura Hardware
+Componente Descripción Costo (MXN)
+Smartphone Android Dispositivo para operador (Gama media) $3,500.00
+Laptop de Desarrollo Equipo con 16GB RAM / SSD $15,000.00
+Total Hardware: $18,500.00Costo de infraestructura de Software
+Componente Descripción Costo (MXN)
+.NET MAUI Licencia Open Source $0.00
+SQLite Dominio Público $0.00
+Google Cloud APIs Capa gratuita (Free Tier) $0.00
+Visual Studio 2022 Edición Community $0.00
+Total Software: $0.00
+Costo de infraestructura de Habilidades
+Habilidad Descripción Costo (MXN)
+Desarrollo Mobile Especialidad técnica $0.00
+Arquitectura Cloud Especialidad técnica $0.00
+Gestión de Datos Especialidad técnica $0.00
+Total Habilidades: $0.00
+Total General
+TOTAL GENERAL: $18,500.00
